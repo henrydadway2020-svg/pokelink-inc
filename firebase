@@ -1496,14 +1496,16 @@
              collection, query, where, getCountFromServer, Timestamp }
       from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCc0nqHJffKHQg7HgFKtstQlyEjXM1Jdic",
-      authDomain: "pokelink-pocket.firebaseapp.com",
-      projectId: "pokelink-pocket",
-      storageBucket: "pokelink-pocket.firebasestorage.app",
-      messagingSenderId: "298802299124",
-      appId: "1:298802299124:web:d6364f5e9b87727dd45ea1"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyD9_yuDSKCGPoUSKVz80gdl-Nz7NeY_wFk",
+  authDomain: "pokelink-2026.firebaseapp.com",
+  databaseURL: "https://firebaseio.com",
+  projectId: "pokelink-2026",
+  storageBucket: "pokelink-2026.firebasestorage.app",
+  messagingSenderId: "501151685730",
+  appId: "1:501151685730:web:fada98a770c437e743853b"
+};
+
 
     const app  = initializeApp(firebaseConfig);
 
