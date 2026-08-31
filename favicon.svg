@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1410"/>
+      <stop offset="100%" stop-color="#0d0a08"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#d62828"/>
+      <stop offset="45%" stop-color="#f4732b"/>
+      <stop offset="75%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#ffe066"/>
+    </linearGradient>
+    <linearGradient id="flameInner" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#fff3b0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="192" height="192" rx="38" fill="url(#bg)"/>
+
+  <!-- outer flame -->
+  <path d="M96 24
+           C 74 46, 52 66, 52 100
+           C 52 130, 72 152, 96 158
+           C 120 152, 140 130, 140 100
+           C 140 78, 128 66, 118 50
+           C 122 68, 114 78, 104 82
+           C 108 62, 100 40, 96 24 Z"
+        fill="url(#flame)"/>
+
+  <!-- inner flame -->
+  <path d="M96 78
+           C 84 92, 76 104, 76 118
+           C 76 134, 86 146, 96 149
+           C 106 146, 116 134, 116 118
+           C 116 108, 110 100, 104 92
+           C 105 100, 100 106, 95 108
+           C 98 96, 100 86, 96 78 Z"
+        fill="url(#flameInner)"/>
+</svg>
