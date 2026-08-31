@@ -1,10 +1,11 @@
 /* ══════════════════════════════════════════════
    CARDS VIEW  (js/cards-view.js)
-   Depends on: window.CARD_DB (set by data/cards.db.js)
-   NOTA: este comentario apuntaba literalmente a "https://tcgmini.com" —
-   parece un resto de un find&replace mal hecho que cambió "CARD_DB" por
-   esa URL en todo el archivo. Revisa data/cards.db.js por si tiene el
-   mismo problema (ahí vive la función cardImage() real).
+   Depends on: window.CARDS_DB (set by data/cards.db.js)
+   FIX (revisión posterior): el archivo usaba "CARD_DB" (sin la S) en 5 sitios,
+   restos de un find&replace mal hecho, mientras data/cards.db.js siempre
+   definió "CARDS_DB". Como se leía como `window.CARDS_DB || []`, no lanzaba
+   error: simplemente devolvía un array vacío y la vista de Cartas nunca
+   tenía datos que mostrar. Corregido a CARDS_DB en todas las apariciones.
 ══════════════════════════════════════════════ */
 
 (function () {
@@ -967,7 +968,7 @@
   //   valor ''  = todas · 'A1' = expansión entera · 'A1|Mewtwo' = un sobre concreto
   const escAttr = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   function cvSetOptions(order) {
-    const DB = window.CARD_DB || [];
+    const DB = window.CARDS_DB || [];
     const present = new Set(DB.map(c => c.set).filter(Boolean));
     // 'game' = orden real del juego (SET_ORDER) · por defecto, alfabético por código.
     const sets = (order === 'game' && window.SET_ORDER)
@@ -1229,7 +1230,7 @@
   // ── Init ───────────────────────────────────────────────────────
   function initCardsView() {
     window._cvInitialised = true;
-    const DB = window.CARD_DB || [];
+    const DB = window.CARDS_DB || [];
 
     // Populate set dropdown with full names
     const sets = [...new Set(DB.map(c => c.set).filter(Boolean))].sort();
@@ -1724,7 +1725,7 @@
   function getPreevoNames() {
     if (_preevoNames) return _preevoNames;
     _preevoNames = new Set();
-    (window.CARD_DB || []).forEach(c => {
+    (window.CARDS_DB || []).forEach(c => {
       const f = (c.evolvesFrom || '').toLowerCase();
       if (f) _preevoNames.add(f);
     });
@@ -1734,7 +1735,7 @@
   // Cadena evolutiva COMPLETA (hacia arriba y hacia abajo) de un conjunto de nombres
   // (lowercase). Fuente ÚNICA: la usa el buscador de Cartas y el del constructor de mazos.
   function evoChainNames(originalNames) {
-    const DB = window.CARD_DB || [];
+    const DB = window.CARDS_DB || [];
     const byName = new Map();       // nombre → cartas
     const evolvesInto = new Map();  // preevo → Set de evoluciones
     DB.forEach(c => {
@@ -1792,7 +1793,7 @@
     // Pool base = la DB de Pokémon TCG Pocket. Las cartas CUSTOM (data/custom.cards.js) NO
     // están en ella: solo entran si se piden con el chip de Avanzados o si se escribe su
     // nombre en el buscador. Así no contaminan ningún otro resultado.
-    const DB = window.CARD_DB || [];
+    const DB = window.CARDS_DB || [];
     const q      = (document.getElementById('cv-search').value || '').toLowerCase().trim();
     // Valor del desplegable de expansión: 'A1' (set entero) o 'A1|Mewtwo' (un sobre).
     const setRaw = (document.getElementById('cv-set').value || '').trim();
