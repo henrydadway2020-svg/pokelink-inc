@@ -11,7 +11,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://googleapis.com">
-<link href="https://googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://googleapis.com/css2?family=Nunito:wght=600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/styles.css">
 <link rel="stylesheet" href="../css/cards-view.css">
 <link rel="stylesheet" href="../css/mazos-view.css">
@@ -42,7 +42,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="currentColor" stroke="none"/></svg>
     <span data-i18n="nav.home">Inicio</span>
   </a>
-  <a class="app-tab" id="app-tab-board" href="/tablero" onclick="switchAppTab('board');return false;" style="display:none">
+  <a class="app-tab" id="app-tab-board" href="/tablero" onclick="switchAppTab('board');return false;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="2.6" width="9" height="12.6" rx="1.5"/><circle cx="5.6" cy="19" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/><circle cx="18.4" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg>
     <span data-i18n="nav.board">Tablero</span>
   </a>
@@ -58,7 +58,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="5"/><line x1="19" y1="20" x2="19" y2="9.5"/></svg>
     <span data-i18n="nav.meta">Meta</span>
   </a>
-  <a class="app-tab" id="app-tab-draft" href="/draft" onclick="switchAppTab('draft');return false;" style="display:none">
+  <a class="app-tab" id="app-tab-draft" href="/draft" onclick="switchAppTab('draft');return false;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.9" y="5.1" width="9.4" height="13.16" rx="1.6" transform="rotate(-11 7.6 11.7)"/><rect x="11.7" y="5.1" width="9.4" height="13.16" rx="1.6" transform="rotate(11 16.4 11.7)"/></svg>
     <span data-i18n="nav.draft">Draft</span>
   </a>
@@ -74,45 +74,47 @@
 
   <div id="app-nav-right">
     <div id="lang-select">
-      <button id="lang-current" type="button" aria-haspopup="true" aria-expanded="false" title="Idioma / Language">EN</button>
+      <button id="lang-current" type="button" aria-haspopup="true" aria-expanded="false" title="Idioma / Language">ES</button>
       <div id="lang-menu" role="menu">
         <button data-lang="es" role="menuitem">Español</button>
         <button data-lang="en" role="menuitem">English</button>
         <button data-lang="ja" role="menuitem">日本語</button>
-        <button data-lang="it" role="menuitem">Italiano</button>
-        <button data-lang="fr" role="menuitem">Français</button>
-        <button data-lang="pt" role="menuitem">Português</button>
-        <button data-lang="ko" role="menuitem">한국어</button>
       </div>
     </div>
     <div id="app-nav-sep"></div>
-    <button id="app-gear-btn" onclick="toggleSbSettings(event)" title="Ajustes">
-      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+    <button id="app-gear-btn" onclick="window.toggleSbSettings&&toggleSbSettings(event)" title="Ajustes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
     </button>
   </div>
 </nav>
 
-<div id="main-content">
-  <div class="privacy-container">
-    <h2 id="privacy-title" data-i18n="privacy.title">Política de privacidad</h2>
-    <div id="privacy-body" data-i18n-html="privacy.body">
-      <p>TCGmini guarda contenido en este navegador y, al iniciar sesión o utilizar funciones multijugador, procesa los datos necesarios mediante Firebase (Google). Solo se ofrece inicio de sesión con Google.</p>
-    </div>
+<!-- VISTA PRINCIPAL DEL JUEGO (EL TABLERO REALTARGET) -->
+<div id="page-wrap">
+  <div id="game-board">
+    <!-- El motor de JS pintará dinámicamente las zonas aquí (Mazo, Banca, Activo, Premios) -->
+    <div id="board-grid"></div>
   </div>
 </div>
 
+<!-- CAPAS OCULTAS REQUERIDAS POR EL MOTOR DEL CLON -->
+<div id="view-jugar" style="display:none;"></div>
+<div id="view-cards" style="display:none;"></div>
+<div id="view-mazos" style="display:none;"></div>
+<div id="view-tierlist" style="display:none;"></div>
+<div id="view-draft" style="display:none;"></div>
+<div id="view-perfil" style="display:none;"></div>
+
 <!-- ════════════════ SCRIPTS DE ARRANQUE Y LIBRERÍAS DE GOOGLE ════════════════ -->
-
-<!-- 1. Primero cargamos las configuraciones y tus claves reales -->
 <script src="../js/shared.js"></script>
-
-<!-- 2. Luego cargamos los scripts de Firebase originales del juego corregidos -->
 <script src="https://gstatic.com"></script>
 <script src="https://gstatic.com"></script>
 <script src="https://gstatic.com"></script>
-
-<!-- 3. Por último las vistas y el motor del tablero -->
 <script src="../js/jugar-view.js"></script>
+<script src="../js/router.js"></script>
+<script src="../js/cards-view.js"></script>
+<script src="../js/mazos-view.js"></script>
+<script src="../js/tierlist-view.js"></script>
+<script src="../js/draft-view.js"></script>
 <script src="../js/main.js"></script>
 
 </body>
