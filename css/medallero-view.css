@@ -1,0 +1,458 @@
+/* ═══ PERFIL / MAESTRÍA POKÉMON — pura estética (feedback de Daniel: «los bordes
+   tienen que verse épicos»). Diseño A: marcos de metal PULIDO por rango con bisel,
+   corona que emerge del canto (desde plata+), placa con el nombre del rango y barra
+   tipo PS con el número dentro. Estética base de la pestaña Cartas: oscuro neutro +
+   system-ui. Todo el color de acento se reserva a: avatar (identidad) y el botón
+   RECLAMAR de las misiones. ═══ */
+
+#view-perfil {
+  display: none;
+  position: fixed; top: 48px; left: 0; right: 0; bottom: 0;
+  z-index: 9050;
+  background:
+    radial-gradient(60% 40% at 18% -5%, rgba(255, 209, 102, 0.05), transparent 70%),
+    radial-gradient(55% 38% at 85% -5%, rgba(120, 140, 255, 0.05), transparent 70%),
+    linear-gradient(180deg, #12121a 0%, #101017 40%, #0e0e14 100%);
+  overflow-y: auto;
+  flex-direction: column;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #e9e9f0;
+}
+.pf-wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 34px 24px 80px; }
+
+/* ── héroe del perfil: vertical y centrado, estilo Pocket ── */
+.pf-hero {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 14px 4px 6px; margin-bottom: 10px;
+}
+/* La identidad (avatar editable + nombre + correo) la monta js/auth.js dentro de
+   #pf-account: aquí solo se le da la forma del héroe. */
+.pf-account { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.pf-avatar {
+  width: 92px; height: 92px; border-radius: 50%; flex-shrink: 0; margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #4a5a78, #2d3346);
+  box-shadow:
+    0 0 0 2.5px #ffd166,
+    0 0 0 4px rgba(255, 209, 102, 0.25),
+    0 6px 22px rgba(255, 209, 102, 0.18),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: visible;   /* el lápiz de «cambiar avatar» asoma en la esquina */
+  position: relative; padding: 0; border: none; cursor: pointer;
+  transition: transform 0.12s;
+}
+.pf-avatar:hover { transform: scale(1.03); }
+.pf-avatar > #prof-pfp { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
+.pf-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pf-letter, .prof-pfp-letter { font-size: 34px; font-weight: 800; color: #e9e9f0; }
+.pf-name { font-size: 26px; font-weight: 800; letter-spacing: -0.4px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+/* Botón de iniciar sesión (sin cuenta, el perfil es la puerta de entrada) */
+/* Sin cuenta: avatar apagado + puerta de entrada (el perfil ES donde se inicia sesión) */
+.pf-avatar--empty { background: rgba(255,255,255,0.05); box-shadow: 0 0 0 2px rgba(255,255,255,0.08); cursor: default; }
+.pf-avatar--empty .pf-letter { color: rgba(255,255,255,0.25); }
+.pf-signin {
+  display: flex; align-items: center; gap: 9px; padding: 11px 20px; border-radius: 999px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+  color: #e9e9f0; font: 700 13.5px system-ui, sans-serif; cursor: pointer;
+  transition: background 0.14s, transform 0.1s;
+}
+.pf-signin:hover { background: rgba(255,255,255,0.12); }
+.pf-signin:active { transform: scale(0.97); }
+.pf-signin svg { width: 17px; height: 17px; }
+
+/* Código de amigo: apartado de la identidad, con copiar y editar */
+.pf-friendcode {
+  margin-top: 20px; width: 100%; max-width: 320px;
+  display: flex; flex-direction: column; gap: 6px; text-align: left;
+}
+.pf-fc-label {
+  font: 700 9.5px system-ui, sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+/* Gestión de la cuenta, al final del perfil */
+.pf-account-actions {
+  display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+  margin: 26px auto 8px; padding-top: 16px; max-width: 460px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.pf-stats { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+/* forma reciente: puntitos victoria/derrota de las últimas partidas */
+.pf-form { display: flex; align-items: center; gap: 5px; margin-top: 16px; }
+.pf-form-lb { font-size: 10px; color: #63636f; letter-spacing: 1px; text-transform: uppercase; margin-right: 7px; }
+.pf-form i { width: 9px; height: 9px; border-radius: 50%; }
+.pf-form i.w { background: linear-gradient(180deg, #7ce8a8, #2f9e63); box-shadow: 0 0 6px rgba(87, 214, 141, 0.45); }
+.pf-form i.l { background: rgba(255, 255, 255, 0.13); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4); }
+.pf-stats div {
+  text-align: center; min-width: 96px; padding: 10px 16px 9px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+.pf-stats b { display: block; font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.pf-stats span { font-size: 10.5px; color: #9a9aa8; letter-spacing: 0.3px; }
+
+.pf-note {
+  font-size: 13.5px; color: #b9b9c6;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;
+}
+
+/* ── rejilla de maestría (solo Pokémon con progreso, de más a menos) ── */
+.md-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 36px 22px; }
+.md-cell { position: relative; min-width: 0; }
+
+/* ═══ EL EMBLEMA (diseño A) ═══
+   El marco lleva DOS capas de fondo: (1) un destello de luz estrecho que recorre el
+   metal cada pocos segundos (la animación «premium»: vive en el MARCO, no en el arte)
+   y (2) el metal en sí. TRUCO DE LA CORONA (pixel-exacto): el marco pinta su fondo
+   como si midiera --md-cw más por arriba (tamaño 100%+cw, desplazado -cw), y la
+   corona (.md-cr::after, que sí mide eso) hereda el fondo y lo pinta a 100%/0 →
+   ambos dibujan LA MISMA imagen en LA MISMA posición de pantalla: cero costura,
+   también con el destello moviéndose (solo se anima background-position-x). */
+.md-fr {
+  position: relative; padding: 6px 6px 22px; border-radius: 14px;
+  --md-cw: 16px;                                   /* lo que asoma la corona */
+  --md-glint: linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 32%, rgba(255,255,255,0.62) 50%, rgba(255,255,255,0) 68%, rgba(255,255,255,0) 100%);
+  background-image: var(--md-glint), var(--md-metal);
+  background-size: 52% calc(100% + var(--md-cw)), 100% calc(100% + var(--md-cw));
+  background-repeat: no-repeat;
+  background-position-x: -140%, 0;
+  background-position-y: calc(-1 * var(--md-cw)), calc(-1 * var(--md-cw));
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 12px 26px rgba(0, 0, 0, 0.5);
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.3, 1.2), box-shadow 0.22s ease, filter 0.22s ease;
+}
+/* DESTELLO: un barrido de 1.4 s que la vista dispara (clase .md-glow) en UN marco visible
+   cada ~1.2 s, al azar — un solo elemento animando a la vez en vez de 30 a la vez
+   (animar background-position es trabajo del hilo principal + repintado; con la rejilla
+   entera animando el rasterizador se resentía al hacer scroll). Fuera de pantalla nada. */
+.md-fr.md-glow { animation: md-glint 1.4s cubic-bezier(0.4, 0, 0.2, 1) 1; }
+@keyframes md-glint {
+  0%   { background-position-x: -140%, 0; }
+  100% { background-position-x: 240%, 0; }
+}
+/* Reducir animaciones: ningún marco se anima (destello, hover, prisma) */
+html.pb-reduce-motion .md-fr { animation: none !important; }
+
+/* bisel interior del marco: canto de luz arriba, sombra abajo = grosor de metal */
+.md-fr::before {
+  content: ""; position: absolute; inset: 6px; bottom: 22px; border-radius: 9px; z-index: 2; pointer-events: none;
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.42), inset 0 -1.5px 0 rgba(0, 0, 0, 0.42), inset 1px 0 0 rgba(255, 255, 255, 0.12), inset -1px 0 0 rgba(0, 0, 0, 0.18);
+}
+/* PLACA: el borde inferior extendido con el nombre del rango grabado (misma
+   superficie de metal — es el propio padding del marco, no una etiqueta) */
+.md-plate {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 22px; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  font: 800 8.5px system-ui, sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+.md-t1 .md-plate, .md-t3 .md-plate { color: #262b33; }
+.md-t2 .md-plate, .md-t4 .md-plate { color: #3a2506; }
+.md-t5 .md-plate { color: #241a3d; }
+/* CORONA: emerge del propio borde. El pseudo cubre el marco ENTERO (+cw por
+   arriba) y hereda el fondo del marco: misma imagen (tamaño 100% de ESTA caja =
+   la del marco +cw) en la misma posición de pantalla (y=0 aquí = -cw en el marco)
+   → pixel-exacto, incluso con el destello en marcha. El clip-path deja ver SOLO la
+   silueta de la corona: centrada, con la base dentro del canto y los flancos
+   muriendo en él. Sin bandas altas, sin recortes oscuros, sin esquinas comidas. */
+.md-cr::after {
+  content: ""; position: absolute; top: calc(-1 * var(--md-cw)); left: 0; right: 0; bottom: 0; z-index: 1; pointer-events: none;
+  background: inherit; border-radius: inherit;
+  background-size: 52% 100%, 100% 100%;
+  background-position-y: 0, 0;
+  clip-path: polygon(
+    calc(50% - 27px) 20px,
+    calc(50% - 17.5px) 5px,
+    calc(50% - 9px) 11px,
+    50% 0px,
+    calc(50% + 9px) 11px,
+    calc(50% + 17.5px) 5px,
+    calc(50% + 27px) 20px
+  );
+}
+/* pre-rango (1-4 victorias): sin marco, solo la carta apagada con su progreso */
+.md-pre { padding: 3px; background: rgba(255, 255, 255, 0.06); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5); animation: none; }
+.md-pre::before { display: none; }
+.md-pre .md-img { filter: grayscale(0.65) brightness(0.62); }
+.md-img {
+  position: relative; overflow: hidden;
+  width: 100%; aspect-ratio: 367 / 512; border-radius: 8px;
+  background-size: cover; background-position: center; background-color: #191922;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
+@media (hover: hover) {
+  .md-cell:hover .md-fr, .pf-emb:hover .md-fr { transform: translateY(-5px) scale(1.025); filter: brightness(1.05) saturate(1.06); }
+  /* al pasar por encima: el destello recorre el metal AL INSTANTE (una vez); el
+     prisma conserva su flujo de color y no se toca */
+  .md-cell:hover .md-fr:not(.md-t5):not(.md-pre), .pf-emb:hover .md-fr:not(.md-t5):not(.md-pre) { animation: md-glint-hover 1.05s cubic-bezier(0.3, 0, 0.2, 1) 1; }
+  @keyframes md-glint-hover {
+    0%   { background-position-x: -140%, 0; }
+    100% { background-position-x: 240%, 0; }
+  }
+  .md-cell:hover .md-t2, .pf-emb:hover .md-t2 { box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 16px 34px rgba(0,0,0,0.55), 0 6px 26px rgba(232, 160, 88, 0.42); }
+  .md-cell:hover .md-t3, .pf-emb:hover .md-t3 { box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 16px 34px rgba(0,0,0,0.55), 0 6px 26px rgba(214, 224, 238, 0.42); }
+  .md-cell:hover .md-t4, .pf-emb:hover .md-t4 { box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 16px 34px rgba(0,0,0,0.55), 0 6px 30px rgba(255, 205, 80, 0.55); }
+  .md-cell:hover .md-t5, .pf-emb:hover .md-t5 { box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 16px 34px rgba(0,0,0,0.55), 0 8px 34px rgba(196, 155, 255, 0.55); }
+}
+
+/* METALES pulidos: la dominante de cada uno es CLARA y saturada (el oro es oro
+   amarillo, no mostaza; la plata blanca; el bronce cobre luminoso); las bandas
+   oscuras son solo el reflejo del metal torneado, nunca marrones ni oliva. */
+.md-t1 { --md-metal: linear-gradient(155deg, #6c727d 0%, #747a85 7%, #aab1bc 15%, #dde2ea 26%, #929aa5 38%, #737a85 50%, #c7ced8 63%, #e6eaf0 72%, #9aa1ad 85%, #5f656f 100%);
+         box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 10px 22px rgba(0,0,0,0.45); }
+.md-t2 { --md-metal: linear-gradient(155deg, #c9803b 0%, #d08946 7%, #f4b978 15%, #ffe4c2 26%, #e69c58 38%, #c67b37 50%, #f7c58e 63%, #ffead2 72%, #de9651 85%, #b0692a 100%);
+         box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 12px 26px rgba(0,0,0,0.5), 0 4px 20px rgba(232, 160, 88, 0.26); }
+.md-t3 { --md-metal: linear-gradient(155deg, #b8c0cb 0%, #c2c9d4 7%, #eef2f7 15%, #ffffff 26%, #d4dae3 38%, #aab3bf 50%, #f5f8fc 63%, #ffffff 72%, #d0d7e0 85%, #98a2b0 100%);
+         box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 12px 26px rgba(0,0,0,0.5), 0 4px 22px rgba(214, 224, 238, 0.28); }
+.md-t4 { --md-metal: linear-gradient(155deg, #f2b93a 0%, #f6c045 7%, #ffe27c 15%, #fff8d6 26%, #ffd75c 38%, #f0b52a 50%, #ffe89a 63%, #fff5cf 72%, #f7c74e 85%, #dc9d21 100%);
+         box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 12px 26px rgba(0,0,0,0.5), 0 5px 28px rgba(255, 205, 80, 0.42); }
+/* prisma: el fondo casi al doble de ancho y su posición yendo y viniendo → los
+   colores del espectro FLUYEN por el marco (sin saltos: 0→100→0). La corona
+   hereda tamaño relativo a SU caja (mismo ancho) → sigue pixel-exacta. */
+.md-t5 { --md-metal: linear-gradient(140deg, #8be0ff, #7fa8ff 18%, #c79bff 36%, #ff9bd6 54%, #ffd166 72%, #9ff0c8 88%, #8be0ff);
+         background-size: 52% calc(100% + var(--md-cw)), 180% calc(100% + var(--md-cw));
+         box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 12px 28px rgba(0,0,0,0.5), 0 6px 30px rgba(196, 155, 255, 0.45); }
+.md-live .md-t5 { animation: md-prism 12s ease-in-out infinite; }
+.md-t5.md-cr::after { background-size: 52% 100%, 180% 100%; }
+@keyframes md-prism {
+  0%      { background-position-x: -140%, 0%; }
+  50%     { background-position-x: -140%, 100%; }
+  87%     { background-position-x: -140%, 26%; }
+  100%    { background-position-x: 240%, 0%; }
+}
+/* prisma: además, barrido de luz recorriendo el arte (ya estaba; se calma con Reducir animaciones) */
+.md-t5 .md-img::after {
+  content: ""; position: absolute; top: -20%; bottom: -20%; left: -60%; width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.30) 50%, transparent);
+  transform: skewX(-12deg) translateX(0);
+  will-change: transform;
+}
+.md-live .md-t5 .md-img::after { animation: md-sheen 4.8s ease-in-out infinite; }
+/* se mueve por transform (compositor): antes animaba `left` = layout + pintado en cada frame */
+@keyframes md-sheen {
+  0%, 55% { transform: skewX(-12deg) translateX(0); }
+  85%, 100% { transform: skewX(-12deg) translateX(400%); }
+}
+html.pb-reduce-motion .md-t5 .md-img::after { animation: none; display: none; }
+
+/* barra tipo XP con los números DENTRO (fuera la fila de números aparte) */
+.md-xp {
+  position: relative; margin-top: 9px; height: 16px; border-radius: 99px; overflow: hidden;
+  background: rgba(0, 0, 0, 0.42);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.md-xp i {
+  position: absolute; top: 0; left: 0; bottom: 0; border-radius: 99px;
+  background: linear-gradient(180deg, #7ce8a8, #35b26b 55%, #2a935a);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 1px 0 8px rgba(103, 226, 158, 0.55);
+}
+.md-xpmax i {
+  background: linear-gradient(90deg, #8be0ff, #c79bff, #ffd166);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 10px rgba(196, 155, 255, 0.55);
+}
+.md-xp span {
+  position: relative; z-index: 2; display: flex; align-items: center; justify-content: center;
+  height: 100%; font: 800 9.5px system-ui, sans-serif; letter-spacing: 0.4px; color: #f2f4f8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85); font-variant-numeric: tabular-nums;
+}
+.md-xpmax span { color: #fff8e6; letter-spacing: 0.8px; }
+
+/* ── cabeceras de sección estilo Pocket (título centrado entre líneas) ── */
+.pf-sect {
+  display: flex; align-items: center; gap: 16px; margin: 36px 0 22px;
+  color: #9a9aa8; font-size: 12px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase;
+}
+.pf-sect::before, .pf-sect::after { content: ""; flex: 1; height: 1px; }
+.pf-sect::before { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14)); }
+.pf-sect::after { background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent); }
+
+/* ── emblemas equipados (hasta 3) ── */
+.pf-emblems { display: flex; gap: 28px; justify-content: center; align-items: flex-start; padding-top: 6px; }
+.pf-emb { width: 108px; }
+.pf-slot {
+  width: 108px; aspect-ratio: 367 / 512; border-radius: 12px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.20);
+  display: flex; align-items: center; justify-content: center;
+  color: #63636f; font-size: 26px; font-weight: 300;
+}
+#pf-emb-edit {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #9a9aa8; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s, transform 0.12s;
+}
+#pf-emb-edit:hover { background: rgba(255, 255, 255, 0.12); color: #e9e9f0; }
+#pf-emb-edit:active { transform: scale(0.94); }
+#pf-emb-edit svg { width: 13px; height: 13px; }
+.pf-slot[data-open-pick] { cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+.pf-slot[data-open-pick]:hover { border-color: rgba(255, 255, 255, 0.4); color: #9a9aa8; }
+
+/* ══ MISIONES ══
+   Tarjeta neutra de cristal; la barra es SIEMPRE verde (llena al completar); a la
+   derecha una RANURA de recompensa hundida (bandeja con sombra interior), todas del
+   mismo tamaño, con el emote centrado. Estados: bloqueada (emote apagado + candado),
+   reclamable (la ranura se ilumina en oro suave + botón RECLAMAR = el ÚNICO amarillo
+   de la sección) y reclamada (emote a color + check). */
+.pf-missions { display: flex; flex-direction: column; gap: 12px; max-width: 720px; margin: 0 auto; }
+.pf-mi {
+  position: relative; display: flex; align-items: center; gap: 22px; padding: 14px 14px 14px 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.032));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+.pf-mi.rdy { border-color: rgba(255, 255, 255, 0.13); }
+/* icono del tipo de misión (trofeo = victorias, corona = rango), monocromo y discreto */
+.pf-mi-ic {
+  flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%; margin-right: -4px;
+  display: flex; align-items: center; justify-content: center; color: #b3b3c2;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), inset 0 -1px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.pf-mi-ic svg { width: 20px; height: 20px; }
+.pf-mi.rdy .pf-mi-ic { color: #ffe08a; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), inset 0 -1px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 209, 102, 0.28), 0 0 12px rgba(255, 209, 102, 0.12); }
+.pf-mi.got .pf-mi-ic { color: #7ce8a8; }
+.pf-mi-body { flex: 1; min-width: 0; }
+.pf-mi-t { font-size: 14px; font-weight: 650; letter-spacing: -0.1px; }
+/* barra estilo juego: gruesa, verde, con el progreso centrado DENTRO */
+.pf-mi-xp {
+  position: relative; margin-top: 11px; height: 20px; border-radius: 10px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.40));
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+.pf-mi-xp i {
+  position: absolute; top: 2px; left: 2px; bottom: 2px; border-radius: 8px;
+  background: linear-gradient(180deg, #a9ec6e 0%, #62cf43 48%, #3fae2f 52%, #45b834 100%);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 0 -1px 0 rgba(0, 0, 0, 0.18), 1px 0 10px rgba(120, 220, 90, 0.42);
+}
+.pf-mi-xp span {
+  position: relative; z-index: 2; display: flex; align-items: center; justify-content: center;
+  height: 100%; font: 800 11px system-ui, sans-serif; color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85); font-variant-numeric: tabular-nums; letter-spacing: 0.4px;
+}
+.pf-mi-n { font-size: 11px; color: #9a9aa8; margin-top: 6px; }
+/* RANURA de recompensa: bandeja hundida, mismo tamaño todas */
+.pf-rw {
+  position: relative; flex-shrink: 0; width: 178px; min-height: 84px; border-radius: 13px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.42));
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.055), 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex; align-items: center; justify-content: center; padding: 12px 10px;
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+.pf-rw-in { display: flex; flex-direction: column; align-items: center; gap: 9px; max-width: 100%; }
+/* el bocadillo: la CLASE REAL de partida (.pvp-emote-bubble.mine); aquí solo se
+   anula lo posicional (fixed/transform/pop) para que viva dentro de la ranura */
+.pf-rw .pvp-emote-bubble.mine.pf-emote {
+  position: static; z-index: auto; transform: none; animation: none; pointer-events: none;   /* z-index:auto: en un flex item el z-index cuenta aunque sea static (spec Flexbox) */
+  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+.pf-rw.lk .pf-emote { opacity: 0.38; filter: grayscale(0.7); border-color: rgba(255, 255, 255, 0.16); box-shadow: none; }
+/* insignia de estado en la esquina de la ranura (candado / check) */
+.pf-rw-badge {
+  position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+.pf-rw-badge svg { width: 12px; height: 12px; }
+.pf-rw-lock { background: linear-gradient(180deg, #2a2a38, #1c1c26); border: 1px solid rgba(255, 255, 255, 0.16); color: #a3a3b1; }
+.pf-rw-check { background: linear-gradient(180deg, #7ce8a8, #2f9e63); color: #0c2417; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 0 12px rgba(87, 214, 141, 0.35); }
+/* reclamable: la ranura se ilumina en oro suave (rim + luz interior), pulso muy leve */
+.pf-rw.rdy {
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(255, 209, 102, 0.07), rgba(255, 209, 102, 0.03)), linear-gradient(180deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.42));
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 209, 102, 0.42), inset 0 0 18px rgba(255, 209, 102, 0.10), 0 0 14px rgba(255, 209, 102, 0.08);
+}
+.pf-rw .pf-rw-in { position: relative; z-index: 1; }
+/* el pulso es una capa de brillo que va y viene por OPACIDAD (compositor): animar el
+   box-shadow repintaba las 6 ranuras en cada frame y cargaba el rasterizador al hacer scroll */
+.pf-rw.rdy::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 209, 102, 0.55), inset 0 0 22px rgba(255, 209, 102, 0.18), 0 0 20px rgba(255, 209, 102, 0.16);
+  opacity: 0; will-change: opacity;
+  animation: pf-rdy 2.2s ease-in-out infinite;
+}
+.pf-rw.rdy:hover::after { opacity: 1; animation: none; }
+.pf-rw.rdy:active { transform: scale(0.98); }
+@keyframes pf-rdy { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+html.pb-reduce-motion .pf-rw.rdy::after { animation: none; }
+/* el botón RECLAMAR: el único acento dorado de la sección */
+.pf-rw-claim {
+  font: 800 10px system-ui, sans-serif; letter-spacing: 1.3px; text-transform: uppercase; color: #2a1c04;
+  background: linear-gradient(180deg, #ffe08a, #f4bd45 60%, #e8ac2c);
+  padding: 5px 14px; border-radius: 999px; white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 3px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 209, 102, 0.25);
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
+}
+.pf-rw.rdy:hover .pf-rw-claim { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 5px 14px rgba(0, 0, 0, 0.45), 0 0 16px rgba(255, 209, 102, 0.35); }
+.pf-rw.got .pf-emote { opacity: 0.92; }
+
+/* ── EMOTES DE PARTIDA: el mazo (hasta 10 bocadillos reales) + botón lápiz ── */
+.pf-emodeck { display: flex; flex-wrap: wrap; gap: 10px 12px; justify-content: center; max-width: 720px; margin: 0 auto; }
+.pf-emodeck .pvp-emote-bubble.mine.pf-emote { position: static; z-index: auto; transform: none; animation: none; pointer-events: none; }
+#pf-emo-edit {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #9a9aa8; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s, transform 0.12s;
+}
+#pf-emo-edit:hover { background: rgba(255, 255, 255, 0.12); color: #e9e9f0; }
+#pf-emo-edit:active { transform: scale(0.94); }
+#pf-emo-edit svg { width: 13px; height: 13px; }
+/* «Ver todas las misiones» */
+.pf-mi-more {
+  align-self: center; margin-top: 4px; cursor: pointer;
+  font: 600 12.5px system-ui, sans-serif; color: #b9b9c6;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 999px; padding: 8px 16px;
+  transition: background 0.15s, color 0.15s;
+}
+.pf-mi-more:hover { background: rgba(255, 255, 255, 0.10); color: #e9e9f0; }
+/* selector del mazo de emotes: mismas clases mz-feat-*; celda = bocadillo centrado */
+.pf-emo-count { text-align: center; font: 600 12px system-ui, sans-serif; color: #9a9aa8; margin: -8px 0 16px; letter-spacing: 0.3px; }
+.pf-emo-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 12px; }
+.pf-emo-c.mz-feat-card {
+  aspect-ratio: auto; min-height: 76px; overflow: visible; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; padding: 14px 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.pf-emo-c.mz-feat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45); border-color: rgba(255, 255, 255, 0.2); }
+.pf-emo-c.mz-feat-card.sel { border-color: #4dabff; box-shadow: 0 0 0 2px rgba(77, 171, 255, 0.8); }
+.pf-emo-c.mz-feat-card.sel::after { border-radius: 14px; }
+.pf-emo-c .pvp-emote-bubble.mine.pf-emote { position: static; z-index: auto; transform: none; animation: none; pointer-events: none; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-emo-c.locked { cursor: default; }
+.pf-emo-c.locked:hover { transform: none; box-shadow: none; border-color: rgba(255, 255, 255, 0.09); }
+.pf-emo-c.locked .pf-emote { opacity: 0.38; filter: grayscale(0.7); border-color: rgba(255, 255, 255, 0.16); box-shadow: none; }
+/* el número va a la esquina (no encima del texto del bocadillo, que hay que poder leer) */
+.pf-emo-c .mz-feat-num { top: -10px; right: -10px; left: auto; transform: none; width: 30px; height: 30px; font-size: 14px; }
+
+/* ── selector de emblemas: reutiliza el de «Cartas destacadas» (mz-feat-*, en
+   mazos-view.css); aquí solo la celda = el emblema en vez del arte plano ── */
+.pf-pick-grid { gap: 32px 14px; padding-top: 12px; }
+.pf-pick-c.mz-feat-card { aspect-ratio: auto; overflow: visible; background: none; border: 0; border-radius: 14px; }
+.pf-pick-c.mz-feat-card:hover { transform: translateY(-2px); box-shadow: none; }
+.pf-pick-c.mz-feat-card.sel { box-shadow: 0 0 0 2px rgba(77, 171, 255, 0.8); }
+.pf-pick-c.mz-feat-card.sel::after { border-radius: 14px; }
+.pf-pick-c .md-fr { animation: none; }
+.pf-pick-c .md-plate { font-size: 8px; letter-spacing: 1.2px; }
+
+
+/* móvil */
+@media (max-width: 720px) {
+  .pf-wrap { padding: 22px 16px 64px; }
+  .pf-avatar { width: 72px; height: 72px; }
+  .pf-name { font-size: 22px; }
+  .pf-stats div { flex: 1 1 40%; min-width: 0; }
+  .pf-emblems { gap: 14px; }
+  .pf-emb, .pf-slot { width: 88px; }
+  .md-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px 12px; }
+  .pf-mi { flex-wrap: wrap; padding: 14px; gap: 12px 14px; }
+  .pf-mi-ic { width: 36px; height: 36px; margin-right: -2px; }
+  .pf-mi-ic svg { width: 17px; height: 17px; }
+  /* la ranura baja a su fila, a lo ancho, más baja: bocadillo y botón en línea */
+  .pf-rw { width: 100%; min-height: 60px; padding: 10px 12px; }
+  .pf-rw-in { flex-direction: row; justify-content: center; gap: 14px; }
+  .pf-pick-grid { grid-template-columns: repeat(3, 1fr); gap: 30px 10px; }
+}

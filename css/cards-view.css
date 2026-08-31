@@ -1,0 +1,1678 @@
+
+/* ══════════════════════════════════════════════
+   APP NAV TABS
+══════════════════════════════════════════════ */
+#app-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9100;
+  display: flex; align-items: center;
+  height: 48px;
+  background: rgba(10,10,18,0.98);
+  border: 1px solid transparent;
+  border-bottom-color: rgba(255,255,255,0.06);
+  padding: 0 14px;
+  gap: 16px;
+  backdrop-filter: blur(12px);
+  transition: top .32s cubic-bezier(.34,1.2,.5,1), border-radius .32s ease,
+              background .32s ease, box-shadow .32s ease, border-color .32s ease,
+              padding .32s ease, backdrop-filter .32s ease;
+}
+/* Logo a la esquina izquierda y pestañas ALINEADAS A LA IZQUIERDA junto a él
+   (decisión Daniel 2026-08-07, «así siempre» — también en la pill floaty);
+   idioma/ajustes a la derecha (el cluster derecho crece y se empuja al borde). */
+#app-nav-logo { flex: 0 0 auto; min-width: 0; display: flex; align-items: center; }
+#app-nav-logo svg { width: 26px; height: 26px; display: block; }
+#app-nav-tabs { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; }
+#app-nav-right { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: flex-end; }
+
+/* (El estado «floaty» de la barra murió con el Inicio viejo, borrado el 2026-08-23:
+   era exclusivo de esa vista. En git: commit b2cfc3c.) */
+.app-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 14px; height: 32px; border-radius: 8px;
+  background: none; border: none; text-decoration: none;   /* son <a>: sin subrayado */
+  color: rgba(255,255,255,0.32); font-family: 'Nunito', sans-serif;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.app-tab svg { width: 13px; height: 13px; flex-shrink: 0; }
+.app-tab:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.65); }
+.app-tab.active { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.92); }
+
+/* Barra ESTRECHA: cuando el bloque derecho (apoyo + idioma + ajustes) no cabe
+   junto a las pestañas centradas, las PESTAÑAS pasan a solo-icono (el botón de
+   donar se mantiene entero, tiene prioridad) y se retira la coletilla del apoyo.
+   Al pasar el ratón por una pestaña se DESPLIEGA mostrando su etiqueta (efecto
+   dock). La clase la pone el guardián JS `window._fitNav` MIDIENDO el solape
+   real, así que es a prueba de tipografía/zoom/idioma; la media query de
+   responsive.css cubre además el caso base sin depender del JS. El span colapsa
+   por ancho (no display:none) para poder animarlo — OJO: la `transition` vive
+   SOLO aquí (bajo .nav-tight) y en la media query, así que fuera de icono el
+   span no tiene transición y `_fitNav` lo mide con su ancho real al instante. */
+#app-nav.nav-tight #app-nav-tabs .app-tab { padding: 0 11px; gap: 0; }
+#app-nav.nav-tight #app-nav-tabs .app-tab span {
+  max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+  transition: max-width .38s cubic-bezier(.22,1,.36,1), opacity .26s ease,
+              margin-left .38s cubic-bezier(.22,1,.36,1);
+}
+#app-nav.nav-tight #app-nav-tabs .app-tab:hover span { max-width: 132px; opacity: 1; margin-left: 7px; }
+#app-nav.nav-tight #kofi-support .kofi-q { display: none; }
+
+#app-nav-spacer { flex: 1; }
+
+/* Settings gear — right side of top nav */
+#app-gear-btn {
+  width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px;
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.32); transition: color 0.15s, background 0.15s;
+  position: relative;
+}
+#app-gear-btn svg { width: 15px; height: 15px; }
+#app-gear-btn:hover { color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.06); }
+#app-gear-btn.active { color: rgba(255,255,255,0.92); background: rgba(255,255,255,0.1); }
+
+/* ══ Look TCG Live v2 (ajustes Daniel 2026-08-07): pestañas de TEXTO en mayúsculas
+   BLANCO/GRIS (fuera el dorado LoL), la pestaña ocupa TODA la altura de la barra →
+   el subrayado de la activa descansa EN el borde inferior de la navbar (no flota) y
+   el hover tinta el BOTÓN ENTERO (mismo ancho que el subrayado, todo el alto).
+   system-ui (fuera Nunito). Sin iconos; móvil (≤720) usa hamburguesa aparte. ══ */
+/* el GRUPO también estira (si no, colapsa a la altura del texto y el subrayado flota) */
+#app-nav-tabs { align-self: stretch; }
+.app-tab {
+  font-family: system-ui, -apple-system, 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  position: relative; letter-spacing: 0.09em; padding: 0 16px;
+  align-self: stretch; height: auto; border-radius: 0;   /* toda la altura de la barra */
+  font-size: 13px;
+}
+.app-tab svg { display: none; }
+.app-tab:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+.app-tab.active { background: none; color: rgba(255,255,255,0.95); }
+.app-tab.active:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.95); }
+.app-tab.active::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: linear-gradient(90deg, #d8d8e2, #ffffff);
+  border-radius: 0; box-shadow: 0 0 8px rgba(255,255,255,0.35);
+}
+/* `.nav-tight` (barra estrecha): sin iconos, no colapsar la etiqueta → solo
+   ajustar padding; así el guardián `_fitNav` sigue funcionando sin romper. */
+#app-nav.nav-tight #app-nav-tabs .app-tab { padding: 0 7px; gap: 0; font-size: 10.5px; letter-spacing: 0.02em; }
+#app-nav.nav-tight #app-nav-tabs .app-tab span {
+  max-width: none; opacity: 1; margin-left: 0;
+}
+
+/* ── Apoyo (Ko-fi): elemento que SE REUBICA según el estado de la barra ──
+   En Inicio (barra flotante) flota FUERA de la píldora, arriba a la derecha;
+   al fijarse la barra (otras pestañas) se integra DENTRO, a la izquierda del
+   idioma. js/cards-view.js (_pbNavSync) lo mueve a #app-nav-right. */
+#kofi-support { display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0; }
+#kofi-support:not(.kofi-floating) { margin-right: 10px; }
+#kofi-support .kofi-q { font-size: 12px; color: rgba(255,255,255,0.55); white-space: nowrap; }  /* 0.45→0.55: pasa AA */
+#kofi-support .kofi-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.8);
+  text-decoration: none; white-space: nowrap;
+  padding: 6px 13px; border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: background .16s, border-color .16s, color .16s, transform .14s;
+}
+#kofi-support .kofi-ico { width: 15px; height: 15px; flex: 0 0 auto; color: #e3a765; transition: transform .18s, color .16s; }
+#kofi-support .kofi-btn:hover { background: rgba(227,167,101,0.14); border-color: rgba(227,167,101,0.4); color: #f3cd93; transform: translateY(-1px); }
+#kofi-support .kofi-btn:hover .kofi-ico { color: #f3cd93; transform: translateY(-1px) rotate(-4deg); }
+#kofi-support .kofi-btn:active { transform: translateY(0) scale(0.97); }
+/* Estado flotante (Inicio): fuera de la píldora, arriba a la derecha de la pantalla. */
+#kofi-support.kofi-floating { position: fixed; top: 25px; right: 24px; z-index: 9200; }
+
+/* Selector de idioma — barra superior, junto al engranaje (mismo formato) */
+#app-nav-sep {              /* línea vertical incompleta que divide el área */
+  width: 1px; height: 18px; flex-shrink: 0; margin: 0 5px;
+  background: rgba(255,255,255,0.12);
+}
+#lang-select { position: relative; flex-shrink: 0; }
+#lang-current {
+  height: 32px; padding: 0 8px; flex-shrink: 0; border-radius: 8px;
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: system-ui, sans-serif; font-size: 11px; font-weight: 800;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  transition: color 0.15s, background 0.15s;
+}
+#lang-current:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+#lang-select.open #lang-current { color: rgba(255,255,255,0.92); background: rgba(255,255,255,0.1); }
+
+/* Bandera SVG (chip redondeado, se recorta a las esquinas por overflow:hidden). */
+.lang-flag {
+  display: inline-block; width: 21px; height: 14px; flex-shrink: 0;
+  border-radius: 3px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.30), inset 0 0 0 1px rgba(255,255,255,0.14);
+}
+.lang-flag svg { display: block; width: 100%; height: 100%; }
+.lang-code { font-size: 11px; font-weight: 800; letter-spacing: 0.07em; }
+.lang-name { flex: 1; min-width: 0; }
+#lang-menu {
+  position: absolute; top: calc(100% + 7px); right: 0;
+  min-width: 134px; padding: 5px;
+  border-radius: 11px;
+  /* material: bloque «LIQUID GLASS» al final de este archivo */
+  display: flex; flex-direction: column; gap: 2px; z-index: 9200;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateY(-6px) scale(0.97); transform-origin: top right;
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.22,1,0.36,1), visibility 0.16s;
+}
+#lang-menu > * { position: relative; z-index: 1; }
+#lang-select.open #lang-menu {
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+#lang-menu button {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 8px 11px; border-radius: 7px; text-align: left;
+  background: none; border: none; cursor: pointer;
+  font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600;
+  color: rgba(255,255,255,0.62);
+  transition: background 0.13s, color 0.13s;
+}
+#lang-menu button:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.92); }
+#lang-menu button.active { color: #fff; background: rgba(255,255,255,0.10); }
+#lang-menu button.active::after { content: '✓'; font-size: 11px; opacity: 0.8; }
+
+/* El nav fijo mide 48px — todo el contenido de página empieza debajo.
+   (Única regla de offset: antes había tres en conflicto con 40px/48px.) */
+#page-wrap {
+  position: fixed; top: 48px; left: 0; right: 0;
+  /* altura USABLE (visible − nav). --app-vh la fija el JS = altura visible real − reserva de
+     la barra del navegador (que ninguna API delata). bottom:0 quitado: anclaba al viewport
+     que MIENTE en Chrome Android. Fallback dvh→vh para antes de que cargue el JS. */
+  height: calc(var(--app-vh, 100dvh) - 48px);
+}
+
+/* ══════════════════════════════════════════════
+   CARTAS VIEW
+══════════════════════════════════════════════ */
+#view-cards {
+  position: fixed; top: 48px; left: 0; right: 0; bottom: 0;
+  background: #111118;
+  display: flex; flex-direction: column;
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+  z-index: 9050;
+  color: #e0e0e0;
+}
+
+#cv-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 16px 10px;
+  flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+#cv-search-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.pb-search-wrap {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 8px;
+  padding: 8px 12px; transition: border-color 0.15s, background 0.15s;
+}
+.pb-search-wrap svg { flex-shrink: 0; opacity: 0.5; color: #fff; }
+#cv-search, .pb-search-input {
+  flex: 1; min-width: 0; background: none; border: none; outline: none;
+  color: #f0f0f0; font-size: 14px; font-family: system-ui, sans-serif;
+}
+#cv-search::placeholder, .pb-search-input::placeholder { color: rgba(255,255,255,0.4); }
+.pb-search-wrap:hover { background: rgba(255,255,255,0.07); }
+.pb-search-wrap:focus-within { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.07); }
+.pb-search-clear {
+  color: rgba(255,255,255,0.3); cursor: pointer; font-size: 13px; line-height: 1;
+  transition: color 0.12s;
+}
+.pb-search-clear:hover { color: rgba(255,255,255,0.7); }
+#cv-count { color: #666; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+
+#cv-filters {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+}
+
+/* Segmented control container — one pill per filter group */
+.cv-chip-group {
+  display: flex; align-items: stretch;
+  border: 1px solid rgba(255,255,255,0.11); border-radius: 20px;
+  overflow: hidden; flex-shrink: 0;
+}
+
+/* Individual chip inside a group — no own border-radius, group handles it */
+.cv-chip-group .cv-chip {
+  border: none; border-right: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0;
+}
+.cv-chip-group .cv-chip:last-child { border-right: none; }
+
+/* Standalone chips (rarity, cost row etc.) keep their own pill shape */
+.cv-filter-group { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+
+.cv-chip {
+  cursor: pointer; padding: 6px 14px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.11); background: transparent;
+  color: rgba(255,255,255,0.55);   /* subido de 0.42 → pasa contraste AA (4.5:1) */
+  font-size: 12px; font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+  user-select: none; display: inline-flex; align-items: center; gap: 5px;
+  white-space: nowrap;
+}
+.cv-chip.cv-sm { padding: 4px 10px; font-size: 11px; }
+.cv-chip:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.8); }
+.cv-chip.active { color: #fff; }
+/* Rareza: iconos OPACOS por defecto (Daniel) — el "pulsado" lo da el fondo
+   teñido por familia (abajo) + el estallido de partículas, no el atenuado. */
+.cv-rar-chip { gap: 2px; color: rgba(255,255,255,0.72); }
+.cv-rar-chip .rar-ico { height: 15px; width: auto; opacity: 1; }
+
+/* Fondo activo por FAMILIA de rareza (como tipos/energía). */
+.cv-rar-chip[data-rar="◊"].active,
+.cv-rar-chip[data-rar="◊◊"].active,
+.cv-rar-chip[data-rar="◊◊◊"].active,
+.cv-rar-chip[data-rar="◊◊◊◊"].active {            /* diamantes → plateado */
+  background: rgba(200,212,232,0.22); border-color: rgba(212,222,238,0.32);
+}
+.cv-rar-chip[data-rar="AR"].active,
+.cv-rar-chip[data-rar="SAR"].active,
+.cv-rar-chip[data-rar="IM"].active {               /* estrellas → dorado */
+  background: rgba(245,205,90,0.22); border-color: rgba(245,205,90,0.34);
+}
+.cv-rar-chip[data-rar="✸"].active,
+.cv-rar-chip[data-rar="✸✸"].active {               /* shiny → multicolor suave */
+  background: linear-gradient(95deg, rgba(255,126,176,0.20), rgba(255,217,94,0.16), rgba(122,215,255,0.20), rgba(169,139,255,0.20));
+  border-color: rgba(255,255,255,0.30);
+}
+.cv-rar-chip[data-rar="♕"].active {                /* corona → dorado/arcoíris */
+  background: linear-gradient(95deg, rgba(255,224,122,0.26), rgba(255,158,209,0.18), rgba(143,220,255,0.20));
+  border-color: rgba(255,224,122,0.36);
+}
+.cv-rar-chip[data-rar="Promo"].active {            /* Promo → neutro */
+  background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25);
+}
+
+/* ── Filtros AVANZADOS (por efecto) — sección plegable a lo ancho ── */
+#cv-advanced {
+  flex-basis: 100%; width: 100%;
+  display: grid; grid-template-rows: 0fr;          /* 0fr → 1fr = altura animable sin JS */
+  transition: grid-template-rows 0.3s cubic-bezier(0.22,0.61,0.36,1);
+}
+#cv-advanced.open { grid-template-rows: 1fr; }
+#cv-adv-count, #mz-adv-count {
+  display: none; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
+  background: rgba(255,255,255,0.22); color: #fff;
+  font-size: 10px; font-weight: 800; line-height: 1;
+  align-items: center; justify-content: center;
+}
+#cv-adv-count.on, #mz-adv-count.on { display: inline-flex; }
+#cv-adv-body {
+  width: 100%; min-height: 0; overflow: hidden;
+  opacity: 0; transform: translateY(-5px);
+  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.22,0.61,0.36,1);
+}
+#cv-advanced.open #cv-adv-body { opacity: 1; transform: none; transition-delay: 0.04s; }
+/* grupos de efectos: pills segmentadas como los filtros normales (los chips con
+   desplegable van dentro de un .cv-dd-wrap → hay que quitarles el borde propio) */
+.cv-eff-group .cv-dd-wrap { display: inline-flex; align-items: stretch; }
+.cv-eff-group .cv-dd-wrap > .cv-chip {
+  border: none; border-radius: 0; border-right: 1px solid rgba(255,255,255,0.08);
+}
+.cv-eff-group .cv-dd-wrap:last-child > .cv-chip { border-right: none; }
+.cv-eff-chip { padding: 6px 11px; }
+/* Con «Daño pasivo» (2026-08-25) los chips de efecto piden ~40px más de los que caben en dos
+   filas a 1280. Un píxel menos de aire a cada lado los devuelve a dos filas sin tocar textos
+   ni la agrupación por familias; a partir de 1400 se quedan como estaban. */
+@media (max-width: 1400px) { .cv-eff-chip { padding-left: 10px; padding-right: 10px; } }
+/* Un desplegable abierto tiene que poder salirse de su pill y del cuerpo de los avanzados:
+   los dos recortan (`overflow:hidden`) — la pill para redondear sus chips, el cuerpo para la
+   animación de abrir/cerrar. La marca la pone/quita js/cards-view.js (syncDDClip) solo mientras
+   hay uno abierto, así que fuera de ese momento el recorte sigue igual que siempre. Los chips
+   llevan su propio border-radius (primero/último de cada grupo), de modo que la pill se ve
+   idéntica sin el recorte. */
+#view-cards.cv-dd-open #cv-adv-body,
+#view-cards.cv-dd-open #cv-adv-body .cv-chip-group,
+#view-mazos.cv-dd-open #cv-adv-body,
+#view-mazos.cv-dd-open #cv-adv-body .cv-chip-group { overflow: visible; }
+.cv-adv-label {
+  font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: rgba(255,255,255,0.34); margin-bottom: 7px;
+}
+.cv-adv-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.cv-adv-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.cv-adv-row + .cv-adv-row { margin-top: 7px; }
+
+/* ── Búsqueda por TEXTO de carta (la caja vive en la fila superior, ver #cv-text-wrap) ── */
+.cv-text-info { position: relative; display: inline-flex; cursor: pointer; flex-shrink: 0; }
+.cv-text-info-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7);
+  font: italic 800 10px Georgia, serif;
+}
+.cv-text-info:hover .cv-text-info-btn { background: rgba(255,255,255,0.2); color: #fff; }
+.cv-text-info-pop {
+  position: absolute; top: calc(100% + 9px); right: 0; width: 252px; padding: 10px 12px;
+  background: rgba(22,22,30,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.55);
+  color: rgba(255,255,255,0.75); font-family: system-ui, sans-serif; font-size: 12px; line-height: 1.5;
+  z-index: 60; opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+}
+.cv-text-info.open .cv-text-info-pop { opacity: 1; visibility: visible; transform: translateY(0); }
+.cv-text-ennote { font-family: system-ui, sans-serif; font-size: 11px; color: #ff7a7a; font-weight: 600; }
+#cv-text-search {
+  flex: 1; min-width: 0; background: none; border: none; outline: none;
+  color: #f0f0f0; font-size: 14px; font-family: system-ui, sans-serif;
+}
+#cv-text-search::placeholder { color: rgba(255,255,255,0.4); }
+.cv-eff-chip.active {
+  background: rgba(255,255,255,0.12); color: #fff;
+  border-color: rgba(255,255,255,0.22);
+}
+
+/* ── Chips con desplegable (Robo / +Daño / Bloquear) ── */
+.cv-dd-wrap { position: relative; display: inline-flex; }
+.cv-eff-dd { gap: 5px; }
+.cv-dd-mode { font-size: 11px; opacity: 0.72; }
+.cv-dd-mode:empty { display: none; }
+.cv-dd-caret { width: 9px; height: 9px; opacity: 0.55; transition: transform 0.15s; }
+.cv-dd-wrap.open .cv-dd-caret { transform: rotate(180deg); }
+/* ×: cuando el desplegable está activo, un clic la quita sin reabrir el menú */
+.cv-dd-x {
+  display: none; align-items: center; justify-content: center;
+  width: 15px; height: 15px; margin-left: 1px; border-radius: 50%;
+  font-size: 14px; line-height: 1; color: rgba(255,255,255,0.6);
+}
+.cv-dd-x:hover { color: #fff; background: rgba(255,255,255,0.16); }
+.cv-dd-wrap.active .cv-dd-x { display: inline-flex; }
+.cv-dd-wrap.active .cv-dd-caret { display: none; }
+.cv-dd-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; min-width: 150px; padding: 5px;
+  background: rgba(22,22,30,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 11px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  display: flex; flex-direction: column; gap: 2px; z-index: 60;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateY(-6px) scale(0.97); transform-origin: top left;
+  transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.22,1,0.36,1), visibility 0.15s;
+}
+.cv-dd-wrap.open .cv-dd-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); }
+.cv-dd-menu button {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 8px 11px; border-radius: 7px; text-align: left;
+  background: none; border: none; cursor: pointer;
+  font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600;
+  color: rgba(255,255,255,0.62); transition: background 0.13s, color 0.13s;
+}
+.cv-dd-menu button:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.92); }
+.cv-dd-menu button.sel { color: #fff; background: rgba(255,255,255,0.10); }
+.cv-dd-menu button.sel::after { content: '✓'; font-size: 11px; opacity: 0.8; margin-left: 12px; }
+
+/* ── Pill de Estados (iconos PNG de estado del tablero, estilo pill de energía) ── */
+.cv-cond-chip { padding: 4px 7px; }
+.cv-cond-chip.active { background: rgba(255,255,255,0.12); }
+.cv-cond-img {
+  display: block; width: 19px; height: 19px; flex-shrink: 0;
+  pointer-events: none; opacity: 0.5; transition: opacity 0.15s;
+}
+.cv-cond-chip:hover .cv-cond-img, .cv-cond-chip.active .cv-cond-img { opacity: 1; }
+
+/* Type chip active colors */
+.cv-chip[data-cv-type="pokemon"].active    { background: rgba(60,160,60,0.25);  color: #7de87d; }
+.cv-chip[data-cv-type="item"].active       { background: rgba(40,120,220,0.25); color: #7ab8ff; }
+.cv-chip[data-cv-type="tool"].active       { background: rgba(200,150,20,0.25); color: #ffd060; }
+.cv-chip[data-cv-type="supporter"].active  { background: rgba(160,60,220,0.25); color: #d88aff; }
+.cv-chip[data-cv-type="stadium"].active    { background: rgba(20,160,160,0.25); color: #5ee0e0; }
+.cv-chip[data-cv-type="fossil"].active     { background: rgba(120,120,120,0.22);color: #b0b0b0; }
+
+/* Element chip active colors */
+.cv-chip[data-cv-el="grass"].active       { background: rgba(68,170,136,0.3); }
+.cv-chip[data-cv-el="fire"].active        { background: rgba(238,85,68,0.3); }
+.cv-chip[data-cv-el="water"].active       { background: rgba(68,136,238,0.3); }
+.cv-chip[data-cv-el="lightning"].active   { background: rgba(238,187,0,0.3); }
+.cv-chip[data-cv-el="psychic"].active     { background: rgba(187,136,221,0.3); }
+.cv-chip[data-cv-el="fighting"].active    { background: rgba(187,119,68,0.3); }
+.cv-chip[data-cv-el="darkness"].active    { background: rgba(68,68,102,0.5); }
+.cv-chip[data-cv-el="metal"].active       { background: rgba(136,153,170,0.3); }
+.cv-chip[data-cv-el="dragon"].active      { background: rgba(102,102,204,0.3); }
+.cv-chip[data-cv-el="colorless"].active   { background: rgba(136,136,136,0.3); }
+
+/* Element dots */
+.cv-eldot {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+}
+.el-grass      { background: #4a8; }
+.el-fire       { background: #e54; }
+.el-water      { background: #48e; }
+.el-lightning  { background: #eb0; }
+.el-psychic    { background: #b4d; }
+.el-fighting   { background: #b74; }
+.el-darkness   { background: #446; }
+.el-metal      { background: #89a; }
+.el-dragon     { background: #66c; }
+.el-colorless  { background: #888; }
+
+/* Stage chips */
+.cv-chip[data-cv-stage].active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); }
+
+/* Generic toggle chips (EX, Mega, Habilidad, Línea evolutiva, Ultra Ente, Pasado, Futuro) */
+#cv-ex-chip.active, #cv-mega-chip.active, #cv-ability-chip.active,
+#cv-evoline-chip.active,
+#cv-ub-chip.active, #cv-past-chip.active, #cv-future-chip.active {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+/* Retreat cost active */
+.cv-chip[data-cv-rc].active { background: rgba(255,255,255,0.15); }
+
+/* Dropdowns */
+#cv-set, #cv-rarity {
+  background: transparent; border: 1px solid rgba(255,255,255,0.11); border-radius: 20px;
+  color: rgba(255,255,255,0.5); padding: 6px 12px; font-size: 12px; outline: none; cursor: pointer;
+  font-family: system-ui, sans-serif; font-weight: 600;
+  transition: border-color 0.15s, color 0.15s;
+}
+#cv-set:hover, #cv-rarity:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+#cv-set:focus, #cv-rarity:focus { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+/* ── Desplegable de EXPANSIÓN con miniatura de sobre ──
+   El <select id="cv-set"> queda OCULTO (sigue guardando el valor); la piel es
+   .pb-set-trigger + .pb-set-menu. Las expansiones con varios sobres despliegan
+   una sub-lista (una fila por sobre, cada una con su miniatura). */
+#cv-set { display: none !important; }
+.pb-set-wrap { position: relative; display: inline-flex; }
+.pb-set-trigger {
+  display: flex; align-items: center; gap: 7px;
+  background: transparent; border: 1px solid rgba(255,255,255,0.11); border-radius: 20px;
+  color: rgba(255,255,255,0.5); padding: 5px 11px 5px 12px; font-size: 12px; outline: none; cursor: pointer;
+  font-family: system-ui, sans-serif; font-weight: 600; white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.pb-set-trigger:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.85); }
+.pb-set-wrap.pb-set-on .pb-set-trigger { color: #fff; border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.07); }
+.pb-set-trigger svg { flex: 0 0 auto; opacity: 0.6; }
+/* la mini del sobre no engorda la píldora: se sale por arriba y por abajo */
+.pb-set-thumb:not(:empty) { display: block; width: 15px; height: 29px; margin: -8px 0; position: relative; }
+.pb-set-thumb img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+
+.pb-set-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 9200;
+  border-radius: 12px; padding: 5px; min-width: 272px; overflow: hidden;
+  /* material: bloque «LIQUID GLASS» al final de este archivo */
+}
+.pb-set-menu > * { position: relative; z-index: 1; }
+/* el scroll va DENTRO (si no, el brillo del cristal se desplaza con el contenido) */
+.cv-set-scroll {
+  max-height: 58vh; overflow-y: auto; padding-right: 2px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent;
+}
+.cv-set-scroll::-webkit-scrollbar { width: 6px; }
+.cv-set-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
+.cv-set-opt {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  padding: 5px 9px; border-radius: 8px; font-size: 12.5px; text-align: left;
+  border: none; background: transparent; color: rgba(255,255,255,0.6);
+  cursor: pointer; font-family: system-ui, sans-serif; font-weight: 550;
+  transition: background 0.12s, color 0.12s;
+}
+.cv-set-opt:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.92); }
+.cv-set-opt.active { color: #fff; background: rgba(255,255,255,0.09); font-weight: 700; }
+.cv-set-optthumb { flex: 0 0 auto; width: 27px; height: 52px; display: flex; align-items: center; justify-content: center; }
+.cv-set-optthumb img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.6)); }
+.cv-set-optname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-set-optcode { flex: 0 0 auto; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: rgba(255,255,255,0.32); }
+/* flecha ▸ = abre la sub-lista de sobres (no elige la expansión entera) */
+.cv-set-exp {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; margin-right: -3px; border-radius: 6px; color: rgba(255,255,255,0.45);
+  transition: transform 0.18s cubic-bezier(0.25,1,0.4,1), background 0.12s, color 0.12s;
+}
+.cv-set-exp:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.cv-set-row.open .cv-set-exp { transform: rotate(90deg); color: rgba(255,255,255,0.8); }
+.cv-set-sub { display: none; margin: 2px 0 4px 12px; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); }
+.cv-set-row.open .cv-set-sub { display: block; }
+.cv-set-subopt { font-size: 12px; padding: 4px 8px; }
+.cv-set-subopt .cv-set-optthumb { width: 24px; height: 46px; }
+
+/* EX toggle */
+.cv-ex-toggle {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: #aaa; cursor: pointer; user-select: none;
+}
+.cv-ex-toggle input { cursor: pointer; accent-color: #6060ff; }
+
+/* Range inputs */
+.cv-range-label { font-size: 11px; color: #888; white-space: nowrap; }
+#cv-hp-min, #cv-hp-max {
+  width: 64px; background: #1e1e2e; border: 1px solid #333; border-radius: 6px;
+  color: #ccc; padding: 4px 8px; font-size: 12px; outline: none;
+  font-family: system-ui, sans-serif;
+}
+#cv-hp-min:focus, #cv-hp-max:focus { border-color: #6060ff; }
+.cv-range-sep { color: #555; font-size: 12px; }
+
+/* Toolbar */
+#cv-toolbar {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.cv-view-btn {
+  width: 30px; height: 30px; border-radius: 6px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.14s, color 0.14s;
+}
+.cv-view-btn svg { width: 14px; height: 14px; }
+.cv-view-btn:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.75); }
+.cv-view-btn.active { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); }
+/* Limpiar filtros: reutiliza el tamaño de cv-view-btn pero se pone ROJO en hover */
+#cv-clear-btn svg { width: 16px; height: 16px; }
+#cv-clear-btn:hover { background: rgba(255,80,80,0.14); color: #ff6b6b; }
+/* Solo favoritas: amarillo + estrella rellena cuando está activo */
+#cv-fav-btn svg { width: 16px; height: 16px; }
+#cv-fav-btn.fav-active { color: #ffd24a; background: rgba(255,210,74,0.14); }
+#cv-fav-btn.fav-active svg { fill: #ffd24a; }
+
+/* Estrella de FAVORITA: un control compacto que se integra con la carta, en vez de
+   un círculo opaco que compite con el arte. En táctil se queda visible solo en el
+   zoom cercano (la regla de los niveles vive en responsive.css). */
+.cv-fav-star {
+  position: absolute; top: 6px; right: 6px; z-index: 7;
+  width: 25px; height: 25px; padding: 0; border: 1px solid rgba(255,255,255,0.16); border-radius: 8px;
+  background: linear-gradient(145deg, rgba(31,31,42,0.74), rgba(9,9,15,0.48));
+  box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+  -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  color: rgba(255,255,255,0.9); opacity: 0;
+  transition: opacity 0.14s, transform 0.12s ease, background 0.14s, border-color 0.14s, box-shadow 0.14s, visibility 0s linear 0.14s;
+}
+.cv-fav-star svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.cv-card-wrap:hover .cv-fav-star { opacity: 1; }
+.cv-fav-star:hover { transform: translateY(-1px) scale(1.08); background: rgba(36,36,49,0.86); border-color: rgba(255,255,255,0.3); box-shadow: 0 3px 10px rgba(0,0,0,0.4); }
+.cv-fav-star:active { transform: scale(0.9); }
+.cv-fav-star:focus-visible { opacity: 1; outline: 2px solid rgba(255,255,255,0.92); outline-offset: 2px; }
+.cv-fav-star.on { opacity: 1; color: #ffd24a; border-color: rgba(255,210,74,0.56); background: linear-gradient(145deg, rgba(92,69,20,0.84), rgba(37,27,9,0.67)); } /* favorita: visible + amarilla */
+.cv-fav-star.on svg { fill: #ffd24a; stroke: #ffd24a; }
+@media (pointer: coarse) { .cv-fav-star { opacity: 1; } }  /* táctil: sin hover, siempre visible al acercar */
+
+/* Badge de uso en el meta (esquina sup-izq; solo al ordenar por «Más usadas») */
+.cv-usage-badge {
+  position: absolute; top: 5px; left: 5px; z-index: 7;
+  padding: 3px 7px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; line-height: 1; letter-spacing: 0.2px;
+  color: #fff; background: rgba(10,10,16,0.62);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
+  pointer-events: none; white-space: nowrap;
+}
+#cv-apply-btn {
+  padding: 6px 14px; border-radius: 8px;
+  background: transparent; border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.55); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+  font-family: system-ui, sans-serif; transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+#cv-apply-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.3); }
+
+/* Body */
+#cv-body {
+  flex: 1; overflow-y: auto; min-height: 0;
+  padding: 16px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+#cv-body::-webkit-scrollbar { width: 6px; }
+#cv-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+/* Círculo de carga: se muestra mientras la 1ª pantalla no está lista (la rejilla oculta). */
+#cv-loading {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 55vh; width: 100%;
+}
+.cv-loading-spin {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.13); border-top-color: rgba(255,255,255,0.7);
+  animation: cvLoadSpin 0.7s linear infinite;
+}
+@keyframes cvLoadSpin { to { transform: rotate(360deg); } }
+html.pb-reduce-motion .cv-loading-spin { animation-duration: 1.5s; }
+
+/* Card grid */
+#cv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+/* Individual grid card */
+.cv-card-wrap {
+  display: flex; flex-direction: column; gap: 6px;
+  cursor: pointer; position: relative;
+}
+.cv-card-img {
+  aspect-ratio: 400/559;
+  border-radius: 8px;
+  background-size: cover; background-position: center;
+  background-color: #1a1a2a;
+  border: 1px solid rgba(255,255,255,0.08);
+  position: relative; overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s;
+}
+.cv-card-img:hover {
+  transform: scale(1.04) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.65);
+  border-color: rgba(255,255,255,0.22);
+}
+/* Esqueleto (shimmer) mientras la imagen no está lista → se funde al cargar (.cv-img-loaded).
+   Evita ver las cartas «entrar» con la imagen a medio cargar; la 1ª pantalla se revela junta. */
+.cv-card-img::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
+  background:
+    linear-gradient(100deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0) 80%),
+    #20202e;
+  background-size: 220% 100%, 100% 100%;
+  animation: cvSkelShimmer 1.15s ease-in-out infinite;
+  opacity: 1; transition: opacity 0.4s ease;
+}
+.cv-card-img.cv-img-loaded::after { opacity: 0; animation: none; }
+@keyframes cvSkelShimmer {
+  0%   { background-position: 180% 0, 0 0; }
+  100% { background-position: -80% 0, 0 0; }
+}
+html.pb-reduce-motion .cv-card-img::after { animation: none; }
+/* Anillo de progreso de la pulsación larga (táctil): se llena en 1s
+   (50% = 1ª copia a 0,5s, 100% = 2ª copia a 1,0s). @property para animar el conic. */
+@property --cv-lp { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+.cv-lp-ring {
+  position: absolute; top: 50%; left: 50%; pointer-events: none; z-index: 4;
+  width: 44px; height: 44px; border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.6); opacity: 0;
+  transition: opacity .12s ease, transform .12s ease;
+  background: conic-gradient(rgba(90,210,130,0.95) var(--cv-lp, 0%), rgba(255,255,255,0.22) 0);
+  -webkit-mask: radial-gradient(circle, transparent 56%, #000 58%);
+          mask: radial-gradient(circle, transparent 56%, #000 58%);
+}
+.cv-card-img.lp .cv-lp-ring {
+  opacity: 1; transform: translate(-50%, -50%) scale(1);
+  animation: cvLpFill 1s linear forwards;
+}
+@keyframes cvLpFill { from { --cv-lp: 0%; } to { --cv-lp: 100%; } }
+@media (prefers-reduced-motion: reduce) { .cv-card-img.lp .cv-lp-ring { animation: none; } }
+
+/* Pulso al añadir/rechazar SOBRE LA CARTA (en todos los niveles de zoom).
+   z-index elevado para superponerse a las cartas vecinas si quedan cerca. */
+.cv-card-img.cv-add-ok, .cv-card-img.cv-add-err { z-index: 6; }
+/* OK: ONDA mística = anillo de glow verde que se expande hacia fuera y se
+   desvanece (box-shadow → no lo recorta el overflow de la carta), + pop sutil.
+   El pop al 22% (rápido) hace que un 2º añadido se note aunque el 1º acabe. */
+.cv-card-img.cv-add-ok  { animation: cvAddOk 0.5s ease-out; }
+@keyframes cvAddOk {
+  0%   { transform: scale(1);     box-shadow: 0 0 0 0 rgba(110,225,150,0.6), 0 0 12px 2px rgba(110,225,150,0.45); }
+  22%  { transform: scale(1.045); }
+  100% { transform: scale(1);     box-shadow: 0 0 0 13px rgba(110,225,150,0), 0 0 12px 2px rgba(110,225,150,0); }
+}
+/* ERR: shake muy SUTIL, RÁPIDO y CORTO + glow rojo tenue */
+.cv-card-img.cv-add-err { animation: cvAddErr 0.3s ease; }
+@keyframes cvAddErr {
+  0%,100% { transform: translate(0,0);   box-shadow: 0 0 0 0 rgba(235,70,70,0); }
+  12%     { box-shadow: 0 0 13px 2px rgba(235,85,85,0.5); }
+  14%     { transform: translate(-1.5px,1px); }  28% { transform: translate(1.5px,-1px); }
+  42%     { transform: translate(-1.5px,-1px); } 56% { transform: translate(1.5px,1px); }
+  70%     { transform: translate(-1px,1px); }    84% { transform: translate(1px,-1px); }
+}
+/* El anillo de carga se PARA y se vuelve rojo al rechazar (como si chocara) */
+.cv-card-img.lp-blocked .cv-lp-ring {
+  animation-play-state: paused;
+  background: conic-gradient(rgba(235,85,85,0.95) var(--cv-lp, 0%), rgba(235,85,85,0.22) 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-card-img.cv-add-ok, .cv-card-img.cv-add-err { animation: none; }
+  .cv-add-ripple { animation: none; opacity: 0; }
+}
+/* "+" add to deck button overlay */
+.cv-card-add {
+  position: absolute; bottom: 6px; right: 6px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,0.468); border: none;
+  color: #fff; font-size: 16px; font-weight: 700; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.14s, background 0.14s;
+  z-index: 2;
+}
+.cv-card-wrap:hover .cv-card-add { opacity: 1; }
+.cv-card-add:hover { background: rgba(120,130,255,1); }
+.cv-card-info {
+  display: flex; flex-direction: column; gap: 3px; padding: 0 2px;
+}
+.cv-card-name {
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.82);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: system-ui, sans-serif;
+}
+
+/* Type badges */
+.cv-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 0; background: none; border-radius: 0;
+  font-size: 10px; font-weight: 700; white-space: nowrap;
+  align-self: flex-start;
+}
+/* Dot + text instead of pill */
+.cv-badge::before {
+  content: ''; display: inline-block;
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.cv-t-pokemon   { color: rgba(100,220,100,0.7);  } .cv-t-pokemon::before   { background: #4c4; }
+.cv-t-item      { color: rgba(100,170,255,0.7);  } .cv-t-item::before      { background: #6af; }
+.cv-t-tool      { color: rgba(220,180,60,0.7);   } .cv-t-tool::before      { background: #db0; }
+.cv-t-supporter { color: rgba(200,120,255,0.7);  } .cv-t-supporter::before { background: #c6f; }
+.cv-t-stadium   { color: rgba(60,200,200,0.7);   } .cv-t-stadium::before   { background: #4cc; }
+.cv-t-fossil    { color: rgba(160,160,160,0.6);  } .cv-t-fossil::before    { background: #888; }
+.cv-t-unknown   { color: rgba(255,120,120,0.6);  } .cv-t-unknown::before   { background: #f66; }
+
+/* Table view */
+#cv-table-wrap {
+  overflow-x: auto;
+}
+#cv-table {
+  width: 100%; border-collapse: collapse;
+  font-family: system-ui, sans-serif; font-size: 13px;
+}
+#cv-table th {
+  background: #15151f; border-bottom: 1px solid #2a2a3a;
+  padding: 8px 12px; text-align: left; color: #888;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  white-space: nowrap; position: sticky; top: 0; z-index: 2;
+}
+#cv-table td {
+  padding: 7px 12px; border-bottom: 1px solid #1a1a24; vertical-align: middle; color: #e0e0e0;
+}
+#cv-table tr:hover td { background: #1a1a26; }
+#cv-table img.cv-tbl-thumb {
+  width: 34px; height: 47px; object-fit: cover; border-radius: 4px;
+  background: #1a1a2a; vertical-align: middle;
+}
+.cv-tbl-add-btn {
+  background: rgba(255,255,255,0.083); border: 1px solid rgba(255,255,255,0.165);
+  color: rgba(255,255,255,0.8); border-radius: 5px; padding: 2px 8px;
+  font-size: 11px; cursor: pointer; transition: all 0.13s;
+}
+.cv-tbl-add-btn:hover { background: rgba(255,255,255,0.193); color: #fff; }
+.cv-stage { color: #888; font-size: 12px; }
+.cv-evo   { color: #666; font-size: 12px; font-style: italic; }
+
+/* Empty state */
+#cv-empty {
+  display: none; text-align: center; padding: 60px;
+  color: rgba(255,255,255,0.3); font-size: 15px;
+  font-family: system-ui, sans-serif;
+}
+#cv-empty span { display: block; margin-bottom: 16px; }
+#cv-clear-filters {
+  padding: 8px 18px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.11);
+  background: transparent; color: rgba(255,255,255,0.5);
+  font-family: system-ui, sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+#cv-clear-filters:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+#cv-clear-filters:active { transform: scale(0.97); }
+
+/* cv-filter-row is a filter group variant that stays inline */
+.cv-filter-row { flex-wrap: nowrap; gap: 6px; }
+
+/* Zoom overlay from cards view — reuses existing #zoom-overlay */
+
+
+/* ── Attack cost filter zone ── */
+#cv-cost-zone {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  min-width: 120px; min-height: 32px;
+  padding: 4px 10px; border-radius: 8px;
+  border: 1px dashed rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer; position: relative;
+  transition: border-color 0.15s, background 0.15s;
+}
+#cv-cost-zone:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.06); }
+.cv-cost-label { font-size: 11px; color: rgba(255,255,255,0.3); pointer-events: none; }
+.cv-cost-clear {
+  background: none; border: none; color: rgba(255,255,255,0.4);
+  cursor: pointer; font-size: 12px; padding: 0 2px; line-height: 1;
+}
+.cv-cost-clear:hover { color: #fff; }
+.cv-cost-orb {
+  width: 28px; height: 28px; cursor: pointer; flex-shrink: 0;
+}
+.cv-cost-orb:hover { transform: scale(1.15); }
+
+/* ── Operator buttons ── */
+.cv-op-group { display: flex; gap: 2px; }
+.cv-op-btn {
+  padding: 4px 8px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1); background: transparent;
+  color: rgba(255,255,255,0.35); font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: background 0.13s, color 0.13s, border-color 0.13s;
+}
+.cv-op-btn:hover { color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); }
+.cv-op-btn.active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); color: #fff; }
+
+/* Raise energy menu above view-cards when in cards tab */
+#energy-menu-wrap { z-index: 9200 !important; }
+#energy-cursor-orb { z-index: 9201 !important; }
+
+/* Zoom overlay and energy menu must be above view-cards (z:9050) */
+#zoom-overlay   { z-index: 9060 !important; }
+#energy-menu-wrap { z-index: 9200 !important; }
+#energy-cursor-orb { z-index: 9201 !important; }
+
+/* Card hover glare + holo shine */
+.cv-card-glare, .cv-card-shine {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+}
+.cv-card-glare {
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18) 0%, transparent 65%);
+}
+.cv-card-shine { opacity: 0; mix-blend-mode: color-dodge; }
+
+/* Fix: energy-menu-wrap .open display rule lives in broken-depth zone of styles.css */
+#energy-menu-wrap.open { display: block !important; }
+
+/* ── Energy orb base CSS (mirrors styles.css; needed because that file has broken brace depth) ── */
+.energy-orb {
+  width: 34px; height: 34px; border-radius: 50%;
+  position: relative; flex-shrink: 0;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.65) 0%, transparent 45%),
+    radial-gradient(circle at 65% 72%, rgba(0,0,0,0.30) 0%, transparent 35%),
+    radial-gradient(circle at 50% 50%, var(--ob,#aaa) 0%, var(--od,#444) 100%);
+  box-shadow:
+    0 0 18px 6px var(--og,rgba(160,160,160,0.3)),
+    0 6px 16px rgba(0,0,0,0.55),
+    inset 0 -6px 16px rgba(0,0,0,0.35),
+    inset 0 3px 8px rgba(255,255,255,0.1);
+}
+.energy-orb img {
+  position: absolute; inset: 0; margin: auto;
+  width: 24px; height: 24px; pointer-events: none; user-select: none;
+}
+
+/* ── Cost filter zone redesign ── */
+#cv-cost-zone {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  min-height: 34px;
+}
+.cv-cost-empty { font-size: 11px; color: rgba(255,255,255,0.3); }
+.cv-cost-add {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px dashed rgba(255,255,255,0.25); background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.5); font-size: 18px; font-weight: 300; line-height: 1;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.cv-cost-add:hover { border-color: rgba(255,255,255,0.6); color: #fff; background: rgba(255,255,255,0.08); }
+.cv-cost-clear-btn {
+  padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,60,60,0.1); color: rgba(255,120,120,0.8); font-size: 12px;
+  cursor: pointer; transition: all 0.13s;
+}
+.cv-cost-clear-btn:hover { background: rgba(255,60,60,0.25); color: #fff; }
+
+/* Orb X button */
+.cv-orb-x {
+  position: absolute; top: -4px; right: -4px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(30,30,40,0.9); border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.8); font-size: 11px; line-height: 1;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  padding: 0; transition: background 0.12s;
+}
+.cv-cost-orb:hover .cv-orb-x { display: flex; }
+.cv-orb-x:hover { background: rgba(220,50,50,0.9); }
+
+/* Static energy icon in cost filter (like equipped energy on board) */
+.cv-cost-orb {
+  position: relative; width: 30px; height: 30px;
+  border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+}
+.cv-cost-orb-img {
+  width: 24px; height: 24px; border-radius: 50%;
+  pointer-events: none; user-select: none;
+}
+
+/* Add button states */
+.cv-card-add-ok   { background: rgba(40,180,80,0.9)  !important; font-size: 13px !important; }
+.cv-card-add-1    { background: rgba(255,255,255,0.33) !important; font-size: 11px !important; }
+.cv-card-add-full { background: rgba(80,80,100,0.8)  !important; font-size: 10px !important; }
+.cv-card-add-err  { background: rgba(220,50,50,0.9)  !important; font-size: 10px !important; }
+
+/* ══ DECK PILL — first definition (overridden below) ══════════ */
+/* kept as comment placeholder — see clean rewrite below */
+
+#cv-pill-top {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+#cv-pill-players { display: flex; gap: 3px; }
+.cv-pill-player {
+  padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 800;
+  border: 1px solid rgba(255,255,255,0.12); background: transparent;
+  color: rgba(255,255,255,0.35); cursor: pointer; letter-spacing: 0.05em;
+  transition: all 0.15s; font-family: 'Nunito', sans-serif;
+}
+.cv-pill-player:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.3); }
+.cv-pill-player.active {
+  background: rgba(255,255,255,0.138); border-color: rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.95);
+}
+
+#cv-pill-count-wrap { flex: 1; text-align: center; }
+#cv-pill-count {
+  font-size: 18px; font-weight: 900; color: #fff;
+  font-family: 'Nunito', sans-serif;
+  transition: transform 0.15s cubic-bezier(0.34,1.6,0.64,1);
+}
+#cv-pill-count.bump { transform: scale(1.35); }
+#cv-pill-max { font-size: 12px; color: rgba(255,255,255,0.3); font-family: 'Nunito', sans-serif; }
+
+
+#cv-pill-bar-wrap {
+  height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px;
+  margin-bottom: 10px; overflow: hidden;
+}
+#cv-pill-bar {
+  height: 100%; background: linear-gradient(90deg, rgba(255,255,255,0.44), rgba(255,255,255,0.9));
+  border-radius: 2px; width: 0%;
+  transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+#cv-pill-bar.full { background: linear-gradient(90deg, rgba(40,180,80,0.8), rgba(80,220,120,0.9)); }
+
+#cv-pill-thumbs {
+  display: flex; gap: 5px; flex-wrap: wrap; min-height: 44px;
+  align-content: flex-start;
+}
+.cv-pill-thumb {
+  width: 38px; height: 53px; border-radius: 4px;
+  background-size: cover; background-position: center;
+  background-color: #252535;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.15s ease, opacity 0.15s;
+  cursor: default; flex-shrink: 0;
+}
+.cv-pill-thumb.new-in {
+  animation: pillThumbIn 0.3s cubic-bezier(0.34,1.5,0.64,1) both;
+}
+@keyframes pillThumbIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ══ CARD HOVER — rediseño consistente con tablero ══════════════ */
+/* Remove old overlay add button — replaced by info-row action */
+.cv-card-add { display: none !important; }
+
+.cv-card-wrap { cursor: pointer; }
+.cv-card-info {
+  display: flex; flex-direction: column; gap: 2px; padding: 4px 2px 2px;
+}
+.cv-card-name {
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.75);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cv-card-row2 {
+  display: flex; align-items: center; gap: 4px; min-height: 20px;
+}
+.cv-card-add-row {
+  flex-shrink: 0; margin-left: auto;
+  padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.4); cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  font-family: 'Nunito', sans-serif; letter-spacing: 0.04em;
+}
+.cv-card-wrap:hover .cv-card-add-row { opacity: 1; }
+/* Sin mazo en EDICIÓN, Cartas es solo consulta: fuera el «+» (y con él la vía de añadir).
+   El gate real está en _cvAddWithPulse; esto es lo que se ve. */
+#view-cards.cv-no-deck .cv-card-add-row { display: none !important; }
+.cv-card-add-row:hover { background: rgba(255,255,255,0.138); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.2); }
+.cv-card-add-row.ok   { background: rgba(40,180,80,0.2); color: #4ee88a; border-color: rgba(60,200,100,0.4); opacity:1 !important; }
+.cv-card-add-row.dupe { color: rgba(255,255,255,0.25); cursor: default; }
+.cv-card-add-row.full { background: rgba(220,50,50,0.15); color: rgba(255,120,120,0.7); cursor: default; }
+
+/* ══ DECK PILL — clean rewrite ══════════════════════════════════ */
+#cv-deck-pill {
+  position: fixed; bottom: 20px; right: 20px;
+  z-index: 9100;
+  background: rgba(16,16,24,0.97);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  backdrop-filter: blur(14px);
+  transform-origin: bottom right;
+  transition:
+    width      0.3s cubic-bezier(0.4,0,0.2,1),
+    height     0.3s cubic-bezier(0.4,0,0.2,1),
+    padding    0.3s cubic-bezier(0.4,0,0.2,1),
+    opacity    0.2s ease,
+    box-shadow 0.22s ease;
+  overflow: hidden;
+  cursor: pointer;
+  /* RESTING — small square, always visible in Cartas tab */
+  width: 56px; height: 56px;
+  padding: 0;
+  display: none; /* shown via JS when entering Cartas */
+}
+/* Resting inner: just the count */
+#cv-pill-rest {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.15s;
+}
+#cv-pill-rest-count {
+  font-size: 15px; font-weight: 900; color: rgba(255,255,255,0.8);
+  font-family: 'Nunito', sans-serif; line-height: 1;
+}
+#cv-pill-rest-label {
+  font-size: 8px; color: rgba(255,255,255,0.3); letter-spacing: 0.08em;
+  font-family: 'Nunito', sans-serif; text-transform: uppercase; margin-top: 2px;
+}
+
+/* OPEN — expanded panel */
+#cv-deck-pill.open {
+  width: auto; min-width: 680px; max-width: 90vw;
+  height: auto; padding: 12px 14px 14px;
+  cursor: default;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  opacity: 1;
+}
+/* Closing fade-out */
+#cv-deck-pill.closing {
+  opacity: 0;
+  transform: scale(0.97) translateY(4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+/* Escritorio: pop-up del mazo ~20% más grande — PURA ESCALA (mismas proporciones,
+   todo se ve igual pero mayor). Origen abajo-derecha (ya definido) → crece hacia
+   arriba-izquierda y sigue clavado en su esquina. Móvil (≤720) usa su hoja inferior
+   propia (responsive.css) y NO se ve afectado. El .closing conserva la escala para
+   que el cierre no dé un salto. */
+@media (min-width: 721px) {
+  #cv-deck-pill { transform: scale(1.2); }
+  #cv-deck-pill.closing { transform: scale(1.16) translateY(4px); }
+}
+/* Pulso «estoy aquí» del FAB cerrado (pop-up del mazo al re-bajar): anillo de luz que se
+   expande. Sin transform (el pill ya usa scale en escritorio) y neutro (sin acento azul). */
+@keyframes pillPeek {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.5), 0 8px 24px rgba(0,0,0,0.45); }
+  70%  { box-shadow: 0 0 0 12px rgba(255,255,255,0), 0 8px 24px rgba(0,0,0,0.45); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0), 0 8px 24px rgba(0,0,0,0.45); }
+}
+#cv-deck-pill.pill-peek:not(.open) { animation: pillPeek 0.75s ease-out 2; }
+#cv-deck-pill.open #cv-pill-rest { opacity: 0; pointer-events: none; }
+
+#cv-pill-top {
+  display: none; align-items: center; gap: 8px; margin-bottom: 8px; white-space: nowrap;
+}
+#cv-deck-pill.open #cv-pill-top { display: flex; }
+
+.cv-pill-player {
+  padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 800;
+  border: 1px solid rgba(255,255,255,0.12); background: transparent;
+  color: rgba(255,255,255,0.35); cursor: pointer; letter-spacing: 0.05em;
+  transition: all 0.15s; font-family: 'Nunito', sans-serif;
+  max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cv-pill-player:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.3); }
+/* J1 = blue, J2 = red */
+.cv-pill-player.p1.active {
+  background: rgba(60,130,255,0.18); border-color: rgba(80,160,255,0.5); color: #7bbfff;
+}
+.cv-pill-player.p2.active {
+  background: rgba(220,60,60,0.18); border-color: rgba(255,80,80,0.5); color: #ff8888;
+}
+#cv-pill-count-wrap { flex: 1; text-align: center; }
+#cv-pill-count {
+  font-size: 18px; font-weight: 900; color: #fff; font-family: 'Nunito', sans-serif;
+  transition: transform 0.15s cubic-bezier(0.34,1.6,0.64,1); display: inline-block;
+}
+#cv-pill-count.bump { transform: scale(1.4); }
+#cv-pill-max { font-size: 12px; color: rgba(255,255,255,0.3); font-family: 'Nunito', sans-serif; }
+/* Save / Clear buttons */
+#cv-pill-save, #cv-pill-clear {
+  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.5); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.15s;
+}
+#cv-pill-save:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.3); }
+#cv-pill-clear:hover { background: rgba(200,50,50,0.2); color: #ff7070; border-color: rgba(200,60,60,0.4); }
+/* Pill fuera de Cartas (Mis Mazos): guardar/vaciar no aplican (se guarda desde la cabecera)
+   → solo cerrar + contador + miniaturas + steppers. */
+#cv-deck-pill.pill-ext #cv-pill-save,
+#cv-deck-pill.pill-ext #cv-pill-clear { display: none; }
+
+/* Progress bar */
+#cv-pill-bar-wrap {
+  display: none; height: 2px; background: rgba(255,255,255,0.07);
+  border-radius: 2px; margin-bottom: 10px; overflow: hidden;
+}
+#cv-deck-pill.open #cv-pill-bar-wrap { display: block; }
+#cv-pill-bar {
+  height: 100%; border-radius: 2px; width: 0%;
+  background: rgba(255,255,255,0.55);
+  transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+#cv-pill-bar.full { background: rgba(80,220,120,0.8); }
+
+/* Thumbnails — fixed-height row, always 10 slots visible */
+#cv-pill-thumbs {
+  display: none; flex-direction: row; flex-wrap: nowrap; gap: 6px;
+  overflow: visible; min-height: 84px;
+}
+#cv-deck-pill.open #cv-pill-thumbs { display: flex; }
+
+/* Real card thumb */
+.cv-pill-thumb-wrap {
+  position: relative; flex-shrink: 0; width: 60px; height: 84px;
+}
+.cv-pill-thumb {
+  width: 60px; height: 84px; flex-shrink: 0;
+  border-radius: 5px; background-size: cover; background-position: center;
+  background-color: #252535; border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+}
+/* Pop-in: primera copia — fade + scale muy suave, sin espacio negro */
+.cv-pill-thumb.pop-in {
+  animation: pill-pop 0.28s ease-out both;
+}
+@keyframes pill-pop {
+  0%   { opacity: 0; filter: brightness(2) saturate(1.5); transform: scale(0.9); }
+  40%  { opacity: 1; filter: brightness(1.25) saturate(1.15); }
+  100% { opacity: 1; filter: brightness(1) saturate(1);   transform: scale(1); }
+}
+
+/* Pop-second: segunda copia — pulso de brillo sutil */
+.cv-pill-thumb.pop-second {
+  animation: pill-second 0.35s ease-out both;
+}
+@keyframes pill-second {
+  0%   { filter: brightness(1); }
+  30%  { filter: brightness(1.6) saturate(1.3); transform: scale(1.04); }
+  100% { filter: brightness(1); transform: scale(1); }
+}
+
+/* Copy count badge — same as deck builder: centered, padding, readable */
+.cv-pill-copy {
+  position: absolute; bottom: 3px;
+  left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.38); border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11px; font-weight: 900; line-height: 1.3;
+  color: rgba(255,255,255,0.92);
+  pointer-events: none; white-space: nowrap;
+}
+
+/* Stepper − N + del pop-up del mazo: MISMO look que el deckbuilder del sidebar
+   (.deck-copy-badge / .dcb-* viven en styles.css). Los +/− solo aparecen y son
+   clicables al hover (desktop); en táctil quedan ocultos y SIN pointer-events, así
+   que nunca roban el swipe-up de quitar ni provocan añadidos accidentales. */
+.cv-pill-thumb-wrap .deck-copy-badge { pointer-events: none; }
+.cv-pill-thumb-wrap .dcb-minus,
+.cv-pill-thumb-wrap .dcb-plus { pointer-events: none; }
+@media (hover: hover) {
+  .cv-pill-thumb-wrap:hover .dcb-minus,
+  .cv-pill-thumb-wrap:hover .dcb-plus { opacity: 1; pointer-events: auto; }
+}
+
+/* Empty placeholder slots */
+.cv-pill-empty {
+  width: 60px; height: 84px; flex-shrink: 0; border-radius: 5px;
+  border: 1px dashed rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.015);
+}
+.cv-pill-thumb.new-in {
+  animation: pillThumbIn 0.28s cubic-bezier(0.34,1.5,0.64,1) both;
+}
+@keyframes pillThumbIn {
+  from { transform: scale(0.4) translateY(10px); opacity: 0; }
+  to   { transform: scale(1)   translateY(0);    opacity: 1; }
+}
+
+/* cv-sort-arrow used inside dropdown options */
+.cv-sort-arrow { font-size: 10px; }
+
+/* Button pulse — no text/size change */
+@keyframes pulseOk {
+  0%   { box-shadow: 0 0 0 0 rgba(80,210,110,0.6); background: rgba(80,210,110,0.18); }
+  100% { box-shadow: 0 0 0 5px rgba(80,210,110,0); background: rgba(255,255,255,0.03); }
+}
+@keyframes pulseErr {
+  0%,40% { background: rgba(220,60,60,0.18); }
+  100%   { background: rgba(255,255,255,0.03); }
+}
+.cv-card-add-row.pulse-ok  { animation: pulseOk  0.35s ease-out forwards; }
+.cv-card-add-row.pulse-err { animation: pulseErr 0.4s ease-out forwards; }
+
+/* Remove purple tints everywhere */
+.cv-card-add-row {
+  color: rgba(255,255,255,0.32) !important;
+  border-color: rgba(255,255,255,0.09) !important;
+  background: transparent !important;
+}
+.cv-card-add-row:hover {
+  background: rgba(255,255,255,0.07) !important;
+  color: rgba(255,255,255,0.7) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+
+/* ── Sort dropdown ── */
+.pb-sort-wrap { position: relative; }
+
+.pb-sort-trigger {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 7px; font-size: 11px; font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55); cursor: pointer; font-family: system-ui, sans-serif;
+  transition: all 0.15s; white-space: nowrap;
+}
+.pb-sort-trigger:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.22); }
+
+.pb-sort-menu {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  border-radius: 9px; padding: 4px; min-width: 140px;
+  /* material: bloque «LIQUID GLASS» al final de este archivo */
+  z-index: 9200;
+}
+.pb-sort-menu > * { position: relative; z-index: 1; }
+.cv-sort-opt {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 7px 11px; border-radius: 6px; font-size: 12px;
+  border: none; background: transparent; color: rgba(255,255,255,0.5);
+  cursor: pointer; font-family: system-ui, sans-serif; font-weight: 500;
+  transition: background 0.12s, color 0.12s; text-align: left;
+}
+.cv-sort-opt:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+.cv-sort-opt.active { color: #fff; background: rgba(255,255,255,0.06); }
+.cv-sort-arrow { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+/* Legacy sort group hidden (replaced by dropdown) */
+#cv-sort-group { display: none !important; }
+
+/* ── Attack cost slots ── */
+#cv-cost-slots { display: flex; gap: 6px; align-items: center; }
+
+.cv-cost-slot {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; position: relative; transition: all 0.15s;
+}
+.cv-cost-slot.empty {
+  border: 1.5px dashed rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.03); cursor: pointer;
+  color: rgba(255,255,255,0.25); font-size: 16px; font-weight: 300; line-height: 1;
+}
+.cv-cost-slot.empty:hover {
+  border-color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.7);
+}
+.cv-cost-slot.filled {
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05); overflow: visible;
+}
+.cv-cost-slot.filled img {
+  width: 24px; height: 24px; border-radius: 50%; pointer-events: none;
+}
+.cv-slot-x {
+  position: absolute; top: -4px; right: -4px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(20,20,30,0.95); border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.7); font-size: 11px; line-height: 1;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background 0.12s;
+}
+.cv-cost-slot.filled:hover .cv-slot-x { display: flex; }
+.cv-slot-x:hover { background: rgba(200,50,50,0.9); }
+
+/* Override old cost zone styles */
+#cv-cost-zone { display: none !important; }
+.cv-cost-add  { display: none !important; }
+
+/* ── Unify border-radius to 10px across all chip groups ── */
+.cv-chip-group { border-radius: 10px !important; }
+.cv-chip { border-radius: 10px; }
+.cv-chip-group .cv-chip { border-radius: 0; }
+.cv-chip-group .cv-chip:first-child { border-radius: 10px 0 0 10px; }
+.cv-chip-group .cv-chip:last-child  { border-radius: 0 10px 10px 0; }
+.cv-chip-group .cv-chip:only-child  { border-radius: 10px; }
+
+/* ── Search bar: shrink to content ── */
+#cv-search-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;
+}
+.pb-search-wrap {
+  width: auto; min-width: 0; flex: 0 1 220px;
+}
+#cv-search { width: 120px; min-width: 0; }
+
+/* ── Apply button: prominent CTA ── */
+#cv-apply-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 10px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.88); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em; cursor: pointer; white-space: nowrap;
+  font-family: system-ui, sans-serif;
+  transition: background 0.15s, border-color 0.15s;
+  margin-left: auto;
+}
+#cv-apply-btn:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.35); color: #fff; }
+
+/* Gemelo: mandar resultados a la Tierlist (mismo look, junto al de Tablero) */
+#cv-apply-tier-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 10px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.82); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em; cursor: pointer; white-space: nowrap;
+  font-family: system-ui, sans-serif;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  margin-left: 8px;
+}
+#cv-apply-tier-btn:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.3); color: #fff; }
+
+/* ── Filtro EXCLUIDO (clic derecho · mantener pulsado en móvil) ──────────────
+   Rojo tenue = «fuera esto». El texto va tachado; los chips que son solo icono
+   (elemento, estados, rareza) llevan una diagonal, que es lo que se lee de un vistazo. */
+.cv-chip.excluded,
+.cv-dd-wrap.excluded > .cv-chip {
+  background: rgba(255,86,86,0.15) !important;
+  border-color: rgba(255,110,110,0.42) !important;
+  color: #ffb2b2 !important;
+  text-decoration: line-through;
+  text-decoration-color: rgba(255,140,140,0.85);
+  text-decoration-thickness: 1.5px;
+}
+.cv-chip.excluded:hover,
+.cv-dd-wrap.excluded > .cv-chip:hover { background: rgba(255,86,86,0.24) !important; }
+/* iconos: la diagonal sustituye al tachado. Barra rotada + overflow:hidden = mismo
+   ángulo en todos (un gradiente diagonal cambia de inclinación según lo ancho que sea
+   el chip) y no puede salirse del borde. */
+.cv-el-chip.excluded, .cv-cond-chip.excluded, .cv-rar-chip.excluded {
+  position: relative; overflow: hidden; text-decoration: none;
+}
+.cv-el-chip.excluded::after,
+.cv-cond-chip.excluded::after,
+.cv-rar-chip.excluded::after {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 160%; height: 2px;
+  background: rgba(255,150,150,0.95); pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-30deg);
+}
+.cv-el-chip.excluded .cv-eldot, .cv-cond-chip.excluded img, .cv-rar-chip.excluded .rar-ico { opacity: 0.5; }
+
+/* ── Botón «Búsqueda avanzada» (fila superior, en el hueco del antiguo «Mandar resultados») ──
+   Algo más presente que un chip normal, pero sin color de acento: material blanco
+   translúcido, y encendido cuando la búsqueda avanzada está desplegada. */
+/* Botón «Búsqueda avanzada» / «Ajustes avanzados»: mismo material en Cartas y en Meta
+   (el del meta era otro: píldora hueca con caret). Fuente única aquí. */
+#cv-adv-toggle, #mz-adv-toggle {
+  display: flex; align-items: center; gap: 7px; margin-left: auto;
+  padding: 8px 14px; border-radius: 9px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.78); cursor: pointer; white-space: nowrap;
+  font-family: system-ui, sans-serif; font-size: 12.5px; font-weight: 700;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+#cv-adv-toggle:hover, #mz-adv-toggle:hover { background: rgba(255,255,255,0.13); color: #fff; }
+#cv-adv-toggle.open, #mz-adv-toggle.open { background: rgba(255,255,255,0.17); border-color: rgba(255,255,255,0.3); color: #fff; }
+.cv-adv-ico { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.9; }
+
+/* ── Caja «Texto de la carta»: aparece junto a la de nombre al encender la búsqueda avanzada ── */
+#cv-text-wrap {
+  /* «ligeramente más ancha que la de nombre» (220px) — no crece más.
+     Cerrada mide 0 y se abre deslizando; el margen negativo se come el gap de la fila. */
+  display: flex; align-items: center; gap: 8px; flex: 0 1 0; min-width: 0;
+  background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 8px;
+  padding: 8px 0; margin-right: -8px; overflow: hidden; white-space: nowrap;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: flex-basis 0.3s cubic-bezier(0.22,0.61,0.36,1), padding 0.3s cubic-bezier(0.22,0.61,0.36,1),
+              margin 0.3s cubic-bezier(0.22,0.61,0.36,1), opacity 0.2s ease 0.05s,
+              border-color 0.15s, background 0.15s, visibility 0s linear 0.3s;
+}
+#cv-header.adv-on #cv-text-wrap {
+  flex-basis: 268px; padding: 8px 12px; margin-right: 0;
+  opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s;
+}
+#cv-text-wrap > svg { flex-shrink: 0; opacity: 0.5; color: #fff; }
+#cv-text-wrap:hover { background: rgba(255,255,255,0.07); }
+#cv-text-wrap:focus-within { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.07); }
+#cv-text-clear {
+  color: rgba(255,255,255,0.3); cursor: pointer; font-size: 13px; line-height: 1;
+  transition: color 0.12s; visibility: hidden;
+}
+#cv-text-clear:hover { color: rgba(255,255,255,0.7); }
+#cv-text-wrap.has-text #cv-text-clear { visibility: visible; }
+
+/* ── Element icon chips — no text, just dot ── */
+.cv-el-icon { padding: 7px 9px !important; }
+.cv-el-icon .cv-eldot { width: 14px; height: 14px; }
+.cv-chip-group .cv-el-icon { gap: 0; }
+
+/* ── Numeric filter blocks (HP / Retirada / Ataque) ── */
+#cv-filters { gap: 6px 10px; }
+.cv-num-block {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.025);
+}
+.cv-num-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  white-space: nowrap; padding-right: 4px;
+  border-right: 1px solid rgba(255,255,255,0.07); margin-right: 3px;
+}
+#cv-hp-val {
+  width: 52px !important; background: transparent; border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.15); border-radius: 0;
+  color: rgba(255,255,255,0.7); padding: 2px 4px; font-size: 12px;
+  outline: none; font-family: system-ui, sans-serif; text-align: center;
+}
+#cv-hp-val:focus { border-bottom-color: rgba(255,255,255,0.4); }
+
+/* Nº de energías del ataque (total, combina con los orbes) */
+.cv-cost-count {
+  width: 40px !important; background: transparent; border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.15); border-radius: 0;
+  color: rgba(255,255,255,0.7); padding: 2px 4px; font-size: 12px;
+  outline: none; font-family: system-ui, sans-serif; text-align: center;
+}
+.cv-cost-count:focus { border-bottom-color: rgba(255,255,255,0.4); }
+
+/* Op buttons inside num-block use chip-group border */
+.cv-num-block .cv-chip-group { border-radius: 8px !important; }
+.cv-num-block .cv-chip-group .cv-op-btn:first-child { border-radius: 8px 0 0 8px; }
+.cv-num-block .cv-chip-group .cv-op-btn:last-child  { border-radius: 0 8px 8px 0; }
+.cv-op-btn {
+  padding: 5px 9px !important; font-size: 13px !important;
+}
+
+/* Count pushed to right of search row */
+#cv-count { font-size: 11px; color: rgba(255,255,255,0.3); white-space: nowrap; }
+
+/* Apply button — green */
+#cv-apply-btn {
+  background: rgba(40,180,80,0.18) !important;
+  border-color: rgba(60,200,100,0.4) !important;
+  color: rgba(100,230,140,0.9) !important;
+}
+#cv-apply-btn:hover {
+  background: rgba(40,180,80,0.32) !important;
+  border-color: rgba(80,220,120,0.6) !important;
+  color: #6dffaa !important;
+}
+
+/* Energy icon chips — compact, no padding sides */
+.cv-el-icon { padding: 5px 7px !important; }
+.cv-el-icon img { display: block; }
+
+/* Apply button — bigger and more obvious */
+#cv-apply-btn {
+  font-size: 13px !important;
+  padding: 8px 16px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+  border-radius: 10px !important;
+}
+
+/* ── Improved cost slots ── */
+.cv-cost-slot {
+  width: 38px !important; height: 38px !important;
+  cursor: pointer;
+}
+.cv-cost-slot.empty {
+  border: 1.5px dashed rgba(255,255,255,0.22) !important;
+  background: rgba(0,0,0,0.35) !important;
+  font-size: 18px !important; font-weight: 200 !important;
+  color: rgba(255,255,255,0.35) !important;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s !important;
+}
+.cv-cost-slot.empty:hover {
+  border-color: rgba(255,255,255,0.55) !important;
+  background: rgba(255,255,255,0.06) !important;
+  transform: scale(1.08) !important;
+  color: rgba(255,255,255,0.75) !important;
+}
+.cv-cost-slot.filled img { width: 28px !important; height: 28px !important; }
+
+/* Hint text */
+.cv-cost-hint {
+  font-size: 10px; color: rgba(255,255,255,0.28); white-space: nowrap;
+  font-style: italic; pointer-events: none; margin-left: 4px;
+}
+
+/* ── Card grid items — refined info row ── */
+.cv-card-info { transition: opacity 0.15s; }
+.cv-card-wrap:not(:hover) .cv-card-info { opacity: 0.75; }
+.cv-card-wrap:hover .cv-card-info { opacity: 1; }
+
+.cv-card-name { color: rgba(255,255,255,0.82) !important; }
+.cv-card-wrap:hover .cv-card-name { color: #fff !important; }
+
+/* "+ Mazo" button — more presence on hover */
+.cv-card-add-row {
+  color: rgba(255,255,255,0.28) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  background: transparent !important;
+  font-size: 10px !important; font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+}
+.cv-card-add-row:hover {
+  background: rgba(255,255,255,0.09) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.2) !important;
+}
+
+/* ── Sort dropdown refinement ── */
+.pb-sort-menu { border-radius: 10px !important; }
+.cv-sort-opt + .cv-sort-opt { border-top: 1px solid rgba(255,255,255,0.05); }
+.cv-sort-opt.active { color: rgba(255,255,255,0.95) !important; font-weight: 700 !important; }
+
+/* Sort trigger button — matches chip style */
+.pb-sort-trigger {
+  border-radius: 10px !important;
+  padding: 5px 11px !important;
+  font-size: 11px !important;
+}
+
+/* "+ Mazo" → "+" — bigger, square-ish */
+.cv-card-add-row {
+  padding: 4px 10px !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  border-radius: 7px !important;
+  min-width: 28px !important;
+}
+
+/* Pill: no max-width limit, let it grow */
+#cv-deck-pill.open { max-width: none !important; }
+
+/* Copy count badge on pill thumbs */
+#cv-pill-thumbs { overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap !important; }
+.cv-pill-thumb-wrap {
+  position: relative; flex-shrink: 0;
+}
+
+
+/* set de iconos v2: pestañas un punto más grandes */
+.app-tab svg { width: 15px; height: 15px; }
+
+/* ═══ MATERIAL «LIQUID GLASS» (copia local: este archivo carga tras styles.css;
+   la receta canónica y su explicación viven al final de css/styles.css) ═══
+   Menús densos (mucho texto, salen sobre la home holográfica): cristal casi
+   OPACO para legibilidad; conservan el brillo del borde/refracción del glass. */
+#lang-menu, .pb-sort-menu, .pb-set-menu, .mz-menu {
+  position: absolute;
+  background: linear-gradient(165deg, rgba(30,31,42,0.94), rgba(19,19,28,0.96) 46%, rgba(12,12,19,0.975));
+  -webkit-backdrop-filter: blur(18px) saturate(1.9) brightness(1.06);
+  backdrop-filter: blur(18px) saturate(1.9) brightness(1.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow:
+    0 18px 44px rgba(0,0,0,0.55),
+    inset 0 1.5px 0.5px rgba(255,255,255,0.42),
+    inset 0 -1px 0.5px rgba(255,255,255,0.12),
+    inset 1.5px 0 1px -0.5px rgba(255,255,255,0.18),
+    inset -1.5px 0 1px -0.5px rgba(255,255,255,0.18),
+    inset 0 0 24px rgba(255,255,255,0.05);
+}
+html.pb-warp #lang-menu, html.pb-warp .pb-sort-menu, html.pb-warp .pb-set-menu, html.pb-warp .mz-menu {
+  -webkit-backdrop-filter: blur(14px) saturate(1.9) brightness(1.06) url(#pb-glass-warp);
+  backdrop-filter: blur(14px) saturate(1.9) brightness(1.06) url(#pb-glass-warp);
+}
+#lang-menu::before, .pb-sort-menu::before, .pb-set-menu::before, .mz-menu::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; z-index: 0;
+  background:
+    radial-gradient(130% 70% at 50% -14%, rgba(255,255,255,0.16), rgba(255,255,255,0) 52%),
+    radial-gradient(100% 46% at 50% 112%, rgba(255,255,255,0.06), rgba(255,255,255,0) 58%);
+}
+#lang-menu::after, .pb-sort-menu::after, .pb-set-menu::after, .mz-menu::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; z-index: 0;
+  -webkit-backdrop-filter: blur(3px) brightness(1.35) saturate(2.2);
+  backdrop-filter: blur(3px) brightness(1.35) saturate(2.2);
+  padding: 2px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask-composite: exclude;
+}
+
+/* ══ CARTAS CUSTOM DE TCGMINI ══════════════════════════════════════════════
+   Cartas que NO existen en Pokémon TCG Pocket (data/custom.cards.js). Solo son
+   legales en el formato Avanzado, así que llevan su mismo violeta. */
+
+/* Chip del bloque «Avanzados»: el ÚNICO botón que las trae (aparte de escribir su nombre). */
+#cv-custom-chip.active {
+  color: #cbb8ff;
+  background: rgba(149,131,216,0.18);
+  border-color: rgba(149,131,216,0.5);
+}
+
+/* Sello sobre la miniatura: se ve de un vistazo que no es una carta oficial. */
+.cv-custom-badge {
+  position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); z-index: 7;
+  padding: 2px 8px; border-radius: 999px;
+  font-size: 9px; font-weight: 800; line-height: 1.3; letter-spacing: 0.1em;
+  color: #e2d7ff; background: rgba(48,34,86,0.86);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  box-shadow: inset 0 0 0 1px rgba(203,184,255,0.4), 0 1px 6px rgba(0,0,0,0.5);
+  pointer-events: none; white-space: nowrap;
+}
