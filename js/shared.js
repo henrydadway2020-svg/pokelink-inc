@@ -781,7 +781,7 @@ if (typeof firebase !== 'undefined') {
   };
   window.pbFlag = function (k) { return !!(window.PB_FLAGS && window.PB_FLAGS[k]); };
   window.IMG_LANGS = {
-    es: { map: function () { return window.ES_IMAGE_MAP; }, base: _imgLocal ? 'images/es/' : 'https://img.pokelink.com/es/' },
+    es: { map: function () { return window.ES_IMAGE_MAP; }, base: _imgLocal ? 'images/es/' : '/assets/img/es/' },
     ja: { map: function () { return window.JA_IMAGE_MAP; }, base: _imgLocal ? 'images/ja/' : 'https://img.pokelink.com/ja/' },
     it: { map: function () { return window.IT_IMAGE_MAP; }, base: _imgLocal ? 'images/it/' : 'https://img.pokelink.com/it/' },
     fr: { map: function () { return window.FR_IMAGE_MAP; }, base: _imgLocal ? 'images/fr/' : 'https://img.pokelink.com/fr/' },
