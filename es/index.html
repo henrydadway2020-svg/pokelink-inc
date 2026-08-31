@@ -16,21 +16,25 @@
      toma el control de las vistas (su !important ganaría al display en línea del tablero).
      Gateado a http/https: en `file://` (dist de un solo fichero) el router está APAGADO y nadie
      llamaría a switchAppTab → allí el tablero debe seguir siendo la vista de arranque. -->
+<script>(function(){try{if(location.protocol==='http:'||location.protocol==='https:')document.documentElement.classList.add('pb-boot');}catch(e){}})();</script>
+<style>html.pb-boot #page-wrap{display:none!important}</style>
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/styles.css">
-<link rel="stylesheet" href="../css/cards-view.css">
-<link rel="stylesheet" href="../css/mazos-view.css">
-<link rel="stylesheet" href="../css/draft-view.css">
-<link rel="stylesheet" href="../css/jugar-view.css">
-<link rel="stylesheet" href="../css/medallero-view.css">
-<link rel="stylesheet" href="../css/tierlist-view.css">
-<link rel="stylesheet" href="../css/deck-qr.css">
-<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/cards-view.css">
+<link rel="stylesheet" href="css/mazos-view.css">
+<link rel="stylesheet" href="css/draft-view.css">
+<link rel="stylesheet" href="css/jugar-view.css">
+<link rel="stylesheet" href="css/medallero-view.css">
+<link rel="stylesheet" href="css/tierlist-view.css">
+<link rel="stylesheet" href="css/deck-qr.css">
+<link rel="stylesheet" href="css/auth.css">
+<link rel="stylesheet" href="css/pvp.css">
+<link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
@@ -1234,7 +1238,7 @@
       </button>
       <h2 id="privacy-title" data-i18n="privacy.title">Política de privacidad</h2>
       <div id="privacy-body" data-i18n-html="privacy.body">
-        <p>TCGmini guarda todo tu contenido (mazos, tierlists, escenarios y ajustes) localmente en este navegador. Esta versión no envía datos a ningún servidor: no hay inicio de sesión ni funciones multijugador online.</p>
+        <p>TCGmini guarda contenido en este navegador y, al iniciar sesión o utilizar funciones multijugador, procesa los datos necesarios mediante Firebase (Google). Solo se ofrece inicio de sesión con Google.</p>
       </div>
     </div>
   </div>
@@ -1260,85 +1264,85 @@
   <!-- ══════════════════════════════════════════════════════════════════
        DATOS DEL JUEGO (carpeta data/ — NO estaba en tu estructura original,
        hace falta crearla: ver aviso al final de mi respuesta) ══════════════ -->
-  <script src="../data/cards.db.js"></script>
-  <script src="../data/custom.cards.js"></script>
-  <script src="../data/abilities.js"></script>
-  <script src="../data/card_effects.js"></script>
-  <script src="../data/card_abilities.js"></script>
-  <script src="../data/card_trainer_effects.js"></script>
-  <script src="../data/trainer_text.js"></script>
-  <script src="../data/draft.config.js"></script>
-  <script src="../data/draft.cards.js"></script>
-  <script src="../data/sound.events.js"></script>
-  <script src="../data/sound.map.js"></script>
-  <script src="../data/sound.data.js"></script>
-  <script src="../data/i18n.js"></script>
-  <script src="../data/es_image_map.js"></script>
-  <script src="../data/ja_image_map.js"></script>
-  <script src="../data/it_image_map.js"></script>
-  <script src="../data/fr_image_map.js"></script>
-  <script src="../data/pt_image_map.js"></script>
-  <script src="../data/ko_image_map.js"></script>
-  <script src="../data/card_names_es.js"></script>
-  <script src="../data/card_names_es_ocr.js"></script>
-  <script src="../data/card_names_es_pokeapi.js"></script>
-  <script src="../data/card_names_ja.js"></script>
-  <script src="../data/card_names_it.js"></script>
-  <script src="../data/card_names_it_ocr.js"></script>
-  <script src="../data/card_names_it_pokeapi.js"></script>
-  <script src="../data/card_names_fr.js"></script>
-  <script src="../data/card_names_fr_ocr.js"></script>
-  <script src="../data/card_names_fr_pokeapi.js"></script>
-  <script src="../data/card_names_pt_ocr.js"></script>
-  <script src="../data/card_names_ko_ocr.js"></script>
-  <script src="../data/card_names_ko_pokeapi.js"></script>
-  <script src="../data/attack_names_es.js"></script>
-  <script src="../data/attack_names_ja.js"></script>
-  <script src="../data/ability_names_es.js"></script>
-  <script src="../data/ability_names_ja.js"></script>
-  <script src="../data/attack_names_es_ocr.js"></script>
-  <script src="../data/attack_names_ja_ocr.js"></script>
-  <script src="../data/ability_names_es_ocr.js"></script>
-  <script src="../data/ability_names_ja_ocr.js"></script>
-  <script src="../data/card_text_es.js"></script>
-  <script src="../data/card_text_ja.js"></script>
-  <script src="../data/meta_decks.js"></script>
-  <script src="../data/meta_tcgmini.js"></script>
-  <script src="../data/card_focus.js"></script>
-  <script src="../data/packs.js"></script>
-  <script src="../data/rarity.icons.js"></script>
-  <script src="../data/status.icons.js"></script>
-  <script src="../data/profile.icons.js"></script>
+  <script src="data/cards.db.js"></script>
+  <script src="data/custom.cards.js"></script>
+  <script src="data/abilities.js"></script>
+  <script src="data/card_effects.js"></script>
+  <script src="data/card_abilities.js"></script>
+  <script src="data/card_trainer_effects.js"></script>
+  <script src="data/trainer_text.js"></script>
+  <script src="data/draft.config.js"></script>
+  <script src="data/draft.cards.js"></script>
+  <script src="data/sound.events.js"></script>
+  <script src="data/sound.map.js"></script>
+  <script src="data/sound.data.js"></script>
+  <script src="data/i18n.js"></script>
+  <script src="data/es_image_map.js"></script>
+  <script src="data/ja_image_map.js"></script>
+  <script src="data/it_image_map.js"></script>
+  <script src="data/fr_image_map.js"></script>
+  <script src="data/pt_image_map.js"></script>
+  <script src="data/ko_image_map.js"></script>
+  <script src="data/card_names_es.js"></script>
+  <script src="data/card_names_es_ocr.js"></script>
+  <script src="data/card_names_es_pokeapi.js"></script>
+  <script src="data/card_names_ja.js"></script>
+  <script src="data/card_names_it.js"></script>
+  <script src="data/card_names_it_ocr.js"></script>
+  <script src="data/card_names_it_pokeapi.js"></script>
+  <script src="data/card_names_fr.js"></script>
+  <script src="data/card_names_fr_ocr.js"></script>
+  <script src="data/card_names_fr_pokeapi.js"></script>
+  <script src="data/card_names_pt_ocr.js"></script>
+  <script src="data/card_names_ko_ocr.js"></script>
+  <script src="data/card_names_ko_pokeapi.js"></script>
+  <script src="data/attack_names_es.js"></script>
+  <script src="data/attack_names_ja.js"></script>
+  <script src="data/ability_names_es.js"></script>
+  <script src="data/ability_names_ja.js"></script>
+  <script src="data/attack_names_es_ocr.js"></script>
+  <script src="data/attack_names_ja_ocr.js"></script>
+  <script src="data/ability_names_es_ocr.js"></script>
+  <script src="data/ability_names_ja_ocr.js"></script>
+  <script src="data/card_text_es.js"></script>
+  <script src="data/card_text_ja.js"></script>
+  <script src="data/meta_decks.js"></script>
+  <script src="data/meta_tcgmini.js"></script>
+  <script src="data/card_focus.js"></script>
+  <script src="data/packs.js"></script>
+  <script src="data/rarity.icons.js"></script>
+  <script src="data/status.icons.js"></script>
+  <script src="data/profile.icons.js"></script>
 
   <!-- ══ LÓGICA DE LA APP (carpeta js/ — tu estructura solo listaba 6 de los
        ~21 ficheros reales; ver aviso al final de mi respuesta) ══ -->
-  <script src="../js/i18n.js"></script>
-  <script src="../js/shared.js"></script>
-  <script src="../js/formats.js"></script>
-  <script src="../js/mastery.js"></script>
-  <script src="../js/cues.js"></script>
-  <script src="../js/board-engine.js"></script>
-  <script src="../js/turn-fx.js"></script>
-  <script src="../data/cards.db.js"></script>
-  <script src="../js/main.js"></script>
-  <script src="../js/cards-view.js"></script>
-  <script src="../js/router.js"></script>
-  <script src="../data/qr_ids.js"></script>
-  <script src="../js/qr-vendor.js"></script>
-  <script src="../js/jsqr-vendor.js"></script>
-  <script src="../js/deck-qr.js"></script>
-  <script src="../js/mazos-view.js"></script>
-  <script src="../js/draft-view.js"></script>
-  <!-- draft-multi.js: draft multijugador online, requiere Firebase — desactivado en la versión local -->
-  <script src="../js/jugar-view.js"></script>
-  <script src="../js/medallero-view.js"></script>
-  <script src="../js/tierlist-view.js"></script>
-  <script src="../js/mobile-nav.js"></script>
-  <!-- auth.js: login (Google/Discord), requiere Firebase — desactivado en la versión local -->
-  <!-- cloud-sync.js: sincronización de la cuenta en la nube, requiere Firebase — desactivado en la versión local -->
+  <script src="js/i18n.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/formats.js"></script>
+  <script src="js/mastery.js"></script>
+  <script src="js/cues.js"></script>
+  <script src="js/board-engine.js"></script>
+  <script src="js/turn-fx.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cards-view.js"></script>
+  <script src="js/router.js"></script>
+  <script src="data/qr_ids.js"></script>
+  <script src="js/qr-vendor.js"></script>
+  <script src="js/jsqr-vendor.js"></script>
+  <script src="js/deck-qr.js"></script>
+  <script src="js/mazos-view.js"></script>
+  <script src="js/draft-view.js"></script>
+  <script src="js/draft-multi.js"></script>
+  <script src="js/jugar-view.js"></script>
+  <script src="js/medallero-view.js"></script>
+  <script src="js/tierlist-view.js"></script>
+  <script src="js/mobile-nav.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cloud-sync.js"></script>
   <script src="js/welcome-deck.js"></script>
-  <!-- presence.js: contador de jugadores online, requiere Firebase — desactivado en la versión local -->
-  <!-- pvp.js / pvp-sync.js: partidas PvP online, requieren Firebase — desactivados en la versión local -->
+  <script src="js/presence.js"></script>
+  <script src="js/pvp.js"></script>
+  <script src="js/pvp-sync.js"></script>
 
 
 <!-- ══ CARD EDITOR POPOVER ══ -->
@@ -1456,37 +1460,162 @@
   </div>
 </div>
 
-  <!-- ══ MODO LOCAL — sin Firebase.
-       Se ha quitado el módulo de Firebase (auth, Firestore, App Check). En su lugar se
-       define un "stub" inofensivo de window.pbAuth / pbRooms / pbPvp / pbPresence para que
-       cualquier script que aún los referencie (con comprobación tipo `window.x && x()`) no
-       rompa la app; todas las funciones devuelven una promesa rechazada con
-       `offline/not-available` y no hacen ninguna llamada de red. No hay login, nube,
-       presencia ni PvP online: todo el progreso vive en localStorage del navegador. ══ -->
+  <div id="auth-overlay" style="display:none;">
+    <div id="auth-overlay-backdrop" onclick="window.pbCloseLogin&&pbCloseLogin()"></div>
+    <div id="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <button id="auth-close" type="button" aria-label="Cerrar" onclick="window.pbCloseLogin&&pbCloseLogin()">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div id="auth-brand">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="7" y="5" width="13" height="18" rx="2.5" fill="none" stroke="#4dabff" stroke-width="2"/><rect x="13" y="9" width="13" height="18" rx="2.5" fill="#15151c" stroke="#ff6b6b" stroke-width="2"/></svg>
+        <span>TCGmini</span>
+      </div>
+      <h2 id="auth-title" data-i18n="auth.title">Inicia sesión</h2>
+      <p id="auth-sub" data-i18n="auth.subtitle">Guarda tus mazos, tierlists, escenarios y ajustes en tu cuenta y tenlos en todos tus dispositivos.</p>
+      <div id="auth-provider-actions">
+        <button id="auth-google-btn" type="button" onclick="window.pbDoGoogleSignIn&&pbDoGoogleSignIn()">
+          <span class="auth-g-icon"><svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.71A5.4 5.4 0 0 1 3.68 9c0-.59.1-1.17.29-1.71V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.82.96 4.04l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96L3.97 7.3C4.68 5.16 6.66 3.58 9 3.58z"/></svg></span>
+          <span class="auth-g-label" data-i18n="auth.continueGoogle">Continuar con Google</span>
+        </button>
+      </div>
+      <p id="auth-consent" data-i18n="auth.consent">Al continuar, aceptas nuestra política de privacidad.</p>
+      <button id="auth-privacy-link" type="button" onclick="window.pbShowPrivacy&&pbShowPrivacy()" data-i18n="auth.privacy">Política de privacidad</button>
+    </div>
+  </div>
+
+  <!-- ══ FIREBASE (SDK v8 compat) — expone window.pbAuth para los scripts clásicos.
+       Proyecto propio: pokelink-pocket. Solo login con Google habilitado (Discord requeriría
+       un backend propio con Cloud Functions, no incluido). Sin App Check / reCAPTCHA por
+       ahora — es opcional, se puede agregar después con tu propia clave.
+       NOTA: usa firebase.auth() + firebase.database() (Realtime Database), en vez del
+       SDK modular v10 + Firestore que había antes. ══ -->
   <script>
-    (function () {
-      function notAvailable() { return Promise.reject({ code: 'offline/not-available' }); }
+    var firebaseConfig = {
+  apiKey: "AIzaSyD9_yuDSKCGPoUSKVz80gdl-Nz7NeY_wFk",
+  authDomain: "pokelink-2026.firebaseapp.com",
+  databaseURL: "https://pokelink-2026-default-rtdb.firebaseio.com",
+  projectId: "pokelink-2026",
+  storageBucket: "pokelink-2026.firebasestorage.app",
+  messagingSenderId: "501151685730",
+  appId: "1:501151685730:web:fada98a770c437e743853b"
+};
 
-      window.pbAuth = {
-        ready: true,
-        user: null,
-        signInGoogle: notAvailable,
-        signInCustomToken: notAvailable,
-        signInAnonymous: notAvailable,
-        getIdToken: notAvailable,
-        getIdTokenResult: notAvailable,
-        getAppCheckToken: notAvailable,
-        getAccessMethods: function () { return Promise.resolve({ current: null, google: false, discord: false }); },
-        signOutUser: notAvailable,
-        deleteAccount: notAvailable
+
+    var app = firebase.initializeApp(firebaseConfig);
+
+    var auth = firebase.auth();
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function () {});
+
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    window.pbAuth = {
+      ready: true,
+      user: null,
+      signInGoogle: function () { return auth.signInWithPopup(provider); },
+      signInCustomToken: function (token) { return auth.signInWithCustomToken(token); },
+      signInAnonymous: function () { return auth.signInAnonymously(); },
+      getIdToken: function (forceRefresh) {
+        return auth.currentUser ? auth.currentUser.getIdToken(!!forceRefresh) : Promise.reject({ code: 'auth/no-current-user' });
+      },
+      getIdTokenResult: function (forceRefresh) {
+        return auth.currentUser ? auth.currentUser.getIdTokenResult(!!forceRefresh) : Promise.reject({ code: 'auth/no-current-user' });
+      },
+      getAppCheckToken: function () { return Promise.reject({ code: 'appcheck/not-configured' }); },
+      getAccessMethods: function () {
+        if (!auth.currentUser) return Promise.resolve({ current: null, google: false, discord: false });
+        var hasGoogle = auth.currentUser.providerData.some(function (p) { return p.providerId === 'google.com'; });
+        return Promise.resolve({ current: auth.currentUser.uid, google: hasGoogle, discord: false });
+      },
+      signOutUser: function () { return auth.signOut(); },
+      deleteAccount: function () {
+        return auth.currentUser ? auth.currentUser.delete() : Promise.reject({ code: 'auth/no-current-user' });
+      }
+    };
+
+    window.pbDoGoogleSignIn = function () {
+      return window.pbAuth.signInGoogle().catch(function (err) {
+        console.error('[auth] Google sign-in error', err);
+      });
+    };
+    window.pbCloseLogin = function () {
+      var el = document.getElementById('auth-overlay');
+      if (el) el.style.display = 'none';
+    };
+    window.pbOpenLogin = function () {
+      var el = document.getElementById('auth-overlay');
+      if (el) el.style.display = '';
+    };
+
+    var db = firebase.database();
+
+    function snapWrap(id, snap) {
+      return { id: id, exists: function () { return snap.exists(); }, data: function () { return snap.val(); } };
+    }
+
+    function makeCrud(path) {
+      return {
+        get: function (id) {
+          return db.ref(path + '/' + id).once('value').then(function (snap) { return snapWrap(id, snap); });
+        },
+        create: function (id, data) { return db.ref(path + '/' + id).set(data); },
+        set: function (id, data) { return db.ref(path + '/' + id).set(data); },
+        update: function (id, data) { return db.ref(path + '/' + id).update(data); },
+        remove: function (id) { return db.ref(path + '/' + id).remove(); },
+        watch: function (id, cb) {
+          var ref = db.ref(path + '/' + id);
+          var listener = ref.on('value', function (snap) { cb(snapWrap(id, snap)); });
+          return function unsubscribe() { ref.off('value', listener); };
+        }
       };
-      window.pbRooms = { get: notAvailable, create: notAvailable, set: notAvailable, update: notAvailable, remove: notAvailable, watch: function () { return function () {}; } };
-      window.pbPvp = { get: notAvailable, create: notAvailable, set: notAvailable, update: notAvailable, remove: notAvailable, watch: function () { return function () {}; }, getPriv: notAvailable, setPriv: notAvailable };
-      window.pbPresence = { beat: function () { return Promise.resolve(); }, leave: function () { return Promise.resolve(); }, counts: function () { return Promise.resolve({ online: null, inMatch: null }); } };
+    }
 
-      // Notifica "sin sesión" a quien escuche el evento de auth, como hacía el Firebase real.
-      window.dispatchEvent(new CustomEvent('pb-auth', { detail: null }));
-    })();
+    window.pbRooms = makeCrud('draftGames');
+
+    var pvpCrud = makeCrud('pvpGames');
+    window.pbPvp = {
+      get: pvpCrud.get, create: pvpCrud.create, set: pvpCrud.set,
+      update: pvpCrud.update, remove: pvpCrud.remove, watch: pvpCrud.watch,
+      getPriv: function (id) {
+        return db.ref('pvpGames/' + id + '/private/data').once('value').then(function (snap) { return snapWrap(id, snap); });
+      },
+      setPriv: function (id, data) { return db.ref('pvpGames/' + id + '/private/data').set(data); }
+    };
+
+    window.pbPresence = {
+      beat: function () {
+        if (!auth.currentUser) return Promise.resolve();
+        return db.ref('presence/' + auth.currentUser.uid).set({ at: firebase.database.ServerValue.TIMESTAMP }).catch(function () {});
+      },
+      leave: function () {
+        if (!auth.currentUser) return Promise.resolve();
+        return db.ref('presence/' + auth.currentUser.uid).remove().catch(function () {});
+      },
+      counts: function () {
+        return db.ref('presence').once('value').then(function (snap) {
+          var val = snap.val() || {};
+          return { online: Object.keys(val).length, inMatch: null };
+        }).catch(function () { return { online: null, inMatch: null }; });
+      }
+    };
+
+    auth.onAuthStateChanged(function (user) {
+      window.pbAuth.user = user;
+      window.dispatchEvent(new CustomEvent('pb-auth', { detail: user }));
+    });
   </script>
+<!-- 1. Primero cargamos los scripts de Firebase (SDK v8 compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
+<!-- 2. Luego las configuraciones y tus claves reales -->
+<script src="../js/shared.js"></script>
+
+<!-- 3. Por último las vistas y el motor del tablero -->
+<script src="../js/jugar-view.js"></script>
+<script src="../js/main.js"></script>
+
 </body>
 </html>
+
