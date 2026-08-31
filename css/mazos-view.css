@@ -1,0 +1,2733 @@
+/* ══════════════════════════════════════════════
+   MAZOS VIEW  (css/mazos-view.css)
+   Mis Mazos tab — deck management UI
+══════════════════════════════════════════════ */
+
+/* ── View container ── */
+#view-mazos {
+  position: fixed; top: 48px; left: 0; right: 0; bottom: 0;
+  background: #111118;
+  display: flex; flex-direction: column;
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+  z-index: 9050;
+  color: #e0e0e0;
+}
+
+/* ── Sub-views ── */
+#mz-grid-view,
+#mz-detail-view {
+  display: flex; flex-direction: column;
+  flex: 1; overflow: hidden;
+  min-height: 0;
+}
+#mz-detail-view { display: none; }
+#mz-mobile-cards-host {
+  display: none; flex: 1; min-height: 0; overflow: hidden;
+  flex-direction: column; background: #111118;
+}
+
+/* ════ DECK GRID VIEW ═════════════════════════════════════════════ */
+
+/* Header bar */
+#mz-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px 12px;
+  background: #1a1a28;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+/* Título de la página: «Barajas» o «Mejores mazos». Ocupa el sitio del viejo
+   conmutador (son dos páginas del nav, no dos estados de una misma). */
+#mz-title {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  font-size: 17px; font-weight: 700;
+  color: rgba(255,255,255,0.95);
+  letter-spacing: 0.02em;
+}
+#mz-deck-count {
+  font-family: system-ui, sans-serif;
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.04em;
+  margin-right: auto;   /* espaciador: empuja «Seleccionar»+«Nuevo mazo» a la derecha, juntos */
+}
+#mz-new-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55);
+  font-size: 12px; font-weight: 700;
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+#mz-new-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
+#mz-new-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.22);
+}
+
+/* Botón «Seleccionar» — mismo skin neutro, a la izquierda de «Nuevo mazo» */
+#mz-select-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55);
+  font: 700 12px system-ui, sans-serif; letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+#mz-select-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+#mz-select-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.22); }
+
+/* En modo selección, la barra sustituye al conmutador Meta/Mis mazos + contador */
+#mz-header.mz-selecting #mz-sort-wrap { display: none !important; }
+#mz-header.mz-selecting #mz-title,
+#mz-header.mz-selecting #mz-deck-count { display: none; }
+
+/* Barra de selección múltiple — ocupa el ancho; acciones a la derecha */
+#mz-select-bar {
+  flex: 1;
+  display: flex; align-items: center; gap: 10px;
+}
+#mz-sel-count {
+  font: 700 12px system-ui, sans-serif; letter-spacing: 0.03em;
+  color: rgba(255,255,255,0.6);
+  margin-right: auto;   /* separa Cancelar+contador (izq) de las acciones (dcha) */
+}
+#mz-select-bar button {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.62);
+  font: 700 12px system-ui, sans-serif; letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+}
+#mz-select-bar button:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.22); }
+#mz-sel-del.mz-sel-danger { border-color: rgba(220,60,60,0.28); color: rgba(230,110,110,0.85); }
+#mz-sel-del.mz-sel-danger:hover:not(:disabled) { background: rgba(220,60,60,0.14); color: rgba(245,130,130,0.95); border-color: rgba(220,60,60,0.5); }
+#mz-select-bar button:disabled { opacity: 0.4; cursor: default; }
+#mz-select-bar button:disabled:hover { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.62); border-color: rgba(255,255,255,0.12); }
+/* Botón «Favoritos» — dorado cuando la selección ya es toda favorita */
+#mz-sel-fav.on { border-color: rgba(240,200,90,0.5); color: rgba(245,205,110,0.95); background: rgba(240,200,90,0.1); }
+#mz-sel-fav.on svg { fill: rgba(245,205,110,0.95); }
+
+/* Scrollable grid body */
+#mz-grid-body {
+  flex: 1; overflow-y: auto; min-height: 0;
+  padding: 20px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+#mz-grid-body::-webkit-scrollbar { width: 6px; }
+#mz-grid-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+/* Grid layout */
+#mz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+/* Empty state */
+#mz-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 80px 40px;
+  gap: 14px;
+  color: rgba(255,255,255,0.25);
+  font-size: 15px; text-align: center;
+}
+#mz-empty svg { width: 48px; height: 48px; opacity: 0.2; }
+#mz-empty-hint {
+  font-size: 12px; color: rgba(255,255,255,0.18); line-height: 1.6;
+}
+
+/* ── Deck card ── */
+.mz-deck-card {
+  display: flex; flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: #16161f;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.18s, transform 0.2s cubic-bezier(0.34,1.3,0.64,1), box-shadow 0.2s;
+}
+.mz-deck-card:hover {
+  border-color: rgba(255,255,255,0.16);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.5);
+}
+
+/* Stack preview: 3 back layers + front card, like "Mis Mazos" sidebar */
+.mz-stack {
+  position: relative;
+  aspect-ratio: 400/559;
+  margin-bottom: 18px;
+}
+.mz-stack-back {
+  position: absolute; inset: 0;
+  border-radius: 9px;
+  background-size: cover; background-position: center;
+  background-color: #252535;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 0.26s cubic-bezier(0.34,1.3,0.64,1), opacity 0.24s;
+}
+.mz-stack-back-3 { transform: translateY(10px); opacity: 0.35; z-index: 0; }
+.mz-stack-back-2 { transform: translateY(6px);  opacity: 0.55; z-index: 1; }
+.mz-stack-back-1 { transform: translateY(3px);  opacity: 0.78; z-index: 2; }
+.mz-stack-front {
+  position: absolute; inset: 0; z-index: 3;
+  border-radius: 9px;
+  background-size: cover; background-position: center;
+  background-color: #1a1a2a;
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s;
+}
+.mz-stack-front-empty {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #1e1e30, #252540);
+}
+.mz-stack-front-empty svg {
+  width: 40px; height: 40px; opacity: 0.18;
+}
+/* Hover: el mazo "se abre" — las cartas del stack se separan por igual.
+   Esa separación (NO un zoom que recorta el borde) es lo que da la sensación
+   de elevación. La info tapa con su fondo el borde inferior que asoma. */
+.mz-deck-card:hover .mz-stack-front {
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+.mz-deck-card:hover .mz-stack-back-1 { transform: translateY(6px);  opacity: 0.9;  }
+.mz-deck-card:hover .mz-stack-back-2 { transform: translateY(12px); opacity: 0.68; }
+.mz-deck-card:hover .mz-stack-back-3 { transform: translateY(18px); opacity: 0.48; }
+
+/* ── Slot «crear mazo»: CALCA un mazo (stack + info); front = "+", info = «Nuevo mazo» ── */
+.mz-create-card {
+  display: flex; flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: #16161f;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  padding: 0; text-align: inherit;
+  font-family: system-ui, sans-serif;
+  -webkit-appearance: none; appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.18s, transform 0.2s cubic-bezier(0.34,1.3,0.64,1), box-shadow 0.2s;
+}
+.mz-create-card:hover {
+  border-color: rgba(255,255,255,0.16);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.5);
+}
+/* Front del stack = cara del mazo con el "+" (el stack NO se despliega en hover) */
+.mz-create-front {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(150deg, #1c1c2b, #23233a);
+}
+.mz-create-plus {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(255,255,255,0.26);
+  color: rgba(255,255,255,0.5);
+  transition: transform 0.2s cubic-bezier(0.34,1.3,0.64,1), border-color 0.2s, color 0.2s;
+}
+.mz-create-plus svg { width: 24px; height: 24px; }
+.mz-create-card:hover .mz-stack-front {
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+.mz-create-card:hover .mz-create-plus {
+  transform: scale(1.1);
+  border-color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.85);
+}
+/* Info: «Nuevo mazo» centrado, donde en un mazo van el nombre + los botones */
+.mz-create-info {
+  position: relative; z-index: 5;
+  flex: 1 1 auto;
+  min-height: 88px;                       /* iguala la info de un mazo (nombre+fecha+botones) */
+  background: #16161f;
+  padding: 10px 12px 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.mz-create-label {
+  font-size: 14px; font-weight: 600; letter-spacing: -0.01em;
+  color: rgba(255,255,255,0.6);
+  transition: color 0.2s;
+}
+.mz-create-card:hover .mz-create-label { color: rgba(255,255,255,0.9); }
+
+/* Miniatura compuesta (cartas destacadas): 2-3 bandas = mitad superior de cada carta */
+.mz-thumb-bands { position: absolute; inset: 0; display: flex; flex-direction: column; border-radius: inherit; overflow: hidden; }
+.mz-thumb-band {
+  flex: 1 1 0; min-height: 0;
+  background-size: 100% auto; background-repeat: no-repeat;
+  background-color: #14141c;
+}
+.mz-thumb-band + .mz-thumb-band { box-shadow: inset 0 1px 0 rgba(0,0,0,0.55); }
+
+/* Marca de selección (solo en modo selección) */
+.mz-select-check {
+  position: absolute; top: 9px; left: 9px; z-index: 6;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(14,14,22,0.55); border: 2px solid rgba(255,255,255,0.55);
+  color: transparent;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+}
+.mz-select-check { z-index: 8; }   /* por encima del tinte de selección */
+.mz-select-check svg { width: 13px; height: 13px; }
+.mz-deck-card.mz-selectable .mz-select-check { display: flex; }
+.mz-deck-card.mz-selectable .mz-fav-badge { display: none; }
+/* Los botones se esconden SIN colapsar la barra: así la tarjeta no encoge al entrar
+   en selección (la energía ya no vive aquí, vive en la fila del nombre) */
+.mz-deck-card.mz-selectable .mz-deck-btns { visibility: hidden; }
+/* Selección MUY visible: tinte de toda la tarjeta + contorno grueso + check sólido */
+.mz-deck-card.mz-selected {
+  border-color: #4dabff;
+  box-shadow: 0 0 0 2px rgba(77,171,255,0.75), 0 8px 22px rgba(30,120,220,0.35);
+}
+.mz-deck-card.mz-selected::after {
+  content: ''; position: absolute; inset: 0; z-index: 6; pointer-events: none;
+  border-radius: inherit;
+  background: rgba(77,171,255,0.26);
+}
+.mz-deck-card.mz-selected .mz-select-check {
+  background: #4dabff; border-color: #4dabff; color: #fff;
+  box-shadow: 0 2px 8px rgba(30,120,220,0.6);
+}
+
+/* Estrella de favorito (esquina sup. izq., fuera de modo selección) */
+.mz-fav-badge {
+  position: absolute; top: 8px; left: 8px; z-index: 6;
+  width: 24px; height: 24px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(14,14,22,0.55); border: 1px solid rgba(240,200,90,0.35);
+  color: rgba(245,205,110,0.98);
+  -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+.mz-fav-badge svg { width: 14px; height: 14px; }
+
+/* Rubber-band: rectángulo de selección con el ratón */
+.mz-rubber {
+  position: fixed; z-index: 9200; pointer-events: none;
+  background: rgba(77,171,255,0.14);
+  border: 1px solid rgba(77,171,255,0.6);
+  border-radius: 3px;
+}
+
+/* Info area below thumb */
+.mz-deck-info {
+  position: relative; z-index: 5;
+  background: #16161f;
+  padding: 10px 12px 12px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.mz-deck-name {
+  font-family: system-ui, sans-serif;
+  font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+  color: rgba(255,255,255,0.92);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mz-deck-date {
+  font-size: 10.5px; color: rgba(255,255,255,0.34);
+  letter-spacing: 0.01em;
+}
+/* Barra inferior: botones (izq) + orbes de energía (esquina inferior derecha) */
+.mz-deck-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 6px; margin-top: 8px;
+  min-height: 29px;   /* alto estable aunque el cúmulo de energía sea más bajo */
+}
+/* Botones y separaciones ajustados para dejar sitio al cúmulo de energía de la derecha:
+   4 botones = 131px, y una tarjeta de 190px (mínimo del grid) deja 166px de contenido. */
+.mz-deck-btns { display: flex; gap: 5px; }
+.mz-deck-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 29px; height: 29px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.58);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.1s;
+}
+.mz-deck-btn svg { width: 14px; height: 14px; }
+.mz-deck-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
+.mz-deck-btn:active { transform: scale(0.94); }
+/* ── Cúmulo de energías del mazo (esquina inferior derecha) ─────────
+   1 energía = orbe suelto · 2 = superpuestas a la mitad · 3 = triángulo.
+   Apiladas ocupan 25px como mucho, así caben las tres en el hueco.  */
+.mz-deck-energy { flex: 0 0 auto; position: relative; display: flex; align-items: center; }
+.mz-deck-energy .mz-el-orb,
+.mz-deck-energy .mz-el-dot-circle {
+  width: 16px; height: 16px; border-radius: 50%;
+  /* aro del color de la superficie: recorta cada orbe del que tiene debajo */
+  box-shadow: 0 0 0 1.5px #16161f, 0 1px 3px rgba(0,0,0,0.5);
+}
+.mz-deck-energy[data-n="2"],
+.mz-deck-energy[data-n="3"] { display: block; width: 25px; height: 16px; }
+.mz-deck-energy[data-n="2"] > *,
+.mz-deck-energy[data-n="3"] > * { position: absolute; }
+/* 2 → superpuestas a la mitad, la primera delante */
+.mz-deck-energy[data-n="2"] > :nth-child(1) { left: 0;   top: 0; z-index: 2; }
+.mz-deck-energy[data-n="2"] > :nth-child(2) { left: 9px; top: 0; z-index: 1; }
+/* 3 → triángulo: una arriba centrada, dos abajo */
+.mz-deck-energy[data-n="3"] { height: 25px; }
+.mz-deck-energy[data-n="3"] > :nth-child(1) { left: 4.5px; top: 0;   z-index: 3; }
+.mz-deck-energy[data-n="3"] > :nth-child(2) { left: 0;     top: 9px; z-index: 2; }
+.mz-deck-energy[data-n="3"] > :nth-child(3) { left: 9px;   top: 9px; z-index: 1; }
+
+/* ════ DECK DETAIL VIEW ══════════════════════════════════════════ */
+
+/* Detail header */
+#mz-detail-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 6px 20px;
+  background: #1a1a28;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+#mz-back-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.5);
+  font-size: 12px; font-weight: 700;
+  font-family: system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+#mz-back-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+#mz-detail-deck-name-header {
+  font-family: system-ui, sans-serif;
+  font-size: 14px; font-weight: 600;
+  color: rgba(255,255,255,0.85);
+}
+
+/* Detail body: two columns */
+#mz-detail-body {
+  flex: 1; overflow: hidden; min-height: 0;
+  display: flex; gap: 0;
+}
+
+/* Left: card grid */
+#mz-detail-cards-col {
+  flex: 0 0 60%;
+  overflow-y: auto;
+  padding: 16px;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+#mz-detail-cards-col::-webkit-scrollbar { width: 6px; }
+#mz-detail-cards-col::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+/* 5-column card grid */
+#mz-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+/* Individual card in detail grid */
+.mz-detail-card {
+  position: relative;
+  aspect-ratio: 400/559;
+  border-radius: 8px;
+  background-size: cover; background-position: center;
+  background-color: #252535;
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s;
+  overflow: visible;
+}
+.mz-detail-card:hover {
+  transform: scale(1.04) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.65);
+  border-color: rgba(255,255,255,0.22);
+  z-index: 2;
+}
+.mz-detail-card-empty {
+  background-color: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.08);
+}
+/* Duplicate badge */
+.mz-card-count-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: rgba(18,18,28,0.95);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  font-family: system-ui, sans-serif;
+  font-size: 9px; font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  padding: 1px 4px;
+  line-height: 1.3;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Section label inside detail */
+.mz-section-label {
+  font-size: 9px; font-weight: 800;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 6px; margin-top: 12px;
+  font-family: system-ui, sans-serif;
+}
+.mz-section-label:first-child { margin-top: 0; }
+
+/* Right: stats + actions */
+#mz-detail-info-col {
+  flex: 0 0 40%;
+  overflow-y: auto;
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 14px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+#mz-detail-info-col::-webkit-scrollbar { width: 6px; }
+#mz-detail-info-col::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+/* Deck name editable */
+#mz-detail-name {
+  font-family: system-ui, sans-serif;
+  font-size: 18px; font-weight: 600;
+  color: rgba(255,255,255,0.92);
+  outline: none;
+  border-radius: 6px;
+  padding: 2px 4px;
+  cursor: text;
+  transition: background 0.15s;
+  word-break: break-word;
+}
+#mz-detail-name:focus {
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
+}
+
+/* Stats panel */
+.mz-stats-panel {
+  background: #1a1a28;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.mz-stat-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px;
+}
+.mz-stat-label {
+  color: rgba(255,255,255,0.4);
+  font-family: system-ui, sans-serif;
+}
+.mz-stat-value {
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  color: rgba(255,255,255,0.82);
+}
+
+/* Type breakdown bar */
+.mz-type-bar {
+  display: flex; border-radius: 4px; overflow: hidden;
+  height: 6px; gap: 1px;
+}
+.mz-type-bar-poke {
+  background: rgba(100,220,100,0.7);
+  border-radius: 3px 0 0 3px;
+  transition: width 0.3s ease;
+}
+.mz-type-bar-trainer {
+  background: rgba(100,170,255,0.7);
+  border-radius: 0 3px 3px 0;
+  transition: width 0.3s ease;
+}
+
+/* Element dots row */
+.mz-element-row {
+  display: flex; flex-wrap: wrap; gap: 5px;
+}
+.mz-el-dot {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  font-family: system-ui, sans-serif;
+}
+.mz-el-dot-circle {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.mz-el-orb {
+  width: 16px; height: 16px; object-fit: contain; flex-shrink: 0;
+  border-radius: 50%;   /* los orbes son JPEG sin transparencia → recortar esquinas negras */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+/* ── Editor de energías (detalle, solo mazos propios) ── */
+/* La energía de la cabecera es editable: se toca y sale el popover (como el nombre) */
+.mz-energy-editable { cursor: pointer; border-radius: 7px; padding: 2px 6px; transition: background 0.14s; }
+.mz-energy-editable:hover { background: rgba(255,255,255,0.07); }
+.mz-energy-add {
+  display: inline-flex; align-items: center; gap: 4px;
+  font: 700 11px system-ui, sans-serif; letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.4);
+}
+.mz-energy-add svg { width: 12px; height: 12px; }
+
+/* Popover del selector de energía */
+.mz-energy-pop {
+  position: fixed; z-index: 9300;
+  display: flex; flex-wrap: wrap; gap: 7px; max-width: 220px;
+  padding: 12px; border-radius: 12px;
+  background: rgba(20,20,28,0.97);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transform: translateY(-4px) scale(0.98);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+.mz-energy-pop.open { opacity: 1; transform: none; }
+
+.mz-energy-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  opacity: 0.4;
+  filter: grayscale(0.85);
+  transition: opacity 0.15s, filter 0.15s, background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.mz-energy-toggle .mz-el-orb { width: 20px; height: 20px; }
+.mz-energy-toggle:hover { opacity: 0.8; filter: grayscale(0.3); border-color: rgba(255,255,255,0.2); }
+.mz-energy-toggle:active { transform: scale(0.92); }
+.mz-energy-toggle.on {
+  opacity: 1; filter: none;
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.28);
+}
+
+/* Selector inferior de energía del constructor móvil. Reutiliza el modal/sheet
+   de Cartas destacadas y solo define su contenido específico. */
+.mz-energy-modal { z-index: 9500; }
+.mz-energy-modal .mz-energy-sheet { padding: 18px 16px calc(22px + var(--safe-bottom)); }
+.mz-energy-sheet-head {
+  display: flex; align-items: center; gap: 12px; max-width: 460px; margin: 0 auto 16px;
+  font: 750 17px system-ui, sans-serif; color: rgba(255,255,255,0.94);
+}
+.mz-energy-sheet-head > span { flex: 1; }
+.mz-energy-sheet-close {
+  display: flex; align-items: center; justify-content: center; width: 38px; height: 38px;
+  border: 0; border-radius: 10px; background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.62); cursor: pointer;
+}
+.mz-energy-sheet-close svg { width: 17px; height: 17px; }
+.mz-energy-options {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px;
+  width: 100%; max-width: 460px; margin: 0 auto;
+}
+.mz-energy-options .mz-energy-toggle { width: 100%; height: 58px; border-radius: 13px; }
+.mz-energy-options .mz-energy-toggle .mz-el-orb { width: 30px; height: 30px; }
+
+/* Stage row */
+.mz-stage-row {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.mz-stage-badge {
+  padding: 3px 10px; border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  font-family: system-ui, sans-serif;
+}
+
+/* Grupo de acciones del detalle — ahora en la CABECERA (derecha), no en una franja bajo el mazo. */
+#mz-detail-actions {
+  display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0;
+}
+/* Botones con etiqueta visible (Activar / Editar / Cartas destacadas): pastilla ancha, texto inline. */
+.mz-detail-btn.labeled { width: auto; padding: 0 11px; gap: 6px; }
+.mz-detail-btn.labeled span {
+  position: static; transform: none; background: none; border: none; padding: 0;
+  bottom: auto; left: auto; opacity: 1; pointer-events: auto; z-index: auto;
+  font: 700 12.5px system-ui, sans-serif; letter-spacing: 0; color: inherit; white-space: nowrap;
+}
+.mz-detail-btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.62);
+  font-family: system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.mz-detail-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.mz-detail-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+/* Solo icono: el texto del botón = tooltip al pasar el ratón (aparece a los 0.5s). */
+.mz-detail-btn span {
+  position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%);
+  background: rgba(14,14,22,0.97); color: rgba(255,255,255,0.9);
+  font: 700 11px system-ui, sans-serif; letter-spacing: 0.02em; white-space: nowrap;
+  padding: 5px 10px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.1);
+  pointer-events: none; opacity: 0; transition: opacity 0.15s 0.5s; z-index: 5;
+}
+.mz-detail-btn:hover span { opacity: 1; }
+.mz-detail-btn.eliminar {
+  border-color: rgba(220,60,60,0.2);
+  color: rgba(220,100,100,0.6);
+}
+.mz-detail-btn.eliminar:hover { background: rgba(220,60,60,0.12); color: rgba(240,120,120,0.9); border-color: rgba(220,60,60,0.35); }
+
+/* ══ MAZO ACTIVO (modelo TCG Live) ══
+   Un único verde para todo el estado «este es tu mazo activo»: el botón de play en verde
+   brillante + el outline de la tarjeta. Sin insignias ni textura metálica (Daniel 2026-08-12):
+   el material en reposo es el neutro translúcido del resto de la app. */
+:root {
+  --mz-active: #3fd68a;
+  --mz-active-hi: #57e39a;
+  --mz-active-lo: #2bb573;
+}
+
+/* «Activar mazo»: pastilla con etiqueta (la forma la da .labeled); aquí solo el color de reposo. */
+.mz-detail-btn.activar {
+  border-color: rgba(255,255,255,0.16); color: rgba(255,255,255,0.86); background: rgba(255,255,255,0.06);
+}
+.mz-detail-btn.activar:hover {
+  background: rgba(63,214,138,0.14); color: #eafff2; border-color: rgba(63,214,138,0.45);
+}
+/* Ya activo: verde brillante (indicador de estado, no conmutador → sin cursor de acción). */
+.mz-detail-btn.activar.is-active,
+.mz-detail-btn.activar.is-active:hover {
+  background: linear-gradient(180deg, var(--mz-active-hi), var(--mz-active-lo));
+  color: #07240f; border-color: rgba(120,240,180,0.7); cursor: default;
+  box-shadow: 0 4px 16px -5px rgba(63,214,138,0.55);
+}
+
+/* Play de la tarjeta de Mis mazos: mismo verde brillante cuando es el mazo activo. */
+.mz-deck-btn.activar.is-active,
+.mz-deck-btn.activar.is-active:hover {
+  background: linear-gradient(180deg, var(--mz-active-hi), var(--mz-active-lo));
+  color: #07240f; border-color: rgba(120,240,180,0.7); cursor: default;
+  box-shadow: 0 3px 12px -4px rgba(63,214,138,0.6);
+}
+.mz-deck-btn.activar:hover { border-color: rgba(63,214,138,0.5); color: #d6ffe8; }
+
+/* (El outline verde de la tarjeta activa vive al FINAL del archivo: el bloque
+   «AESTHETIC UPDATE» pisa con !important el borde y la sombra en :hover.) */
+
+/* ── Export toast ── */
+#mz-export-toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(18,18,28,0.96);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 13px; font-weight: 700; font-family: system-ui, sans-serif;
+  color: rgba(255,255,255,0.85);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+#mz-export-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Responsive: narrow screens ── */
+@media (max-width: 600px) {
+  #mz-detail-body { flex-direction: column; }
+  /* OJO: sin max-height en #mz-detail-cols — el layout .mz-mine es vertical con
+     overflow visible; un tope de alto aquí hacía que el mazo se SOLAPARA con las
+     stats de debajo (legacy del viejo layout a 2 columnas). */
+  #mz-detail-cards-col {
+    flex: none;
+    border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  #mz-detail-info-col { flex: none; }
+  #mz-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+}
+
+/* ══ AESTHETIC UPDATE — align with app design language ══ */
+
+/* Headers transparent — same as Cartas */
+#mz-header, #mz-detail-header {
+  background: transparent !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+}
+
+/* Deck cards — less opaque, more subtle */
+.mz-deck-card {
+  border-radius: 10px !important;
+  background: rgba(255,255,255,0.03) !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+.mz-deck-card:hover {
+  border-color: rgba(255,255,255,0.14) !important;
+  background: rgba(255,255,255,0.05) !important;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.5) !important;
+}
+
+/* Thumbnail fallback — darker */
+.mz-stack-front-empty { background: linear-gradient(135deg, #141420, #1c1c2e) !important; }
+
+/* Detail back button — match app style */
+#mz-back-btn { border-radius: 10px !important; }
+
+/* Stats panel — no heavy surface */
+.mz-stats-panel {
+  background: rgba(255,255,255,0.025) !important;
+  border-radius: 10px !important;
+  border-color: rgba(255,255,255,0.06) !important;
+}
+
+/* Detail column separator */
+#mz-detail-body { gap: 20px !important; }
+#mz-detail-cards-col { border-right-color: rgba(255,255,255,0.05) !important; }
+
+/* Grid gap more breathable */
+#mz-grid { gap: 14px !important; }
+
+/* ══ SELECTOR DE RIVAL (Probar mazo) — cápsulas horizontales ══ */
+.mz-rival-modal { width: 575px; max-width: calc(100vw - 48px); }
+.mz-rival-title { text-align: center; font-size: 16px; }
+.mz-rival-sub-head { text-align: center; margin-top: -8px; }
+.mz-rival-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  max-height: 340px; overflow-y: auto; padding: 2px;
+}
+.mz-rival-opt {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 12px; border-radius: 12px;
+  border: 1.5px solid transparent;
+  background: rgba(255,255,255,0.04);
+  cursor: pointer; font-family: system-ui, sans-serif;
+  text-align: left; width: 100%;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+.mz-rival-opt:hover { background: rgba(255,255,255,0.08); }
+.mz-rival-opt:active { transform: scale(0.98); }
+.mz-rival-opt.sel { border-color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08); }
+.mz-rival-opt.disabled { opacity: 0.35; cursor: default; }
+/* Stack de cartas — mismo lenguaje que Mis Mazos de la sidebar */
+.mz-rival-stack {
+  width: 52px; height: 73px; flex-shrink: 0;
+  position: relative; border-radius: 5px;
+}
+.mzr-back {
+  position: absolute; inset: 0; border-radius: 5px;
+  background-size: cover; background-position: center;
+}
+.mzr-back-3 { transform: translateY(5px); opacity: 0.45; }
+.mzr-back-2 { transform: translateY(3.5px); opacity: 0.65; }
+.mzr-back-1 { transform: translateY(2px); opacity: 0.82; }
+.mzr-front {
+  position: absolute; inset: 0; border-radius: 5px;
+  background-size: cover; background-position: center;
+  background-color: rgba(255,255,255,0.06);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.45);
+}
+.mzr-front-empty {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px;
+}
+.mz-rival-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mz-rival-name {
+  font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.88);
+  line-height: 1.3; word-break: break-word;
+}
+.mz-rival-sub { font-size: 11px; color: rgba(255,255,255,0.35); }
+.mz-rival-section {
+  grid-column: 1 / -1;
+  font-family: system-ui, sans-serif;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  padding: 9px 4px 2px;
+}
+.mz-rival-section:first-child { padding-top: 2px; }
+/* Picker: dos pestañas deslizantes (Mis mazos / Mazos meta) */
+.mz-pick-tabs {
+  position: relative; display: flex; gap: 0;
+  background: rgba(255,255,255,0.04); border-radius: 10px; padding: 4px;
+  margin-bottom: 4px;
+}
+.mz-pick-tab {
+  position: relative; z-index: 1; flex: 1 1 0;
+  padding: 8px 10px; border: none; background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: color 0.18s;
+}
+.mz-pick-tab:hover { color: rgba(255,255,255,0.82); }
+.mz-pick-tab.active { color: #fff; }
+.mz-pick-tab-ind {
+  position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px;
+  width: calc(50% - 4px);
+  background: rgba(255,255,255,0.1); border-radius: 7px;
+  transition: transform 0.24s cubic-bezier(0.4,0,0.2,1);
+}
+.mz-pick-tabs.on-meta .mz-pick-tab-ind { transform: translateX(100%); }
+.mz-pick-empty {
+  grid-column: 1 / -1; text-align: center; padding: 34px 12px; white-space: pre-line;
+  color: rgba(255,255,255,0.35); font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5;
+}
+/* Lado "aleatorio oculto" del selector: dorso de carta (misterio) */
+.start-sel-cover.mystery { background-color: rgba(255,255,255,0.04); }
+
+/* ══ SELECTOR DE INICIO X-vs-Y (vertical) ══ */
+.start-sel { width: min(380px, calc(100vw - 36px)); gap: 8px; padding: 16px 18px; }
+.start-sel-side {
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  padding: 13px 14px; border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid color-mix(in srgb, var(--pc) 50%, rgba(255,255,255,0.06));
+}
+.start-sel-label {
+  font-family: system-ui, sans-serif; font-weight: 800; font-size: 12px;
+  letter-spacing: 1.4px; text-transform: uppercase; color: var(--pc);
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.start-sel-cover {
+  position: relative; cursor: pointer;
+  width: 94px; aspect-ratio: 367 / 512; border-radius: 8px;
+  background-size: cover; background-position: center;
+  background-color: rgba(255,255,255,0.05);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.16s cubic-bezier(0.34,1.3,0.64,1), box-shadow 0.16s, filter 0.16s, border-color 0.16s;
+}
+.start-sel-cover:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.6);
+  filter: brightness(1.07);
+  border-color: color-mix(in srgb, var(--pc) 60%, rgba(255,255,255,0.12));
+}
+.start-sel-cover:active { transform: translateY(-1px) scale(0.99); }
+.start-sel-cover.empty {
+  color: rgba(255,255,255,0.4); font-size: 11px; line-height: 1.4; text-align: center;
+  padding: 8px; font-family: system-ui, sans-serif;
+}
+/* Insignia "cambiar mazo" en la esquina (color del jugador) — clic en el mazo para elegir otro */
+.start-sel-edit {
+  position: absolute; top: -8px; right: -8px;
+  width: 25px; height: 25px; border-radius: 50%;
+  background: var(--pc, #4dabff); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  border: 2.5px solid #16161f;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: transform 0.16s cubic-bezier(0.34,1.3,0.64,1), box-shadow 0.16s;
+}
+.start-sel-edit svg { width: 13px; height: 13px; }
+.start-sel-cover:hover .start-sel-edit { transform: scale(1.15); box-shadow: 0 3px 11px rgba(0,0,0,0.55); }
+.start-sel-deckname {
+  font-family: system-ui, sans-serif; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.7); text-align: center; cursor: pointer;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  transition: color 0.15s;
+}
+.start-sel-deckname:hover { color: rgba(255,255,255,0.95); }
+/* Lado J1 = TU MAZO ACTIVO (solo lectura: se cambia en «Mis mazos») */
+.start-sel-active-tag {
+  font: 600 10.5px/1 system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.38); margin-top: -3px;
+}
+.start-sel-cover.start-sel-dim { filter: grayscale(0.7) brightness(0.62); }
+.start-sel-reason {
+  font: 500 11.5px/1.35 system-ui, sans-serif; color: rgba(255,255,255,0.5);
+  text-align: center; max-width: 200px;
+}
+.start-sel-reason.is-bad { color: #ffb4b4; }
+.start-sel-fix {
+  font: 600 12px/1 system-ui, sans-serif !important; padding: 8px 13px !important;
+  margin-top: 2px;
+}
+.start-sel-vs {
+  font-family: system-ui, sans-serif; font-weight: 900; font-size: 19px;
+  letter-spacing: 2px; color: rgba(255,255,255,0.45); text-align: center; margin: -1px 0;
+}
+/* ══ Popup «i» de un FORMATO: reglas + cartas prohibidas + cartas custom ══
+   Rediseño 2026-08-21: era una columna de casi 1000px de alto en 340 de ancho (el «Cerrar»
+   se quedaba fuera de la pantalla) y las dos listas se pintaban distintas — los baneos como
+   filas con miniatura y las custom como rejilla de 10 cartas. Ahora: reglas en recuadros,
+   las DOS listas como la misma tira horizontal, y el pie siempre a la vista. */
+.pb-modal.fmt-info { width: min(560px, 92vw); max-width: none; max-height: 82vh; gap: 10px; }
+.fmt-info-title.is-advanced { color: #c3aefc; }
+.fmt-info-body {
+  display: flex; flex-direction: column; gap: 4px;
+  overflow-y: auto; overflow-x: hidden; min-height: 0;
+  margin: 0 -4px; padding: 2px 4px 2px;
+  scrollbar-width: thin;
+}
+/* Reglas: cuatro recuadros con el número grande y la etiqueta debajo. */
+.fmt-info-rules { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 2px 0 8px; }
+.fmt-info-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 9px 6px 8px; border-radius: 11px;
+  background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.07);
+}
+.fmt-info-v { font: 700 20px system-ui, sans-serif; color: rgba(255,255,255,0.95); line-height: 1; }
+.fmt-info-k {
+  font: 600 9.5px system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45); text-align: center; line-height: 1.25;
+}
+.fmt-info-sec {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font: 700 10.5px system-ui, sans-serif; letter-spacing: 0.09em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin: 8px 0 7px;
+}
+.fmt-info-none { font: 400 13px system-ui, sans-serif; color: rgba(255,255,255,0.4); padding: 0 2px 4px; }
+
+/* Tira de cartas: misma forma para prohibidas y custom (patrón de la pila de descartes). */
+.fmt-info-strip {
+  --fmt-cw: 92px;
+  display: flex; gap: 10px; align-items: flex-start;
+  overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
+  padding: 2px 1px 6px; scrollbar-width: none; cursor: grab;
+}
+.fmt-info-strip::-webkit-scrollbar { display: none; }
+.fmt-info-strip:active { cursor: grabbing; }
+.fmt-info-strip.has-more {
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 34px), transparent 100%);
+          mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 34px), transparent 100%);
+}
+.fmt-info-card { flex: 0 0 var(--fmt-cw); width: var(--fmt-cw); cursor: zoom-in; text-align: center; }
+.fmt-info-art {
+  width: 100%; aspect-ratio: 367 / 512; border-radius: 7px;
+  background: rgba(0,0,0,0.35) center/cover no-repeat;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: transform 0.14s, box-shadow 0.14s;
+}
+.fmt-info-card:hover .fmt-info-art { transform: translateY(-2px) scale(1.03); }
+/* Las prohibidas van marcadas en rojo — misma forma, distinto estado. */
+.fmt-info-strip.is-ban .fmt-info-art { box-shadow: 0 0 0 2px rgba(255,90,90,0.5), 0 2px 8px rgba(0,0,0,0.45); }
+.fmt-info-strip.is-ban .fmt-info-name { color: rgba(255,150,150,0.85); }
+.fmt-info-name {
+  margin-top: 5px; font: 600 10.5px system-ui, sans-serif; line-height: 1.25;
+  color: rgba(255,255,255,0.75); word-break: break-word;
+}
+
+/* Carta PROHIBIDA en el formato del mazo que se edita: atenuada y con el «+» tachado
+   (se puede seguir ampliando para verla; lo que no se puede es meterla en el mazo). */
+.mzb-banned { opacity: 0.42; filter: grayscale(0.55); }
+.mzb-banned .cv-card-add-row { color: #ff8080; border-color: rgba(255,120,120,0.4); }
+.mzb-banned .cv-card-add-row::after { content: '⃠'; }
+
+/* Cabecera de FORMATO del selector de inicio (solo cuando la partida va atada a uno,
+   p.ej. «Avanzado · 30 cartas · 4 puntos» al entrar por el hub). Mismo violeta que el
+   badge de formato de las tarjetas de mazo. */
+.start-sel-fmt {
+  align-self: center; margin: -2px 0 6px;
+  font: 800 11px system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 5px 13px; border-radius: 999px; color: #fff;
+  background: linear-gradient(135deg, rgba(169,140,245,0.22), rgba(125,95,216,0.22));
+  border: 1px solid rgba(169,140,245,0.45);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.16);
+}
+.start-sel-fmt.is-advanced { background: linear-gradient(135deg, #a98cf5, #7d5fd8); border-color: rgba(255,255,255,0.28); box-shadow: 0 3px 12px rgba(125,95,216,0.45), inset 0 1px 0 rgba(255,255,255,0.3); }
+/* Sin mazos del formato: el botón de crear va bajo el mensaje del picker */
+.mz-pick-newdeck { grid-column: 1 / -1; justify-self: center; margin-top: -16px; }
+.start-sel-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.start-sel-actions .pb-btn { display: block; width: 100%; text-align: center; }
+.start-sel-begin:disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+
+/* ══ INTRO VS ══ */
+#vs-overlay {
+  position: fixed; inset: 0; z-index: 999990;
+  background: rgba(8,8,14,0);
+  display: flex; align-items: center; justify-content: center; gap: 56px;
+  pointer-events: none;
+  transition: background 0.35s;
+}
+#vs-overlay.in { background: rgba(8,8,14,0.94); pointer-events: auto; }
+.vs-side {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s;
+}
+.vs-left  { transform: translateX(-56px); }
+.vs-right { transform: translateX(56px); }
+#vs-overlay.in .vs-side { opacity: 1; transform: translateX(0); }
+.vs-cover {
+  width: 150px; height: 210px; border-radius: 11px;
+  background-size: cover; background-position: center;
+  background-color: rgba(255,255,255,0.05);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.6);
+}
+.vs-name {
+  font-family: system-ui, sans-serif; font-size: 15px; font-weight: 600;
+  max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.vs-name-p1 { color: #4dabff; }
+.vs-name-p2 { color: #ff6b6b; }
+.vs-text {
+  font-family: system-ui, sans-serif; font-size: 44px; font-weight: 800;
+  color: rgba(255,255,255,0.95); letter-spacing: 0.04em;
+  opacity: 0; transform: scale(1.7); filter: blur(8px);
+  transition: transform 0.45s cubic-bezier(0.22,1,0.36,1) 0.18s,
+              opacity 0.35s ease 0.18s, filter 0.45s ease 0.18s;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.6);
+}
+#vs-overlay.in .vs-text { opacity: 1; transform: scale(1); filter: blur(0); }
+#vs-overlay.out { opacity: 0; transition: opacity 0.3s; }
+
+/* ══ MANO INICIAL: probabilidades por básico ══ */
+#mz-start-probs { display: flex; flex-direction: column; gap: 6px; }
+.mz-prob-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 10px; border-radius: 10px;
+  background: rgba(255,255,255,0.035);
+  transition: background 0.15s;
+}
+.mz-prob-row:hover { background: rgba(255,255,255,0.07); }
+.mz-prob-thumb {
+  width: 40px; height: 56px; border-radius: 4px; flex-shrink: 0;
+  background-size: cover; background-position: center top;
+  background-color: rgba(255,255,255,0.06);
+}
+.mz-prob-name {
+  flex: 1; min-width: 0;
+  font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85);
+  font-family: system-ui, sans-serif;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mz-prob-vals {
+  font-size: 11.5px; color: rgba(255,255,255,0.35);
+  font-family: system-ui, sans-serif; white-space: nowrap;
+}
+.mz-prob-vals b { color: rgba(255,255,255,0.78); font-weight: 600; }
+.mz-prob-empty { font-size: 11px; color: rgba(255,200,90,0.7); font-family: system-ui, sans-serif; }
+
+/* ── Click = zoom SOLO en la miniatura (no toda la barra); hover en la fila = tooltip. ── */
+.mz-prob-thumb, .mz-md-fthumb { cursor: zoom-in; }
+.mz-tip {
+  position: fixed; z-index: 12000; pointer-events: none;
+  max-width: 280px; padding: 9px 12px; border-radius: 10px;
+  background: rgba(18,18,26,0.98); border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  font: 12px/1.45 system-ui, sans-serif; color: rgba(255,255,255,0.82);
+  opacity: 0; transform: translateY(3px); transition: opacity .12s, transform .12s;
+}
+.mz-tip.show { opacity: 1; transform: translateY(0); }
+.mz-tip b { color: #fff; font-weight: 700; }
+.mz-tip::after {
+  content: ''; position: absolute; left: var(--mztip-ax, 50%); top: 100%; transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: rgba(18,18,26,0.98);
+}
+.mz-tip.below::after { top: auto; bottom: 100%; border-top-color: transparent; border-bottom-color: rgba(18,18,26,0.98); }
+
+/* Renombrar mazo desde el título de la cabecera (doble clic) */
+#mz-detail-deck-name-header.mz-rename { cursor: text; }
+#mz-detail-deck-name-header[contenteditable="true"] { outline: 1px solid rgba(255,255,255,0.25); border-radius: 5px; padding: 0 4px; background: rgba(255,255,255,0.04); }
+
+/* Energía del mazo junto al nombre en la cabecera del detalle */
+.mz-detail-energy { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; vertical-align: middle; }
+.mz-detail-energy .mz-el-orb { width: 18px; height: 18px; }
+
+/* Chip de FORMATO en la cabecera (junto al nombre). Neutro en Estándar; violeta sutil en Advanced. */
+.mz-detail-format {
+  flex-shrink: 0;
+  font: 700 10.5px system-ui, sans-serif; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 6px; cursor: default;
+  color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+}
+.mz-detail-format.is-advanced { color: #cbb8ff; background: rgba(149,131,216,0.16); border-color: rgba(149,131,216,0.42); }
+/* Badge de formato en la tarjeta del grid (esquina sup. dcha.) — solo Advanced. Vistoso:
+   pastilla violeta con degradado, brillo y borde de luz. */
+.mz-format-badge {
+  position: absolute; top: 7px; right: 7px; z-index: 3; pointer-events: none;
+  font: 800 10px system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px;
+  color: #fff; background: linear-gradient(135deg, #a98cf5, #7d5fd8);
+  border: 1px solid rgba(255,255,255,0.28);
+  box-shadow: 0 3px 12px rgba(125,95,216,0.55), inset 0 1px 0 rgba(255,255,255,0.35);
+  text-shadow: 0 1px 2px rgba(60,40,120,0.5);
+}
+
+/* ── Mano inicial: nombre + cifras en una línea (sin barras) ── */
+.mz-prob-main { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+
+/* ── Robada para el turno v2: curva acumulada ── */
+.mz-turn2-chart { margin-top: 2px; }
+.mz-tc-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.mz-tc-line { stroke: #6fe6a0; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.mz-tc-dot { fill: #6fe6a0; }
+.mz-tc-dot.key { fill: #fff; stroke: #6fe6a0; stroke-width: 2; }
+.mz-tc-pct { fill: rgba(255,255,255,0.5); font: 700 9px system-ui, sans-serif; }
+.mz-tc-pct.key { fill: #fff; font-size: 11px; }
+.mz-tc-lbl { fill: rgba(255,255,255,0.4); font: 600 8.5px system-ui, sans-serif; }
+.mz-tc-lbl.key { fill: rgba(255,255,255,0.7); }
+.mz-tc-mid { stroke: rgba(255,255,255,0.13); stroke-width: 1; stroke-dasharray: 3 3; }
+.mz-tc-midlbl { fill: rgba(255,255,255,0.3); font: 600 7.5px system-ui, sans-serif; }
+
+/* Chips del modal de export */
+.mz-export-lbl {
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.4);
+  font-family: system-ui, sans-serif; margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.mz-export-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.mz-export-chip {
+  padding: 7px 14px; border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.11);
+  background: transparent; color: rgba(255,255,255,0.5);
+  font-family: system-ui, sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+}
+.mz-export-chip:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+.mz-export-chip:active { transform: scale(0.96); }
+.mz-export-chip.sel { border-color: rgba(255,255,255,0.85); color: #fff; background: rgba(255,255,255,0.08); }
+
+
+/* ══ MENÚ COMPARTIR ══ */
+.mz-share-modal { width: 320px; }
+.mz-share-list { display: flex; flex-direction: column; gap: 7px; }
+.mz-share-opt {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 13px; border-radius: 11px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.85);
+  font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; text-align: left;
+  transition: background 0.15s, transform 0.1s;
+}
+.mz-share-opt:hover { background: rgba(255,255,255,0.09); }
+.mz-share-opt:active { transform: scale(0.97); }
+.mz-share-opt svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.8; }
+
+/* ══ CALCULADORA «ROBADA PARA EL TURNO» ══ */
+.mz-turn-select {
+  width: 100%;
+  padding: 7px 10px; border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.88);
+  font-family: system-ui, sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; outline: none;
+  margin-bottom: 7px;
+}
+.mz-turn-select:hover { background: rgba(255,255,255,0.08); }
+.mz-turn-select option { background: #16161f; }
+.mz-turn-chips { display: flex; gap: 5px; }
+.mz-turn-chip {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 5px 2px; border-radius: 8px;
+  background: rgba(255,255,255,0.035);
+}
+.mz-turn-chip-t { font-size: 9.5px; font-weight: 600; color: rgba(255,255,255,0.35); }
+.mz-turn-chip b { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.88); }
+
+/* ════ SECCIÓN META — Mejores mazos (tanda 2) ═════════════════════ */
+
+
+/* Ficha del dataset: vive en la BARRA DEL TÍTULO, a la derecha de la sub-navbar de
+   fuentes (antes era un bloque aparte dentro del cuerpo, que empujaba la lista hacia abajo). */
+#mz-meta-banner {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  margin-left: auto; padding: 0;
+  background: none; border: 0;
+  font-family: system-ui, sans-serif;
+  font-size: 11.5px; color: rgba(255,255,255,0.42); line-height: 1.4;
+}
+#mz-meta-banner b { color: rgba(255,255,255,0.72); font-weight: 700; }
+#mz-meta-banner .mz-meta-dot { opacity: 0.3; }
+#mz-meta-banner .mz-meta-src { color: rgba(255,255,255,0.28); }
+
+/* Sub-navbar de FUENTES del meta. Habla el idioma de la nav principal (mayúsculas,
+   espaciado de letra, pestaña a toda la altura con el subrayado descansando en el borde)
+   pero UN ESCALÓN POR DEBAJO en tamaño y contraste: es sub-navegación, no debe competir
+   con ella. Estructura de .mz-md-tabs; el material se redefine aquí entero.
+
+   ALTO FIJO: la barra no puede encoger al cambiar de fuente. En Limitless la sostiene
+   también la ficha del dataset, pero en las demás esa ficha no existe. */
+#mz-header.mz-meta-head-mode { min-height: 52px; padding-top: 0; padding-bottom: 0; }
+#mz-header #mz-source-tabs {
+  justify-content: flex-start; border-bottom: 0; margin: 0; gap: 0;
+  align-self: stretch; align-items: stretch;      /* la pestaña ocupa el alto de la barra… */
+  min-width: 0; overflow-x: auto; scrollbar-width: none;
+}
+#mz-header #mz-source-tabs::-webkit-scrollbar { display: none; }
+#mz-header #mz-source-tabs .mz-md-tab {
+  display: flex; align-items: center; padding: 0 14px; white-space: nowrap;
+  font-family: system-ui, -apple-system, 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.075em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+#mz-header #mz-source-tabs .mz-md-tab:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6); }
+#mz-header #mz-source-tabs .mz-md-tab.active { color: rgba(255,255,255,0.86); }
+/* …y su subrayado descansa en el borde inferior de la barra. Va DENTRO del botón: fuera
+   lo recortaría el scroll horizontal de la sub-navbar. Más fino y sin glow que el de la
+   nav principal — de nuevo, un escalón por debajo. */
+#mz-header #mz-source-tabs .mz-md-tab.active::after {
+  bottom: 0; left: 0; right: 0; height: 2px; border-radius: 0;
+  background: rgba(255,255,255,0.7);
+}
+/* en Meta manda la sub-navbar: el título y su contador se retiran */
+#mz-header.mz-meta-head-mode #mz-title,
+#mz-header.mz-meta-head-mode #mz-deck-count { display: none; }
+
+/* ── SUB-NAVBAR de FORMATOS de Mis mazos (Todos / Estándar / Avanzado) ──────────
+   Mismo lenguaje que la de fuentes del meta, pero aquí CONVIVE con el título: «Barajas»
+   se queda a la izquierda y las pestañas van a su lado. Igual que allí, la barra pierde
+   el padding vertical para que el subrayado de la activa descanse en su borde inferior. */
+#mz-header.mz-fmt-head-mode { min-height: 52px; padding-top: 0; padding-bottom: 0; }
+#mz-header #mz-format-tabs {
+  justify-content: flex-start; border-bottom: 0; margin: 0; gap: 0;
+  align-self: stretch; align-items: stretch;
+  min-width: 0; overflow-x: auto; scrollbar-width: none;
+  margin-right: auto;   /* espaciador: empuja «Seleccionar»/«Nuevo mazo» a la derecha */
+}
+#mz-header #mz-format-tabs::-webkit-scrollbar { display: none; }
+#mz-header #mz-format-tabs .mz-md-tab {
+  display: flex; align-items: center; gap: 6px; padding: 0 13px; white-space: nowrap;
+  font-family: system-ui, -apple-system, 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.075em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+#mz-header #mz-format-tabs .mz-md-tab:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6); }
+#mz-header #mz-format-tabs .mz-md-tab.active { color: rgba(255,255,255,0.86); }
+#mz-header #mz-format-tabs .mz-md-tab.active::after {
+  bottom: 0; left: 0; right: 0; height: 2px; border-radius: 0;
+  background: rgba(255,255,255,0.7);
+}
+/* Recuento de cada formato: un escalón por debajo del nombre, nunca compite con él. */
+.mz-tab-n {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.07);
+  padding: 1px 5px; border-radius: 5px;
+  transition: color 0.15s, background 0.15s;
+}
+#mz-header #mz-format-tabs .mz-md-tab.active .mz-tab-n {
+  color: rgba(255,255,255,0.62); background: rgba(255,255,255,0.11);
+}
+/* Igual que en Meta: manda la sub-navbar. El título («Mis mazos») y su contador se retiran
+   — en qué página estás ya lo dice la nav de arriba, y el total lo dice «Todos (n)». */
+#mz-header.mz-fmt-head-mode #mz-title,
+#mz-header.mz-fmt-head-mode #mz-deck-count { display: none; }
+
+/* Estado vacío honesto de las fuentes propias (aún sin datos suficientes) */
+.mz-meta-soon {
+  max-width: 460px; margin: 60px auto; padding: 0 20px; text-align: center;
+  font-family: system-ui, sans-serif; color: rgba(255,255,255,0.42);
+}
+.mz-meta-soon svg { width: 34px; height: 34px; color: rgba(255,255,255,0.22); margin-bottom: 14px; }
+.mz-meta-soon h3 { margin: 0 0 8px; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.78); }
+.mz-meta-soon p { margin: 0; font-size: 13px; line-height: 1.65; }
+
+/* Tarjeta de mazo meta (hereda .mz-deck-card para hover/borde/acciones) */
+.mz-meta-card .mz-meta-thumb {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 10px 14px;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,0.05), transparent 70%);
+}
+.mz-meta-rank {
+  position: absolute; top: 8px; left: 8px; z-index: 3;
+  min-width: 20px; height: 20px; padding: 0 5px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.8);
+  font-family: system-ui, sans-serif; font-size: 11px; font-weight: 800;
+}
+
+/* Imagen de arquetipo: tamaño carta, corte horizontal, mitad superior de cada protagonista */
+.mz-arch {
+  position: relative; width: 104px; aspect-ratio: 367/512;
+  border-radius: 9px; overflow: hidden; background: #12121c;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+}
+.mz-arch .mz-arch-h {
+  position: absolute; left: 0; right: 0; height: 50%;
+  background-size: 100% auto; background-repeat: no-repeat; background-position: center top;
+}
+.mz-arch .mz-arch-h.top { top: 0; }
+.mz-arch .mz-arch-h.bot { bottom: 0; }
+.mz-arch .mz-arch-h.full { top: 0; height: 100%; background-size: cover; background-position: center; }
+.mz-arch .mz-arch-seam {
+  position: absolute; left: 0; right: 0; top: 50%; height: 2px;
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.6); box-shadow: 0 0 4px rgba(0,0,0,0.55);
+}
+
+/* Línea de stats del meta (uso / victorias) bajo el nombre */
+.mz-meta-statline {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; color: rgba(255,255,255,0.45);
+}
+.mz-meta-statline .mz-meta-num { color: rgba(255,255,255,0.85); font-weight: 800; }
+.mz-meta-statline .mz-meta-dot { opacity: 0.35; }
+
+/* Botón Guardar en Mis Mazos (detalle) — neutro, sutilmente destacado */
+.mz-detail-btn.guardar {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.82);
+}
+.mz-detail-btn.guardar:hover {
+  background: rgba(255,255,255,0.13); color: #fff; border-color: rgba(255,255,255,0.3);
+}
+
+/* Línea meta dentro del detalle (uso / victorias / partidas) */
+.mz-meta-detail-line {
+  display: flex; flex-wrap: wrap; gap: 7px; margin: 2px 0 6px;
+}
+.mz-meta-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: 999px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  font-family: system-ui, sans-serif; font-size: 11px; color: rgba(255,255,255,0.6);
+}
+.mz-meta-chip b { color: #fff; font-weight: 800; }
+
+/* ════ META — tabla ultra-minimalista (estética lista de Cartas) ═══ */
+#mz-grid-body.mz-meta-mode #mz-grid { display: block; }
+#mz-meta-wrap { overflow-x: auto; }
+
+.mz-meta-table { width: 100%; border-collapse: collapse; font-family: system-ui, sans-serif; font-size: 14px; }
+.mz-meta-table th {
+  background: #15151f; border-bottom: 1px solid #2a2a3a;
+  padding: 9px 14px; text-align: left; color: #888;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  white-space: nowrap; position: sticky; top: 0; z-index: 2; user-select: none;
+}
+.mz-meta-table th.num { text-align: right; }
+.mz-meta-table th.sortable { cursor: pointer; transition: color .13s; }
+.mz-meta-table th.sortable:hover { color: #bbb; }
+.mz-meta-table th.sorted { color: #e6e6ee; }
+.mz-meta-table th .mz-sort-arrow { font-size: 9px; margin-left: 4px; }
+
+/* Filas relajadas: ~doble de altas, con aire entre mazos */
+.mz-meta-table td { padding: 15px 14px; border-bottom: 1px solid #1a1a24; vertical-align: middle; color: #e0e0e0; }
+.mz-meta-table td.num { text-align: right; font-variant-numeric: tabular-nums; font-size: 15px; }
+.mz-meta-table tr.mz-trow { cursor: pointer; }
+.mz-meta-table tr.mz-trow:hover td { background: #1a1a26; }
+
+.mz-meta-table .mz-rk { color: #5e5e6e; font-variant-numeric: tabular-nums; text-align: right; width: 1%; padding-right: 10px; font-size: 14px; }
+.mz-meta-table .mz-tcell-thumb { width: 1%; padding-right: 6px; }
+/* Las dos cartas protagonistas COMPLETAS, una al lado de otra, sin redondez extra */
+.mz-meta-table .mz-tcards { display: flex; gap: 5px; align-items: center; }
+.mz-meta-table .mz-tcard { height: 92px; width: auto; display: block; border-radius: 0; box-shadow: 0 2px 7px rgba(0,0,0,.5); }
+.mz-meta-table .mz-tname { font-weight: 500; font-size: 15.5px; color: rgba(255,255,255,0.92); white-space: nowrap; }
+.mz-meta-table td.wr.pos { color: #6fe6a0; }
+.mz-meta-table td.wr.neg { color: #ff8f8f; }
+
+.mz-meta-table .mz-tbar {
+  display: inline-block; width: 48px; height: 5px; border-radius: 3px; margin-right: 10px;
+  background: rgba(255,255,255,0.08); overflow: hidden; vertical-align: middle;
+}
+.mz-meta-table .mz-tbar > span { display: block; height: 100%; background: linear-gradient(90deg, rgba(255,255,255,0.55), rgba(255,255,255,0.22)); }
+
+/* Tendencia: COLUMNA propia a la derecha del uso (no empuja el %) */
+.mz-meta-table th.mz-tcol-h, .mz-meta-table td.mz-tcol { width: 1%; white-space: nowrap; padding-left: 4px; }
+.mz-meta-table .mz-trend {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; cursor: default;
+}
+.mz-meta-table .mz-trend.up   { color: #6fe6a0; }
+.mz-meta-table .mz-trend.down { color: #ff8f8f; }
+/* Orbe DORADA "nuevo" — brillante y con glow pulsante */
+/* Indicador «nuevo» en la lista del meta — badge limpio (sin el punto amarillo) */
+.mz-newbadge {
+  display: inline-block; padding: 2px 7px; border-radius: 6px; cursor: default;
+  font: 700 9px system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #cfe3ff; background: rgba(120,170,255,0.16); border: 1px solid rgba(120,170,255,0.35);
+}
+
+/* ── Barra de filtros del meta (estilo Cartas) ──
+   Mismo ancho y centrado que la lista de tarjetas (#mz-meta-wrap): si no, el buscador
+   arranca en el borde de la página y la primera tarjeta muy adentro.
+
+   DOS FILAS, como en Cartas: búsqueda + avanzados arriba, chips de filtro debajo. En una
+   sola fila no caben en es/fr/it/pt (piden hasta 1053px de los 980 disponibles) y
+   «Ajustes avanzados» acababa descolgado él solo en una segunda línea. El salto lo fuerza
+   un ::after de ancho completo colocado por `order` entre unos y otros. */
+#mz-meta-filters {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  max-width: 980px; margin: 0 auto 14px; padding: 0 4px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#mz-meta-filters > .mz-search-wrap { order: 1; }
+#mz-meta-filters > #mz-adv-toggle  { order: 2; }
+#mz-meta-filters::after { content: ''; order: 3; flex: 0 0 100%; height: 0; }
+#mz-meta-filters > .mz-trend-group { order: 4; }
+#mz-meta-filters > .mz-type-group  { order: 5; }
+#mz-meta-filters > #mz-advanced    { order: 6; }
+/* el buscador es el componente compartido .pb-search-wrap (con lupa y ✕), igual que el
+   de Cartas; aquí solo se le acota el ancho. ENCOGIBLE a propósito: es quien absorbe la
+   diferencia para que «Ajustes avanzados» no se caiga a una segunda fila en los idiomas
+   con etiquetas más largas. */
+.mz-search-wrap { flex: 0 1 340px; min-width: 148px; max-width: 42vw; }
+/* Tendencia (Nuevos / En alza / En caída): UNA pill segmentada estilo Cartas (.cv-chip-group),
+   con color de estado por segmento. El resto de la apariencia la hereda de cards-view.css. */
+.mz-trend-group .cv-chip { gap: 6px; }
+.mz-trend-group .cv-chip .mz-fic { font-size: 10px; opacity: 0.85; }
+.mz-trend-group .cv-chip[data-q="new"].active     { background: rgba(120,170,255,0.22); color: #cfe3ff; }
+.mz-trend-group .cv-chip[data-q="rising"].active  { background: rgba(111,230,160,0.22); color: #aef0c8; }
+.mz-trend-group .cv-chip[data-q="falling"].active { background: rgba(255,143,143,0.2);  color: #ffc2c2; }
+
+/* Dropdown «Ajustes avanzados» (mismo look que el de Cartas #cv-advanced) */
+#mz-advanced { flex-basis: 100%; width: 100%; margin-top: 2px; }
+/* el botón y su badge son los MISMOS de Cartas (css/cards-view.css) */
+#mz-adv-body { display: none; width: 100%; margin-top: 12px; }
+#mz-advanced.open #mz-adv-body { display: block; }
+.mz-adv-block { margin-bottom: 16px; }
+#mz-card-search {
+  width: 280px; max-width: 100%;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 9px; padding: 8px 12px; color: #e8e8ee;
+  font-family: system-ui, sans-serif; font-size: 13px; outline: none;
+  transition: border-color .15s, background .15s;
+}
+#mz-card-search:focus { border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.07); }
+#mz-card-search::placeholder { color: rgba(255,255,255,0.34); }
+
+/* Sliders de filtro: MÍNIMO de partidas + VICTORIAS (rango, 2 mangos) */
+.mz-sliders { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 18px 32px; margin-top: 6px; }
+.mz-slider { display: flex; flex-direction: column; gap: 8px; flex: 1 1 240px; min-width: 210px; max-width: 360px; }
+.mz-slider-lbl { font: 600 12px system-ui, sans-serif; color: rgba(255,255,255,0.5); }
+.mz-slider-lbl b { color: rgba(255,255,255,0.92); font-weight: 800; font-variant-numeric: tabular-nums; }
+.mz-range { position: relative; height: 22px; }
+.mz-range-track { position: absolute; top: 50%; left: 0; right: 0; height: 4px; transform: translateY(-50%);
+  background: rgba(255,255,255,0.12); border-radius: 3px; }
+.mz-range-fill { position: absolute; top: 0; bottom: 0; background: rgba(255,255,255,0.6); border-radius: 3px; }
+.mz-range input[type=range] {
+  position: absolute; top: 0; left: 0; width: 100%; height: 22px; margin: 0;
+  background: none; pointer-events: none; -webkit-appearance: none; appearance: none;
+}
+.mz-range input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; pointer-events: auto; width: 15px; height: 15px; border-radius: 50%;
+  background: #fff; border: 1px solid rgba(0,0,0,0.35); cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.45);
+}
+.mz-range input[type=range]::-moz-range-thumb {
+  pointer-events: auto; width: 15px; height: 15px; border-radius: 50%; background: #fff; border: none; cursor: grab;
+}
+.mz-range-dual .mz-range-lo { z-index: 3; }
+.mz-range-dual .mz-range-hi { z-index: 4; }
+/* Tipos de energía: pill segmentada idéntica a Cartas — .cv-chip-group + .cv-el-icon
+   (orbes reales + icono de dragón) heredan todo su estilo de cards-view.css. */
+#mz-meta-empty-filter { padding: 50px 20px; text-align: center; color: rgba(255,255,255,0.3); font-size: 14px; }
+
+#mz-meta-more { display: flex; justify-content: center; padding: 16px 0 6px; }
+#mz-meta-more button {
+  padding: 8px 18px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 700; font-family: system-ui, sans-serif;
+  letter-spacing: .03em; transition: background .15s, color .15s, border-color .15s;
+}
+#mz-meta-more button:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.22); }
+
+/* ════ DETALLE META (consenso + flex/tech) ════════════════════════ */
+#mz-meta-detail { flex: 1 1 auto; width: 100%; overflow-y: auto; padding: 10px 26px 28px; }
+
+.mz-md-head { display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; margin-bottom: 18px; }
+.mz-md-art .mz-tcards { display: flex; gap: 6px; }
+.mz-md-art .mz-tcard { height: 104px; width: auto; border-radius: 0; box-shadow: 0 4px 14px rgba(0,0,0,.5); }
+.mz-md-title { font-family: system-ui, sans-serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 0; }
+/* Stats del ARQUETIPO junto al nombre: línea de datos PLANA (no botones: sin borde ni caja). */
+.mz-md-chips { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px; }
+.mz-md-chip {
+  display: inline-flex; align-items: baseline; gap: 5px; padding: 0; border: none; background: none;
+  font-family: system-ui, sans-serif; font-size: 12.5px; color: rgba(255,255,255,0.42);
+}
+.mz-md-chip b { color: rgba(255,255,255,0.95); font-weight: 800; font-size: 14px; }
+.mz-md-chip.wr.pos b { color: #6fe6a0; } .mz-md-chip.wr.neg b { color: #ff8f8f; }
+/* Chip de tipos de energía en el detalle meta (orbes reales) */
+.mz-md-energychip { gap: 5px; padding: 4px 9px; }
+.mz-md-energychip .mz-el-orb { width: 15px; height: 15px; }
+.mz-md-chip.trendchip { padding: 0; }
+.mz-md-sub { margin-top: 9px; font-family: system-ui, sans-serif; font-size: 11.5px; color: rgba(255,255,255,0.35); }
+
+.mz-md-cols { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; align-items: start; }
+@media (max-width: 720px) { .mz-md-cols { grid-template-columns: 1fr; } }
+.mz-md-col-h {
+  font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: rgba(255,255,255,0.4); margin-bottom: 10px;
+  padding-bottom: 7px; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mz-md-sec { margin-bottom: 14px; }
+.mz-md-h { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); margin: 0 0 7px 2px; }
+.mz-md-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 6px; }
+.mz-md-card {
+  display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 4px; border-radius: 8px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.mz-md-thumb { width: 30px; height: 42px; object-fit: cover; border-radius: 0; background: #1a1a24; flex: 0 0 auto; }
+.mz-md-count { font-family: system-ui, sans-serif; font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; }
+.mz-md-name { font-family: system-ui, sans-serif; font-size: 12.5px; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; }
+.mz-md-flex {
+  flex: 0 0 auto; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 999px;
+  background: rgba(120,150,255,0.16); color: #b9c4ff; border: 1px solid rgba(120,150,255,0.3);
+}
+.mz-md-flex.tech { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.12); }
+
+.mz-md-flexhint { font-family: system-ui, sans-serif; font-size: 11.5px; color: rgba(255,255,255,0.4); margin: -2px 0 10px; }
+.mz-md-frow { display: flex; align-items: center; gap: 8px; padding: 4px 2px; }
+.mz-md-fthumb { width: 24px; height: 33px; object-fit: cover; border-radius: 0; background: #1a1a24; flex: 0 0 auto; }
+.mz-md-fname { font-family: system-ui, sans-serif; font-size: 12.5px; color: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; }
+.mz-md-fbar { flex: 0 0 70px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.mz-md-fbar > span { display: block; height: 100%; background: linear-gradient(90deg, rgba(150,180,255,0.85), rgba(120,150,255,0.5)); }
+.mz-md-fbar.tech > span { background: rgba(255,255,255,0.28); }
+.mz-md-fpct { flex: 0 0 auto; width: 34px; text-align: right; font-family: system-ui, sans-serif; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums; }
+/* .mz-md-legend eliminada (2026-07-03): ya no hay resaltado verde que explicar */
+
+/* ── 2ª fila de pestañas: Estadísticas / Enfrentamientos (bajo los botones) ── */
+/* Doble clase para ganar al margin de `.mz-md-tabs` (definido después). Mismo ancho completo
+   + justify-content:center que las pestañas de versión → quedan centradas igual. */
+.mz-md-tabs.mz-md-tabs2 { margin: 28px 0 16px; }
+.mz-md-low { width: 100%; }
+.mz-md-low .mz-md-prob { max-width: 680px; margin: 18px auto 0; }
+.mz-md-low .mz-md-start { display: flex; flex-direction: column; gap: 6px; }
+.mz-md-empty { padding: 24px 8px; color: rgba(255,255,255,0.3); font-family: system-ui, sans-serif; font-size: 13px; }
+
+.mz-md-probs { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+.mz-md-probs summary {
+  cursor: pointer; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 700;
+  color: rgba(255,255,255,0.7); list-style: none; user-select: none; padding: 4px 0;
+}
+.mz-md-probs summary::-webkit-details-marker { display: none; }
+.mz-md-probs summary::before { content: '▸ '; color: rgba(255,255,255,0.4); }
+.mz-md-probs[open] summary::before { content: '▾ '; }
+.mz-md-probsbody { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 12px 2px 2px; }
+@media (max-width: 720px) { .mz-md-probsbody { grid-template-columns: 1fr; } }
+.mz-md-prob-h { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+
+.mz-md-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.mz-md-actions .mz-detail-btn { flex: 0 0 auto; }
+
+/* ── Enfrentamientos (matchups del meta) ── */
+.mz-md-mu { width: 100%; max-width: 680px; margin: 22px auto 4px; font-family: system-ui, sans-serif; }
+.mz-mu-bar2 { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.mz-mu-title { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+/* Conmutador segmentado (estética Cartas) */
+.mz-mu-seg { display: inline-flex; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10); border-radius: 9px; padding: 2px; gap: 2px; }
+.mz-mu-sg { border: none; background: none; cursor: pointer; padding: 5px 12px; border-radius: 7px;
+  font: 600 12px system-ui, sans-serif; color: rgba(255,255,255,0.5); transition: background 0.15s, color 0.15s; }
+.mz-mu-sg:hover { color: rgba(255,255,255,0.8); }
+.mz-mu-sg.on { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* Lista única (1 columna, mejor → peor) + explicación + divisores mejores/peores */
+.mz-mu-explain { font-family: system-ui, sans-serif; font-size: 11px; color: rgba(255,255,255,0.4);
+  margin: -6px 0 11px; }
+.mz-mu-list { display: flex; flex-direction: column; gap: 2px; }
+.mz-mu-div { display: flex; align-items: center; gap: 10px; margin: 12px 2px 4px;
+  font: 800 10px system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+.mz-mu-div:first-child { margin-top: 0; }
+.mz-mu-div::before, .mz-mu-div::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+.mz-mu-div span { flex: 0 0 auto; }
+.mz-mu-div.best  span { color: #6fe6a0; }
+.mz-mu-div.worst span { color: #ff8f8f; }
+
+/* Fila de enfrentamiento (botón clicable) */
+.mz-mu-row { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  background: none; border: none; border-radius: 8px; padding: 7px 10px; cursor: pointer;
+  font-family: system-ui, sans-serif; transition: background 0.14s; }
+.mz-mu-row:hover { background: rgba(255,255,255,0.06); }
+.mz-mu-row.nolink { cursor: default; }
+.mz-mu-row.nolink:hover { background: none; }
+/* Miniatura del rival = formato de mazo de la tierlist (mono/dual, _tlDeckCover).
+   Forma de CARTA por defecto: SIN recorte cuadrado ni redondeo. */
+.mz-mu-cover { width: 42px; aspect-ratio: 367 / 512; flex-shrink: 0; overflow: hidden;
+  background: rgba(255,255,255,0.04); }
+.mz-mu-cover .tl-deck-cover { width: 100%; height: 100%; }
+.mz-mu-name { flex: 1; min-width: 0; font-size: 13.5px; color: rgba(255,255,255,0.85);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mz-mu-bar { width: 96px; height: 6px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; flex-shrink: 0; }
+.mz-mu-bar > span { display: block; height: 100%; border-radius: 4px; }
+.mz-mu-pct { font-size: 13px; font-weight: 700; width: 44px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.mz-mu-n { font-size: 10.5px; color: rgba(255,255,255,0.3); width: 42px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+/* ── Distribución apaisada (deckLayout) ── */
+.mz-dl { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.mz-dl-row { display: flex; justify-content: center; gap: 8px; flex-wrap: nowrap; }
+.mz-dl-row.wrap { flex-wrap: wrap; gap: 16px 13px; max-width: 1180px; align-items: flex-start; }
+.mz-dl.big { gap: 16px; width: 100%; }   /* el contenedor fit mide el ancho real → evita el sizing circular en flex-columns centradas (p.ej. #dr-end-grid) */
+.mz-dl-card { position: relative; flex: 0 0 auto; }
+/* aspect-ratio reserva la caja aunque la imagen tarde/falle → no colapsa ni desplaza al resto */
+.mz-dl-card > img { height: 96px; width: auto; aspect-ratio: 367 / 512; object-fit: cover; display: block; border-radius: 0; box-shadow: 0 2px 8px rgba(0,0,0,.5); background: rgba(255,255,255,0.04); }
+.mz-dl.big .mz-dl-card > img { height: 200px; }   /* detalle meta ~2x (tuneable) */
+
+/* ── Vista de mazo UNIFICADA «fit-to-frame» (mismo sistema que la descarga de imagen).
+   Un solo contenedor centrado; el tamaño de carta lo calcula fitDeckEl() en JS: TECHO =
+   el tamaño clásico (200px de alto), NUNCA más grande (escala consistente entre vistas);
+   encoge solo cuando el marco no da (móvil = 4 col). Sustituye a las filas fijas de
+   200px y a la rama >16 (wrap). Detalle del algoritmo en fitDeckEl (mazos-view.js). ── */
+.mz-dl.big .mz-dl-fit {
+  display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+  gap: var(--mzdl-gap, 8px); width: 100%;
+}
+.mz-dl.big .mz-dl-fit > .mz-dl-card { width: var(--mzdl-cw, 140px); flex: 0 0 auto; margin: 0; }
+.mz-dl.big .mz-dl-fit > .mz-dl-card > img { width: 100%; height: auto; }
+.mz-dl.big .mz-dl-fit > .mz-dl-card.mz-slot { margin-right: 0; }
+.mz-dl.big .mz-dl-fit .mz-slot-sizer { width: 100%; height: auto; }
+/* Hueco decorativo del builder (sin img): MISMA caja que los slots vacíos del tablero (.slot). */
+.mz-dl.big .mz-dl-fit > .mz-dl-card.mz-dl-empty {
+  aspect-ratio: 367 / 512; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px; background: rgba(0,0,0,0.28); box-shadow: none;
+}
+.mz-dl-x {
+  position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+  min-width: 17px; height: 17px; padding: 0 4px; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(20,20,28,0.9); border: 1px solid rgba(255,255,255,0.25);
+  color: #fff; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+/* Edición en sitio (Mis Mazos = builder): REUTILIZA el componente − contador + de la
+   sidebar (.deck-copy-badge/.dcb-*, en styles.css). Aquí solo se hace visible SIEMPRE
+   (allí es hover) y un pelín más grande, porque las cartas del detalle son mayores. */
+#mz-cards-grid .deck-copy-badge { opacity: 1; bottom: 6px; padding: 3px 7px; gap: 5px; border-radius: 6px; }
+#mz-cards-grid .dcb-minus, #mz-cards-grid .dcb-plus { opacity: 1; width: 24px; font-size: 21px; padding: 1px 0; }
+#mz-cards-grid .dcb-count { font-size: 14px; min-width: 18px; }
+/* Guardar/Cancelar = botones de ICONO compactos (heredan el 42px cuadrado de .mz-detail-btn);
+   solo un tinte sutil de "primario" en Guardar. */
+#mz-detail-save-edit { background: rgba(255,255,255,0.13); }
+/* Entrada al editar: − y + se EXTIENDEN del cuadrado (smooth + bouncy). Solo al entrar, no en cada clic. */
+@keyframes dcbExtend { 0% { width: 0; opacity: 0; } 62% { width: 28px; opacity: 1; } 100% { width: 24px; } }
+.dcb-anim .dcb-minus, .dcb-anim .dcb-plus { animation: dcbExtend 0.34s ease-out both; overflow: hidden; }
+/* Salida de edición: la MISMA animación al revés (los − y + se repliegan en el cuadrado). */
+@keyframes dcbCollapse { 0% { width: 24px; opacity: 1; } 100% { width: 0; opacity: 0; } }
+#mz-cards-grid.dcb-out .dcb-minus,
+#mz-cards-grid.dcb-out .dcb-plus { animation: dcbCollapse 0.2s ease-in both; overflow: hidden; }
+/* Buscador del builder (Tanda 2): DEBAJO del mazo, estilo tierlist. Grid/cartas/chips reutilizados. */
+#mzb-search { margin-top: 20px; border-top: 0.5px solid rgba(255,255,255,0.1); padding-top: 16px; }
+#mzb-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 12px; }
+/* Caja de búsqueda, desplegable de expansión y menú de orden = los MISMOS componentes
+   de la pestaña Cartas (.pb-search-wrap / .pb-set-* / .pb-sort-*, css/cards-view.css).
+   Aquí solo se les da su sitio dentro del bar. */
+#mzb-search-wrap { flex: 0 1 260px; min-width: 180px; }
+#mzb-sort-menu { left: 0; right: auto; }
+#mzb-set-wrap { flex: 0 0 auto; }
+#mzb-count { font-size: 12px; color: rgba(255,255,255,0.5); }
+/* Limpiar filtros del constructor: mismo gesto y mismo rojo-en-hover que #cv-clear-btn de Cartas. */
+#mzb-clear {
+  margin-left: auto;   /* empuja el par «limpiar + contador» al final del bar */
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0; flex: 0 0 auto;
+  background: transparent; border: none; border-radius: 8px; cursor: pointer;
+  color: rgba(255,255,255,0.5); transition: background 0.14s, color 0.14s, transform 0.1s;
+}
+#mzb-clear svg { width: 16px; height: 16px; }
+#mzb-clear:hover { background: rgba(255,80,80,0.14); color: #ff6b6b; }
+#mzb-clear:active { transform: scale(0.92); }
+/* Chip «solo favoritas»: mismo amarillo que #cv-fav-btn de Cartas. */
+#mzb-fav .cv-chip { color: rgba(255,255,255,0.62); }
+#mzb-fav .cv-chip.active { --mzb-star-fill: 1; color: #ffd24a; background: rgba(255,210,74,0.14); border-color: rgba(255,210,74,0.32); }
+#mzb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }   /* idéntico a la pestaña Cartas (#cv-grid) */
+/* El mazo fijado es una capa sticky (z:6) y los resultados pasan por debajo. La
+   estrella compartida de Cartas usa z:7 para su propio grid; aquí debe quedar
+   sobre su miniatura, pero BAJO ese mazo, o se ven estrellas sueltas al hacer scroll. */
+#mzb-grid .cv-fav-star { z-index: 1; }
+#mzb-sentinel { height: 1px; }
+/* Flags EX/Mega/Habilidad: Cartas colorea su ACTIVO por id (#cv-ex-chip…); aquí, mismo look. */
+#mzb-flags .cv-chip.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); color: #fff; }
+
+/* Contador X/size del formato: en la CABECERA, a la izquierda de «Guardar cambios», y con el
+   MISMO componente visual que el contador del pop-up del builder (#cv-pill-count): número
+   grande con color progresivo + «pop» al cambiar. Lo muestra/oculta el JS (solo al editar). */
+#mz-detail-body.mz-mine #mz-detail-cards-col { position: relative; }
+.mz-deck-counter {
+  display: none; align-items: baseline; margin-left: auto; flex-shrink: 0;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+#mz-deck-counter-n {
+  display: inline-block;
+  font-size: 18px; font-weight: 900; color: #fff; font-family: 'Nunito', sans-serif;
+  transition: transform 0.15s cubic-bezier(0.34,1.6,0.64,1);
+}
+#mz-deck-counter-n.bump { transform: scale(1.4); }
+#mz-deck-counter-max { font-size: 12px; color: rgba(255,255,255,0.3); font-family: 'Nunito', sans-serif; }
+/* Rojo = te pasas o el mazo es inválido (el motivo, en el tooltip). */
+.mz-deck-counter.mz-counter-bad #mz-deck-counter-n { color: #ff6b6b !important; }
+.cv-card-add-row.mzb-in { color: #7fe0a8; }
+.mz-dl-flag {
+  position: absolute; top: 4px; right: 4px;
+  padding: 1px 5px; border-radius: 6px;
+  background: rgba(120,150,255,0.92); color: #0d0d16;
+  font-family: system-ui, sans-serif; font-size: 10px; font-weight: 800;
+}
+.mz-dl-card.tech .mz-dl-flag { background: rgba(255,200,120,0.92); }
+
+/* ── Selector de variantes ── */
+.mz-md-vtabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 4px 0 14px; }
+.mz-md-vtab {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 7px 14px; border-radius: 10px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6); font-family: system-ui, sans-serif; font-size: 12.5px; font-weight: 700;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.mz-md-vtab:hover { color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.2); }
+.mz-md-vtab.active { background: rgba(255,255,255,0.13); color: #fff; border-color: rgba(255,255,255,0.3); }
+.mz-md-vt-share { font-size: 11px; font-weight: 800; color: rgba(150,180,255,0.95); font-variant-numeric: tabular-nums; }
+.mz-md-vtab.active .mz-md-vt-share { color: #b9c4ff; }
+
+.mz-md-head { text-align: left; margin-bottom: 14px; }
+.mz-md-hero { display: flex; justify-content: center; margin: 4px 0 6px; }
+.mz-md-vline { text-align: center; font-family: system-ui, sans-serif; font-size: 12.5px; color: rgba(255,255,255,0.55); margin: 6px 0 2px; }
+.mz-md-vline b { color: #fff; }
+.mz-md-actions { justify-content: center; }
+.mz-md-meta { margin-top: 22px; max-width: 560px; margin-left: auto; margin-right: auto; }
+.mz-md-fsr { flex: 0 0 auto; margin-left: 8px; font-size: 11px; color: #6fe6a0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ── Mis mazos: mismo lenguaje que el meta (deck apaisado arriba, stats debajo) ── */
+#mz-detail-body.mz-mine { flex-direction: column; overflow-y: auto; gap: 18px !important; padding: 18px 20px; align-items: center; }
+#mz-detail-body.mz-mine #mz-detail-cards-col {
+  /* max-width 1560 (antes 980): las 2 FILAS del mazo necesitan sitio para salir a tamaño
+     clásico (10 col × 143 ≈ 1500px); el fit centra el bloque, no se «estira» de verdad. */
+  flex: none; width: 100%; max-width: 1560px; overflow: visible;
+  border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); padding: 6px 0 20px;
+}
+#mz-detail-body.mz-mine #mz-cards-grid { display: block; }
+#mz-detail-body.mz-mine #mz-detail-info-col {
+  flex: none; width: 100%; max-width: 720px; overflow: visible; padding: 0;
+}
+/* En edición el buscador es la "pestaña" bajo el mazo → ocupa TODO el ancho de la página,
+   como la pestaña Cartas (el grid auto-fill se rellena con más columnas). */
+#mz-detail-body.mz-mine.mz-editing #mz-detail-info-col { max-width: none; }
+/* En edición NO debe quedar franja/hueco entre el mazo y el buscador: se quita el borde
+   inferior del mazo y el borde/margen superior del buscador → el buscador va pegado. */
+#mz-detail-body.mz-mine.mz-editing #mz-detail-cards-col { border-bottom: none; padding-bottom: 6px; }
+#mz-detail-body.mz-mine.mz-editing #mzb-search { margin-top: 0; border-top: none; padding-top: 0; }
+/* Editando, el sitio es para la LISTA de cartas: menos aire arriba y entre bloques. */
+#mz-detail-body.mz-mine.mz-editing { gap: 8px !important; padding-top: 8px; }
+#mz-detail-body.mz-mine.mz-editing #mz-detail-cards-col { padding-top: 0; }
+#mz-detail-body.mz-mine.mz-editing #mzb-bar { margin-bottom: 8px; }
+
+/* ── Mazo FIJADO arriba (toggle «chincheta» de la cabecera) ──────────────────
+   El mazo se queda pegado al borde superior del scroller mientras buscas, y se ENCOGE
+   según bajas (JS: --mz-pin-s + el alto del grid) → el hueco se lo lleva la lista.
+   El transform va en el HIJO (.mz-dl) y el recorte en el grid: al revés, el overflow
+   cortaría el contenido ANTES de escalarlo y partiría las cartas. */
+/* El scroller NO puede llevar padding arriba en modo fijado: el sticky se pega al borde del
+   padding-box y por esa franja asomarían las cartas de la lista al pasar por detrás.
+   `overflow-anchor:none` corta la compensación automática de scroll de Chrome: sin ella,
+   encoger el mazo le resta a scrollTop lo mismo que encoge → bucle encoger↔crecer. */
+#mz-detail-body.mz-mine.mz-editing.mz-pin { padding-top: 0; overflow-anchor: none; }
+#mz-detail-body.mz-mine.mz-editing.mz-pin #mz-detail-cards-col {
+  position: sticky; top: 0; z-index: 6;
+  /* max-width:none = el fondo cubre TODO el ancho del contenido (con el 1560 de la vista
+     normal, los resultados asomarían por los lados al pasar por debajo). */
+  max-width: none; padding: 8px 0 6px;
+  background: #111118;
+}
+#mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid { overflow: hidden; }
+#mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid > .mz-dl {
+  transform: scale(var(--mz-pin-s, 1)); transform-origin: top center;
+  will-change: transform;
+}
+/* Ya encogido: separa el mazo de la lista que pasa por debajo. */
+#mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid.mz-pin-small {
+  box-shadow: 0 14px 16px -14px rgba(0,0,0,0.95);
+}
+/* El mazo tiene DOS tamaños (natural arriba del todo / encogido en cuanto bajas) y pasa de
+   uno a otro ANIMADO: el reajuste ocurre una sola vez y luego el scroll va 1:1. La clase
+   la pone el JS solo cuando el cambio viene del scroll — una re-medida por cambio de mazo
+   o de ventana debe cuadrar al instante, sin que se vea moverse. */
+#mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid.mz-pin-anim {
+  transition: height .22s cubic-bezier(.4, 0, .2, 1), box-shadow .22s ease;
+}
+#mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid.mz-pin-anim > .mz-dl {
+  transition: transform .22s cubic-bezier(.4, 0, .2, 1);
+}
+html.pb-reduce-motion #mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid.mz-pin-anim,
+html.pb-reduce-motion #mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid.mz-pin-anim > .mz-dl {
+  transition: none;
+}
+#mz-detail-body.mz-mine.mz-editing.mz-pin #mz-detail-cards-col::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: rgba(255,255,255,0.07);
+}
+/* Botón de fijar: apagado = contorno; encendido = el mismo relleno que «Guardar cambios». */
+.mz-detail-btn.mz-pin-btn.on {
+  background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.92);
+  border-color: rgba(255,255,255,0.22);
+}
+html.pb-reduce-motion #mz-detail-body.mz-mine.mz-editing.mz-pin #mz-cards-grid > .mz-dl { will-change: auto; }
+
+/* Núcleo / slots flexibles dentro del deckLayout */
+.mz-dl-sep {
+  margin: 16px 0 4px; font-family: system-ui, sans-serif; font-size: 10.5px; font-weight: 800;
+  letter-spacing: .09em; text-transform: uppercase; color: rgba(255,205,110,0.95);
+  display: flex; align-items: center; gap: 10px; width: 100%; max-width: 560px;
+}
+.mz-dl-sep::before, .mz-dl-sep::after { content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,205,110,0.4), transparent); }
+.mz-dl-flag { font-size: 11px; padding: 1px 6px; }
+
+/* ── Tabs del detalle meta (estilo sidebar: subrayado inferior) ── */
+.mz-md-tabs { display: flex; gap: 4px; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08); margin: 6px 0 12px; }
+.mz-md-tab {
+  position: relative; background: none; border: none; cursor: pointer;
+  padding: 9px 16px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 700;
+  color: rgba(255,255,255,0.4); transition: color .15s;
+}
+.mz-md-tab:hover { color: rgba(255,255,255,0.7); }
+.mz-md-tab.active { color: #fff; }
+.mz-md-tab.active::after {
+  content: ''; position: absolute; bottom: -1px; left: 14%; right: 14%;
+  height: 2px; background: rgba(255,255,255,0.6); border-radius: 2px 2px 0 0;
+}
+.mz-md-tshare { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.5); margin-left: 5px; font-variant-numeric: tabular-nums; }
+.mz-md-tab.active .mz-md-tshare { color: rgba(255,255,255,0.92); }
+.mz-md-subline { text-align: center; font-family: system-ui, sans-serif; font-size: 12px; color: rgba(255,255,255,0.5); margin: 0 0 10px; }
+.mz-md-subline b { color: #fff; }
+
+/* Esquinas redondeadas como las cartas del tablero → el aro del hueco SIGUE la forma de la carta */
+.mz-dl.big .mz-dl-card > img { border-radius: 10px; }
+
+/* ── STACK de hueco intercambiable (anti-correlación): ancla delante + alternativas asomando.
+      Sin glow de color (Daniel 2026-07-03): el cue es el chip ⇄N + bordes detrás + puntitos. ── */
+.mz-dl-card.mz-slot { position: relative; margin-right: 12px; }   /* aire para el borde que asoma */
+.mz-slot-swap {
+  position: absolute; top: -9px; left: -9px; z-index: 120;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 8px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.28);
+  background: rgba(20,20,28,0.95); color: #fff;
+  font-family: system-ui, sans-serif; font-size: 11px; font-weight: 800; line-height: 1;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  transition: background .15s ease, color .15s ease, transform .15s ease;
+  animation: mzSwapNudge 2s ease 0.7s 2;
+}
+.mz-slot-swap:hover { background: rgba(255,255,255,0.94); color: #14141c; transform: scale(1.06); }
+.mz-slot-swap:active { transform: scale(0.97); }
+.mz-slot-swap svg { display: block; }
+@keyframes mzSwapNudge { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.22); } 28% { transform: scale(1); } }
+html.pb-reduce-motion .mz-slot-swap { animation: none; }
+.mz-slot-dots {
+  position: absolute; bottom: 27px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 4px; z-index: 110; pointer-events: none;
+}
+.mz-slot-dots.hi { bottom: 48px; }   /* la ancla ×2 apila badge ×N + % debajo */
+.mz-slot-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.4); box-shadow: 0 1px 3px rgba(0,0,0,.55);
+  transition: background .2s ease, transform .2s ease;
+}
+.mz-slot-dot.on { background: #fff; transform: scale(1.2); }
+.mz-slot-sizer { visibility: hidden; }   /* solo reserva el tamaño de una carta normal (responsive) */
+.mz-slot-layer { position: absolute; inset: 0; overflow: visible; touch-action: pan-y; cursor: grab; }
+.mz-slot-layer:active { cursor: grabbing; }
+.mz-slot-card {
+  position: absolute; inset: 0;
+  will-change: transform, filter; transform-origin: 50% 60%;
+  border-radius: 10px;
+}
+.mz-slot-card > img {
+  width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 10px;
+  background: rgba(255,255,255,0.04); pointer-events: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,.55);
+}
+/* % de inclusión de la carta swipeable → ARRIBA-DERECHA (el ⇄N va arriba-izq.), para NO
+   tapar el «spot» del nº de copias, que vive abajo-centro (.mz-dl-x). */
+.mz-slot-pct {
+  position: absolute; top: 6px; right: 6px; z-index: 3;
+  padding: 1px 7px; border-radius: 6px;
+  background: rgba(15,15,22,0.9); border: 1px solid rgba(255,255,255,0.22);
+  color: #fff; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 800;
+  font-variant-numeric: tabular-nums; letter-spacing: .2px; pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
+.mz-slot-pct.main { background: rgba(255,255,255,0.92); border-color: transparent; color: #14141c; }
+.mz-slot-pct.up { top: 6px; }   /* la % ya no compite con el badge ×2 (ahora vive arriba-dcha) */
+
+/* ── «Resultados» = pestaña estilo Best Finishes de Limitless: columnas fijas
+      (Jugador · Torneo · Fecha · Puesto · Resultado + botones) y BAJO cada fila las 20
+      cartas individuales a la vista. Cabecera + filas comparten grid → columnas alineadas. ── */
+.mz-md-fins { width: 100%; max-width: 1080px; margin: 0 auto; }
+/* columnas: Jugador | Torneo | Fecha | Puesto | Resultado | acciones. Cabecera y filas
+   comparten grid EXACTO (última columna FIJA, no auto) → todo alineado. */
+.mz-fin-thead, .mz-fin-cols {
+  display: grid;
+  grid-template-columns: minmax(92px,1fr) minmax(150px,2.2fr) 156px 112px 92px 112px;
+  gap: 16px; align-items: center;
+}
+.mz-fin-thead {
+  padding: 0 13px 9px; margin-bottom: 2px;
+  font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+/* cabeceras ordenables (fecha/puesto/score) */
+.mz-fin-h {
+  background: none; border: none; padding: 0; margin: 0; font: inherit; letter-spacing: inherit;
+  text-transform: inherit; color: rgba(255,255,255,0.3); cursor: pointer; text-align: left;
+  display: inline-flex; align-items: center; gap: 4px; transition: color .12s ease;
+}
+.mz-fin-h:hover { color: rgba(255,255,255,0.65); }
+.mz-fin-h.on { color: rgba(255,255,255,0.85); }
+.mz-fin-arr { font-style: normal; font-size: 8px; opacity: 0.9; }
+.mz-fin-sortlbl { display: none; }   /* solo móvil (ver media query de abajo) */
+.mz-fin-rows { display: flex; flex-direction: column; gap: 11px; padding-top: 11px; }
+.mz-fin-row {
+  background: rgba(255,255,255,0.028); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 12px 13px 11px;
+}
+.mz-fin-cols { font-family: system-ui, sans-serif; font-size: 13px; margin-bottom: 11px; min-width: 0; }
+.mz-fin-cols > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* jerarquía: PUESTO y RESULTADO destacan (es lo que comparas); jugador/torneo/fecha = contexto */
+.mz-fin-place  { font-weight: 800; color: #fff; font-size: 14px; font-variant-numeric: tabular-nums; }
+.mz-fin-score  { font-weight: 700; color: rgba(255,255,255,0.82); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.mz-fin-player { font-weight: 600; color: rgba(255,255,255,0.78); }
+.mz-fin-tourn  { color: rgba(255,255,255,0.44); }
+.mz-fin-date   { color: rgba(255,255,255,0.44); font-variant-numeric: tabular-nums; }
+.mz-fin-acts { display: inline-flex; gap: 6px; justify-self: end; }
+.mz-fin-btn {
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); cursor: pointer;
+  transition: background .14s ease, color .14s ease, transform .1s ease;
+}
+.mz-fin-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.mz-fin-btn:active { transform: scale(0.94); }
+.mz-fin-btn svg { width: 15px; height: 15px; }
+/* la lista de 20: siempre 20 columnas → todas las filas igual de largas */
+.mz-fin-strip { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; }
+.mz-fin-card { position: relative; cursor: zoom-in; min-width: 0; }
+.mz-fin-card img {
+  width: 100%; aspect-ratio: 367 / 512; object-fit: cover; display: block;
+  border-radius: 4px; background: rgba(255,255,255,0.04);
+  box-shadow: 0 1px 4px rgba(0,0,0,.45);
+}
+.mz-fin-card:hover img { transform: translateY(-2px); transition: transform .15s ease; }
+
+/* móvil: sin cabecera de tabla. Cada resultado = tarjeta ordenada:
+   1) línea de datos con PRIORIDAD a puesto · resultado · fecha (jugador y torneo ocultos
+      por ahora — no caben con las cartas grandes);
+   2) mazo en 10×2 filas (cartas grandes, distinguibles) → ~3-5 resultados por pantalla;
+   3) botones de acción centrados ABAJO. */
+@media (max-width: 720px) {
+  .mz-md-fins { max-width: 100%; }
+  /* La cabecera de columnas no cabe en móvil, pero SUS BOTONES son los que ordenan
+     (fecha/puesto/resultado) → se convierte en una fila «Ordenar por» + chips. */
+  .mz-fin-thead {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 7px;
+    padding: 0 0 11px; text-transform: none; letter-spacing: 0;
+  }
+  .mz-fin-thead > span { display: none; }                      /* Jugador · Torneo · hueco */
+  .mz-fin-thead .mz-fin-sortlbl {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: .05em; text-transform: uppercase; color: rgba(255,255,255,0.3);
+  }
+  .mz-fin-thead .mz-fin-h {
+    padding: 7px 11px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    letter-spacing: 0; text-transform: none; color: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.11); background: transparent;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mz-fin-thead .mz-fin-h.on { background: rgba(255,255,255,0.1); color: #fff; }
+  .mz-fin-arr { font-size: 9px; }
+  .mz-fin-player, .mz-fin-tourn { display: none; }
+  /* la fila apila: datos (puesto·resultado·fecha) → mazo 10×2 → botones abajo */
+  .mz-fin-row { display: flex; flex-direction: column; }
+  .mz-fin-cols {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 12px; margin-bottom: 9px;
+    grid-template-areas: none;
+  }
+  .mz-fin-place  { order: 1; font-size: 15px; }
+  .mz-fin-score  { order: 2; }
+  .mz-fin-date   { order: 3; margin-left: auto; font-size: 12px; }
+  .mz-fin-strip  { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
+  .mz-fin-card img { border-radius: 5px; }
+  .mz-fin-acts   { justify-content: center; gap: 12px; margin-top: 11px; }   /* botones centrados abajo */
+  .mz-fin-btn { width: 34px; height: 34px; }
+  .mz-fin-btn svg { width: 17px; height: 17px; }
+}
+
+/* ── Lista «Flex y tech» bajo el mazo: miniatura + barra de % de uso + % (restaurada) ── */
+.mz-md-flexpanel { width: 100%; max-width: 680px; margin: 20px auto 6px; }
+.mz-md-flextitle {
+  font-family: system-ui, sans-serif; font-size: 11px; font-weight: 800;
+  letter-spacing: .09em; text-transform: uppercase; color: rgba(255,255,255,0.72); margin-bottom: 3px;
+}
+.mz-md-flexhint { font-family: system-ui, sans-serif; font-size: 11.5px; color: rgba(255,255,255,0.4); margin: 0 0 11px; }
+.mz-md-flexlist { display: flex; flex-direction: column; gap: 1px; }
+.mz-md-frow { display: flex; align-items: center; gap: 12px; padding: 7px 8px; border-radius: 8px; transition: background .14s; }
+.mz-md-frow:hover { background: rgba(255,255,255,0.05); }
+.mz-md-fthumb { width: 40px; height: 56px; object-fit: cover; border-radius: 2px; background: #1a1a24; flex: 0 0 auto; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+.mz-md-fname { font-family: system-ui, sans-serif; font-size: 13.5px; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; }
+.mz-md-fbar { flex: 0 0 120px; height: 7px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.mz-md-fbar > span { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, rgba(95,214,138,0.95), rgba(95,214,138,0.55)); }
+.mz-md-fbar.tech > span { background: rgba(255,255,255,0.3); }
+.mz-md-fpct { flex: 0 0 38px; text-align: right; font-family: system-ui, sans-serif; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.72); font-variant-numeric: tabular-nums; }
+
+/* ══════ CARTAS DESTACADAS (portada compuesta) — bloque aislado, fácil de quitar ══════ */
+/* «Cartas destacadas» ahora es un .mz-detail-btn.labeled más del grupo de la cabecera (sin estilo propio). */
+
+/* Modal «Elige las cartas destacadas» (hoja inferior) */
+.mz-feat-modal {
+  position: fixed; inset: 0; z-index: 9400;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  background: rgba(0,0,0,0.45);
+  opacity: 0; transition: opacity 0.2s ease;
+}
+.mz-feat-modal.open { opacity: 1; }
+.mz-feat-sheet {
+  background: #15151f;
+  border-top-left-radius: 20px; border-top-right-radius: 20px;
+  border-top: 1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 -14px 40px rgba(0,0,0,0.5);
+  max-height: 82vh; overflow-y: auto;
+  padding: 22px 22px 90px;
+  transform: translateY(24px); transition: transform 0.24s cubic-bezier(0.22,1,0.36,1);
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+.mz-feat-modal.open .mz-feat-sheet { transform: none; }
+.mz-feat-sheet::-webkit-scrollbar { width: 7px; }
+.mz-feat-sheet::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+.mz-feat-title {
+  text-align: center; font: 800 22px system-ui, sans-serif;
+  color: rgba(255,255,255,0.92); margin-bottom: 18px;
+}
+.mz-feat-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px; max-width: 720px; margin: 0 auto;
+}
+.mz-feat-card {
+  position: relative; aspect-ratio: 367/512; border-radius: 10px; overflow: hidden;
+  cursor: pointer; background: #202030;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.12s, box-shadow 0.15s, border-color 0.15s;
+}
+.mz-feat-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mz-feat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2); }
+.mz-feat-card.sel { border-color: #4dabff; box-shadow: 0 0 0 2px rgba(77,171,255,0.8); }
+.mz-feat-card.sel::after { content: ''; position: absolute; inset: 0; background: rgba(77,171,255,0.28); pointer-events: none; }
+.mz-feat-num {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 2;
+  width: 54px; height: 54px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(20,28,44,0.86); border: 2px solid rgba(255,255,255,0.85);
+  color: #fff; font: 800 26px system-ui, sans-serif;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+}
+.mz-feat-done {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 9401;
+  width: 58px; height: 58px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(28,28,40,0.96); border: 1px solid rgba(255,255,255,0.18);
+  color: #fff; cursor: pointer;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.55);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  transition: background 0.15s, transform 0.1s;
+}
+.mz-feat-done svg { width: 26px; height: 26px; }
+.mz-feat-done:hover { background: rgba(40,40,56,0.98); }
+.mz-feat-done:active { transform: translateX(-50%) scale(0.94); }
+
+/* Vista rápida de un mazo (mantener pulsado en el selector de partida) */
+.mz-dv-modal {
+  position: fixed; inset: 0; z-index: 9500;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.6); padding: 24px;
+  opacity: 0; transition: opacity 0.16s ease;
+}
+.mz-dv-modal.open { opacity: 1; }
+.mz-dv-panel {
+  width: min(760px, 96vw); max-height: 88vh; display: flex; flex-direction: column;
+  background: #15151f; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6); overflow: hidden;
+  transform: scale(0.97); transition: transform 0.16s ease;
+}
+.mz-dv-modal.open .mz-dv-panel { transform: none; }
+.mz-dv-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.mz-dv-title { flex: 1; min-width: 0; font: 700 15px system-ui, sans-serif; color: rgba(255,255,255,0.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mz-dv-close {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.65); font-size: 15px; cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+.mz-dv-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.mz-dv-grid {
+  overflow-y: auto; padding: 16px;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+.mz-dv-grid::-webkit-scrollbar { width: 7px; }
+.mz-dv-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+.mz-dv-card { position: relative; aspect-ratio: 367/512; border-radius: 7px; overflow: visible; cursor: pointer; }
+.mz-dv-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 7px; display: block; transition: transform 0.13s; }
+.mz-dv-card:hover img { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+.mz-dv-count {
+  position: absolute; top: -4px; right: -4px; z-index: 2;
+  background: rgba(18,18,28,0.95); border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;
+  font: 700 10px system-ui, sans-serif; color: #fff; padding: 1px 5px;
+}
+
+/* ── Descargar imagen: diálogo con preview GRANDE 16:9 + controles en UNA fila ── */
+.mz-dlimg-modal { width: min(96vw, 1120px); max-width: 1120px; }
+/* El hueco se adapta al FORMATO: el lienzo manda su tamaño (retrato = alto, apaisado = ancho)
+   → la vertical llena en móvil y la horizontal en escritorio, sin recortes ni zoom. */
+.mz-dlimg-preview {
+  position: relative;
+  width: 100%; min-height: 160px; background: #060608; border-radius: 10px; overflow: hidden;
+  margin: 2px 0 4px; display: flex; align-items: center; justify-content: center;
+}
+/* overlay «procesando» sobre el lienzo (se revela la imagen ya terminada) */
+.mz-dlimg-loading {
+  position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+  background: #060608; z-index: 2;
+}
+.mz-dlimg-loading.on { display: flex; }
+.mz-dlimg-spin {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.14); border-top-color: rgba(255,255,255,0.75);
+  animation: mzDlSpin 0.7s linear infinite;
+}
+@keyframes mzDlSpin { to { transform: rotate(360deg); } }
+html.pb-reduce-motion .mz-dlimg-spin { animation-duration: 1.4s; }
+
+/* «Hold» del mazo del detalle: oculta las cartas y muestra un círculo hasta que cargan. */
+.mz-md-hero.mz-imgs-loading, #mz-cards-grid.mz-imgs-loading { position: relative; min-height: 200px; }
+.mz-md-hero.mz-imgs-loading > *, #mz-cards-grid.mz-imgs-loading > * { visibility: hidden; }
+.mz-md-hero.mz-imgs-loading::after, #mz-cards-grid.mz-imgs-loading::after {
+  content: ''; position: absolute; top: 50%; left: 50%; margin: -17px 0 0 -17px;
+  width: 34px; height: 34px; border-radius: 50%; visibility: visible;
+  border: 3px solid rgba(255,255,255,0.13); border-top-color: rgba(255,255,255,0.7);
+  animation: mzDlSpin 0.7s linear infinite;
+}
+html.pb-reduce-motion .mz-md-hero.mz-imgs-loading::after,
+html.pb-reduce-motion #mz-cards-grid.mz-imgs-loading::after { animation-duration: 1.5s; }
+.mz-dlimg-preview canvas { max-width: 100%; max-height: 56vh; width: auto; height: auto; display: block; }
+@media (max-width: 720px) { .mz-dlimg-preview canvas { max-height: 52vh; } }
+.mz-dlimg-dims { text-align: center; font-size: 11.5px; color: rgba(255,255,255,0.4); margin: 0 0 10px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.mz-dlimg-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
+.mz-dlimg-controls .cv-chip { white-space: nowrap; }
+/* par apagado (p.ej. el QR con el formato de una línea) */
+.mz-dlimg-controls .mz-seg-off { opacity: 0.38; }
+.mz-dlimg-controls .cv-chip:disabled { cursor: default; }
+.mz-dlimg-controls .cv-chip.active { background: rgba(255,255,255,0.14); color: #fff; }
+/* manchas del liquid glass: el modal es grande → sin turbulencia warp (cristal limpio como el resto de menús) */
+html.pb-warp .mz-dlimg-modal { -webkit-backdrop-filter: blur(18px) saturate(1.9) brightness(1.06); backdrop-filter: blur(18px) saturate(1.9) brightness(1.06); }
+html.pb-warp .mz-dlimg-modal::after { -webkit-backdrop-filter: blur(3px) brightness(1.35); backdrop-filter: blur(3px) brightness(1.35); }
+
+/* ══ OUTLINE DEL MAZO ACTIVO — al FINAL a propósito ══
+   El bloque «AESTHETIC UPDATE» de arriba redefine `.mz-deck-card:hover` con !important
+   (borde + sombra) → cualquier contorno declarado antes DESAPARECE al pasar el ratón.
+   Por eso el anillo verde vive aquí y también con !important, incluida su variante :hover
+   (que conserva el verde y solo añade la elevación de la tarjeta). */
+.mz-deck-card.mz-deck-active,
+.mz-deck-card.mz-deck-active:hover {
+  border-color: var(--mz-active) !important;
+  box-shadow: 0 0 0 3px rgba(63,214,138,0.72), 0 0 18px rgba(63,214,138,0.28), 0 8px 24px rgba(0,0,0,0.45) !important;
+}
+.mz-deck-card.mz-deck-active:hover {
+  box-shadow: 0 0 0 3px rgba(87,227,154,0.9), 0 0 22px rgba(63,214,138,0.4), 0 12px 32px rgba(0,0,0,0.5) !important;
+}
+/* En modo selección manda el azul de selección: no se mezclan los dos contornos. */
+.mz-deck-card.mz-deck-active.mz-selected,
+.mz-deck-card.mz-deck-active.mz-selected:hover {
+  border-color: #4dabff !important;
+  box-shadow: 0 0 0 2px rgba(77,171,255,0.75), 0 8px 22px rgba(30,120,220,0.35) !important;
+}
+
+/* Chip «CUSTOM» del buscador del constructor (solo aparece en formatos que admiten
+   cartas custom, hoy Avanzado). Mismo violeta que el resto de lo de Advanced. */
+.mzb-custom-chip.active {
+  color: #cbb8ff;
+  background: rgba(149,131,216,0.18);
+  border-color: rgba(149,131,216,0.5);
+}
+
+/* «Ver todas en Cartas»: enlace a la derecha de la cabecera de la sección custom. */
+.fmt-info-see {
+  flex-shrink: 0; padding: 4px 11px; border-radius: 999px; cursor: pointer;
+  font-family: system-ui, sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: #cbb8ff; background: rgba(149,131,216,0.14);
+  border: 1px solid rgba(149,131,216,0.4);
+  transition: background 0.15s, color 0.15s, transform 0.12s;
+}
+.fmt-info-see:hover { background: rgba(149,131,216,0.24); color: #e2d7ff; }
+.fmt-info-see:active { transform: scale(0.97); }
+
+@media (max-width: 720px) {
+  .fmt-info-rules { grid-template-columns: repeat(2, 1fr); }
+  .fmt-info-strip { --fmt-cw: 86px; }
+}
+
+/* ── BANDA «tienes un mazo a medias» (borrador aparcado) ──────────────────────
+   El constructor guarda su estado como la partida guarda la suya: salir de la vista
+   APARCA el mazo, nunca lo tira. Esta banda es su salida visible en la rejilla.       */
+#mz-rescue-bar,
+#mz-draft-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 0 22px 12px; padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  font-size: 13px;
+}
+#mz-rescue-bar .mz-draft-txt,
+#mz-draft-bar .mz-draft-txt { color: rgba(255,255,255,0.82); margin-right: auto; }
+#mz-rescue-bar button,
+#mz-draft-bar button {
+  font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  padding: 6px 14px; border-radius: 999px; border: 1px solid transparent;
+  transition: background 0.14s, transform 0.1s, border-color 0.14s;
+}
+#mz-rescue-bar button:active,
+#mz-draft-bar button:active { transform: scale(0.97); }
+#mz-rescue-bar .mz-draft-go,
+#mz-draft-bar .mz-draft-go { background: rgba(255,255,255,0.92); color: #16161e; }
+#mz-rescue-bar .mz-draft-go:hover,
+#mz-draft-bar .mz-draft-go:hover { background: #fff; }
+#mz-draft-bar .mz-draft-dz {
+  background: transparent; color: rgba(255,255,255,0.55);
+  border-color: rgba(255,255,255,0.14);
+}
+#mz-draft-bar .mz-draft-dz:hover { color: #ff8f8f; border-color: rgba(255,120,120,0.45); }
+
+@media (max-width: 720px) {
+  #mz-draft-bar { margin: 0 12px 10px; padding: 9px 12px; font-size: 12.5px; }
+  #mz-draft-bar .mz-draft-txt { flex: 1 1 100%; margin-right: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   META — lista de tarjetas con el arte del protagonista de fondo
+   Sustituye a la tabla de escritorio Y a la lista de tarjetas de móvil: un solo
+   render para las dos. El tratamiento del fondo es el de las bandas del hub
+   «Jugar» (arte + velo que lo apaga + franja del color de su energía). Sin barra
+   de uso: tendencia, uso, victorias y partidas son columnas alineadas con la
+   cabecera, y la cabecera es lo que se clica para ordenar (como una tabla).
+
+   ── AJUSTES (tocar solo aquí) ──────────────────────────────────────────
+   --mc-h        alto mínimo de cada tarjeta (las miniaturas NO lo alteran)
+   --mc-name     tamaño del nombre del mazo
+   --mc-thumb    alto de las miniaturas de carta (el ancho sale solo)
+   --mc-overlap  cuánto se solapan las dos miniaturas
+   --mc-thumb-x  desplazamiento HORIZONTAL de las miniaturas
+   --mc-thumb-y  desplazamiento VERTICAL (positivo = bajan y asoman por el borde)
+   --mc-tilt     inclinación en grados (abanico; 0 = rectas)
+   --mc-art-y    posición VERTICAL del arte de fondo (0% = arriba de la carta)
+   --mc-art-zoom zoom del arte de fondo (más % = más cerca)
+   --mc-art-dim  opacidad del arte (1 = tal cual, 0 = invisible)
+   --mc-scrim    intensidad del velo que apaga el arte (1 = como está, 0 = sin velo)
+   --mc-gap      separación entre columnas
+   --mc-numgap   separación EXTRA entre las columnas de cifras
+   --mc-rk-align alineación del # (left · center · right) — la cabecera usa la misma
+   --mc-rk-x     desplazamiento horizontal del #
+   --mc-trendw   hueco reservado a la tendencia, a la IZQUIERDA del % de uso
+   --mc-trendgap separación entre la tendencia y el % (van como un pack)
+   --mc-arrow-x  separación de la flecha de orden respecto al final de la palabra
+   --mc-radius   redondeo de la tarjeta
+   --mc-padx     margen interior izquierdo/derecho de la tarjeta y de la cabecera
+   --mc-rowgap   separación entre tarjetas
+   --mc-bar      grosor de la franja de color de la energía (borde izquierdo)
+   --mc-thumb-r  redondeo de las miniaturas
+   --mc-rkf · --mc-usef · --mc-wrf · --mc-gamesf · --mc-trendf · --mc-headf
+                 tamaños de letra: # · uso · victorias · partidas · tendencia · cabecera
+   --mc-namemax  ancho máximo del nombre (a partir de ahí se trunca con «…»); none = todo
+   --mc-namelh   interlineado del nombre (cuenta con el nombre a dos líneas)
+   --mc-shb · --mc-sho
+                 sombra del texto sobre el arte: desenfoque y opacidad del negro
+   --mc-rko · --mc-rkw · --mc-rkshb · --mc-rksho
+                 el # : claridad (blanco), grosor y su PROPIA sombra — para poder
+                 solaparlo con la franja de energía y que siga leyéndose
+   --mc-baro     opacidad de la franja de energía (0 = invisible; el grosor es --mc-bar)
+   --mz-cols     anchos de las columnas, en orden: # · miniaturas · nombre ·
+                 uso (tendencia incluida) · victorias · partidas
+
+   PRESETS de miniatura (el tuner los aplica de un clic):
+     entera  thumb 47 · x 0   · y 0   · overlap 11 · tilt 0
+     arte    thumb 96 · x -6  · y 22  · overlap 20 · tilt -4
+     arte XL thumb 132 · x -12 · y 40 · overlap 28 · tilt -6
+   ═══════════════════════════════════════════════════════════════════════ */
+#mz-meta-wrap {
+  --mc-h: 100px;
+  --mc-name: 17px;
+  --mc-thumb: 132px;
+  --mc-overlap: 11px;
+  --mc-thumb-x: -17px;
+  --mc-thumb-y: 31px;
+  --mc-tilt: 3.5deg;
+  --mc-art-y: 29%;
+  --mc-art-zoom: 100%;
+  --mc-art-dim: 1;
+  --mc-scrim: 1;
+  --mc-gap: 24px;
+  --mc-numgap: 5px;
+  --mc-rk-align: left;
+  --mc-rk-x: 0px;
+  --mc-trendw: 42px;
+  --mc-trendgap: 7px;
+  --mc-arrow-x: 3px;
+  --mc-radius: 12px;
+  --mc-padx: 16px;
+  --mc-rowgap: 7px;
+  --mc-bar: 3px;
+  --mc-thumb-r: 4px;
+  --mc-rkf: 13px;
+  --mc-usef: 14px;
+  --mc-wrf: 17px;
+  --mc-gamesf: 12.5px;
+  --mc-trendf: 12px;
+  --mc-headf: 11px;
+  --mc-namemax: none;
+  --mc-namelh: 1.2;
+  --mc-shb: 8px;
+  --mc-sho: 0.95;
+  --mc-rko: 0.5;
+  --mc-rkw: 600;
+  --mc-rkshb: 6px;
+  --mc-rksho: 0.9;
+  --mc-baro: 1;
+  --mz-cols: 34px 181px minmax(0,1fr) 116px 78px 72px;
+  max-width: 980px; margin: 0 auto; padding: 0 4px;
+}
+.mz-meta-head {
+  display: grid; grid-template-columns: var(--mz-cols); align-items: center; gap: var(--mc-gap);
+  /* el borde invisible compensa el de las tarjetas: sin él, la columna elástica queda 2px
+     más ancha aquí y las palabras no caen exactamente sobre sus cifras */
+  padding: 0 var(--mc-padx) 8px; border: 1px solid transparent; border-bottom: 0;
+  font-size: var(--mc-headf); letter-spacing: .07em; text-transform: uppercase;
+  color: rgba(255,255,255,0.34); font-weight: 600;
+}
+.mz-meta-head .mh-col {
+  appearance: none; border: 0; background: none; color: inherit; font: inherit;
+  letter-spacing: inherit; text-transform: inherit; cursor: pointer;
+  padding: 4px 0; border-radius: 6px; transition: color .15s; white-space: nowrap;
+  position: relative; display: flex; align-items: center; justify-content: center;
+}
+.mz-meta-head .mh-col:hover { color: rgba(255,255,255,0.8); }
+.mz-meta-head .mh-col.sorted { color: #fff; }
+.mz-meta-head .mh-col:focus-visible { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; }
+/* la flecha va FUERA del flujo y colgada del FINAL de la palabra: así la palabra se
+   queda centrada sobre su cifra pase lo que pase, y la flecha no se va al borde */
+.mz-meta-head .mh-col .mh-t { position: relative; }
+.mz-meta-head .mz-sort-arrow {
+  position: absolute; left: calc(100% + var(--mc-arrow-x)); top: 50%; transform: translateY(-50%);
+  font-size: 8px; line-height: 1;
+}
+.mz-meta-head .mh-col:not(.sorted) .mz-sort-arrow { visibility: hidden; }
+
+.mz-meta-list { display: flex; flex-direction: column; gap: var(--mc-rowgap); }
+.mz-mcard {
+  position: relative; display: grid; grid-template-columns: var(--mz-cols);
+  align-items: center; gap: var(--mc-gap); width: 100%; min-height: var(--mc-h);
+  padding: 8px var(--mc-padx); border: 1px solid rgba(255,255,255,0.09); border-radius: var(--mc-radius);
+  background: rgba(255,255,255,0.04); overflow: hidden; cursor: pointer;
+  color: #e9ebf2; font: inherit; text-align: left;
+  transition: border-color .18s, transform .14s, box-shadow .2s;
+}
+.mz-mcard:hover {
+  transform: translateY(-1px); border-color: color-mix(in srgb, var(--a) 55%, transparent);
+  box-shadow: 0 10px 26px -14px color-mix(in srgb, var(--a) 55%, #000);
+}
+.mz-mcard:active { transform: translateY(0); }
+.mz-mcard:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
+/* arte + velo: fuera del grid (position:absolute no ocupa celda) */
+.mc-art {
+  position: absolute; inset: 0; background-color: #12121a; background-repeat: no-repeat;
+  /* --fx/--fy/--fz los pone el JS por carta (data/card_focus.js). Sin ajuste propio,
+     cada carta cae en el encuadre general de arriba. */
+  background-position: var(--fx, center) var(--fy, var(--mc-art-y));
+  background-size: var(--fz, var(--mc-art-zoom)) auto;
+  opacity: var(--mc-art-dim);
+}
+.mc-art.flip { transform: scaleX(-1); }
+/* La franja de energía es su propia capa (antes era un inset del velo): así se le puede
+   dar opacidad aparte y el # puede pintarse ENCIMA de ella. */
+.mz-mcard::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; z-index: 1;
+  width: var(--mc-bar); background: var(--a); opacity: var(--mc-baro); pointer-events: none;
+}
+.mc-scrim {
+  position: absolute; inset: 0; opacity: var(--mc-scrim);
+  background:
+    linear-gradient(90deg, rgba(11,12,18,.95) 30%, rgba(11,12,18,.78) 56%, rgba(11,12,18,.72) 72%, rgba(11,12,18,.93) 100%),
+    linear-gradient(180deg, rgba(11,12,18,.3), rgba(11,12,18,.46));
+}
+.mz-mcard > *:not(.mc-art):not(.mc-scrim) { position: relative; z-index: 2; }
+
+.mc-rk, .mz-meta-head .mh-rk {
+  text-align: var(--mc-rk-align); transform: translateX(var(--mc-rk-x));
+}
+.mz-meta-head .mh-rk { justify-content: flex-end; }
+.mc-rk { font-size: var(--mc-rkf); font-weight: var(--mc-rkw); color: rgba(255,255,255,var(--mc-rko));
+  font-variant-numeric: tabular-nums; text-shadow: 0 1px var(--mc-rkshb) rgba(0,0,0,var(--mc-rksho)); }
+/* las miniaturas se salen del flujo: por grandes que se pongan, el alto de la tarjeta
+   lo manda --mc-h y nada más (antes crecer la miniatura estiraba la fila entera) */
+.mc-thumb { position: relative; align-self: stretch; }
+.mc-thumb .mz-tcards {
+  position: absolute; left: var(--mc-thumb-x); top: 50%; display: flex; align-items: flex-start;
+  transform: translateY(calc(-50% + var(--mc-thumb-y)));
+}
+.mc-thumb .mz-tcard {
+  height: var(--mc-thumb); width: auto; border-radius: var(--mc-thumb-r); box-shadow: 0 3px 12px rgba(0,0,0,.6);
+  position: relative; transform-origin: 50% 0;
+}
+/* inclinación en abanico: la primera cae a la izquierda y la segunda a la derecha */
+.mc-thumb .mz-tcard:first-child  { transform: rotate(calc(var(--mc-tilt) * -1)); z-index: 2; }
+.mc-thumb .mz-tcard:nth-child(2) { transform: rotate(var(--mc-tilt)); z-index: 1; }
+.mc-thumb .mz-tcard + .mz-tcard { margin-left: calc(var(--mc-overlap) * -1); }
+
+.mc-name { font-size: var(--mc-name); font-weight: 600; letter-spacing: -.005em; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; line-height: var(--mc-namelh);
+  max-width: var(--mc-namemax); text-shadow: 0 1px var(--mc-shb) rgba(0,0,0,var(--mc-sho)); }
+/* Nombre a DOS LÍNEAS: una por carta protagonista (el nombre del arquetipo es la suma de
+   las dos). Con un solo protagonista queda una línea, centrada por el propio flex. */
+.mc-name.two { display: flex; flex-direction: column; justify-content: center; white-space: normal; }
+.mc-name.two > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* cifras CENTRADAS en su columna: así la palabra de la cabecera y el número comparten
+   centro exacto (alineadas a la derecha nunca llegaban a verse centradas entre sí) */
+.mc-use, .mc-wr, .mc-games {
+  text-align: center; font-variant-numeric: tabular-nums; text-shadow: 0 1px var(--mc-shb) rgba(0,0,0,var(--mc-sho));
+}
+.mc-use, .mc-wr, .mc-games,
+.mz-meta-head .mh-use, .mz-meta-head .mh-wr, .mz-meta-head .mh-games {
+  padding-left: var(--mc-numgap);
+}
+/* la tendencia vive DENTRO de la celda de uso, en un hueco propio a su izquierda: se
+   mueve con ella como un pack y el % se queda clavado en el centro pase lo que pase */
+.mc-use, .mz-meta-head .mh-use { padding-left: calc(var(--mc-numgap) + var(--mc-trendw)); }
+.mc-use { position: relative; }
+.mc-trend {
+  position: absolute; left: var(--mc-numgap); top: 0; bottom: 0; width: var(--mc-trendw);
+  display: flex; align-items: center; justify-content: flex-end;
+  padding-right: var(--mc-trendgap);
+}
+.mc-use   { font-size: var(--mc-usef); font-weight: 650; }
+.mc-wr    { font-size: var(--mc-wrf); font-weight: 700; letter-spacing: -.02em; }
+.mc-games { font-size: var(--mc-gamesf); color: rgba(255,255,255,0.55); }
+.mc-trend .mz-trend {
+  display: inline-flex; align-items: center; gap: 3px; white-space: nowrap;
+  font-size: var(--mc-trendf); font-weight: 700; font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px var(--mc-shb) rgba(0,0,0,var(--mc-sho));
+}
+.mc-trend .mz-trend.up   { color: #6fe6a0; }
+.mc-trend .mz-trend.down { color: #ff8f8f; }
+
+/* MÓVIL — juego de valores PROPIO (no es «lo de escritorio pero más pequeño»): el tuner
+   guarda dos juegos independientes y `applyMetaTune` aplica el que toca según el ancho.
+   Todo va por variables para que el tuner pueda tocarlo. */
+@media (max-width: 720px) {
+  #mz-meta-wrap {
+    --mc-h: 85px; --mc-name: 12.5px; --mc-thumb: 76px; --mc-overlap: 14px;
+    --mc-thumb-x: -14px; --mc-thumb-y: 10px; --mc-tilt: 2deg; --mc-thumb-r: 1.5px;
+    /* «Partidas» se oculta en móvil: su columna NO se declara (si se deja, reserva su
+       ancho igual y el nombre del mazo se queda sin sitio) */
+    --mz-cols: 22px 90px minmax(0,1fr) 51px 42px;
+    /* la tendencia va SIN número (solo la flecha): su hueco es estrecho */
+    --mc-trendw: 12px; --mc-trendgap: 3px; --mc-arrow-x: 2px;
+    --mc-gap: 2px; --mc-numgap: 4px;
+    --mc-padx: 11px; --mc-radius: 11px; --mc-rowgap: 8px; --mc-bar: 2px;
+    --mc-rk-x: -11px; --mc-rk-align: center;
+    --mc-rkf: 11.5px; --mc-usef: 13px; --mc-wrf: 13px; --mc-gamesf: 12px;
+    --mc-trendf: 11px; --mc-headf: 9px;
+    --mc-namelh: 1.64; --mc-namemax: none;
+    --mc-shb: 8px; --mc-sho: 0.95;
+    --mc-rkw: 400; --mc-rko: 1; --mc-rkshb: 24px; --mc-rksho: 1;
+    --mc-baro: 0.88;
+    --mc-art-y: 22%; --mc-art-zoom: 128%; --mc-art-dim: 1; --mc-scrim: 1;
+    padding: 0;
+  }
+  /* «Partidas» fuera en móvil. La cabecera necesita ganar a `.mz-meta-head .mh-col`
+     (display:flex), o el botón se cae a una fila nueva del grid. */
+  .mz-meta-head .mh-games, .mh-games, .mc-games { display: none; }
+  .mz-meta-head { letter-spacing: .05em; }
+}
+
+/* Mostrar/ocultar columnas desde el tuner. `mcx-` = ocultar · `mcs-` = mostrar aunque el
+   CSS de esa pantalla la esconda (hace falta para devolver «Partidas» en móvil). Sin
+   ajuste guardado no se pone ninguna clase y manda el CSS de arriba.
+   Ocultar una celda con display:none la saca del grid, así que su anchura también sale de
+   --mz-cols (lo hace applyMetaTune). */
+#mz-meta-wrap.mcx-rank  .mc-rk,    #mz-meta-wrap.mcx-rank  .mh-rk    { display: none; }
+#mz-meta-wrap.mcx-thumb .mc-thumb, #mz-meta-wrap.mcx-thumb .mh-thumb { display: none; }
+#mz-meta-wrap.mcx-name  .mc-name,  #mz-meta-wrap.mcx-name  .mh-name  { display: none; }
+#mz-meta-wrap.mcx-use   .mc-use,   #mz-meta-wrap.mcx-use   .mh-use   { display: none; }
+#mz-meta-wrap.mcx-wr    .mc-wr,    #mz-meta-wrap.mcx-wr    .mh-wr    { display: none; }
+#mz-meta-wrap.mcx-games .mc-games, #mz-meta-wrap.mcx-games .mh-games { display: none; }
+#mz-meta-wrap.mcx-trend .mc-trend { display: none; }
+/* al devolverlas: los `.mh-col` son botones flex, el resto celdas de bloque */
+#mz-meta-wrap.mcs-rank  .mc-rk,    #mz-meta-wrap.mcs-rank  .mh-rk    { display: block; }
+#mz-meta-wrap.mcs-thumb .mc-thumb, #mz-meta-wrap.mcs-thumb .mh-thumb { display: block; }
+#mz-meta-wrap.mcs-name  .mc-name,  #mz-meta-wrap.mcs-name  .mh-name  { display: block; }
+#mz-meta-wrap.mcs-name  .mc-name.two { display: flex; }
+#mz-meta-wrap.mcs-use .mc-use, #mz-meta-wrap.mcs-wr .mc-wr,
+#mz-meta-wrap.mcs-games .mc-games { display: block; }
+#mz-meta-wrap.mcs-use .mh-use, #mz-meta-wrap.mcs-wr .mh-wr,
+#mz-meta-wrap.mcs-games .mh-games { display: flex; }
+
+/* Ajustes avanzados del meta: botón compacto en la fila de filtros + panel que se
+   despliega debajo, como la «Búsqueda avanzada» de Cartas. Antes el botón vivía dentro
+   de un bloque de ancho completo (caía a su propia línea) y su flecha no tenía tamaño,
+   así que el SVG se pintaba enorme. */
+#mz-adv-toggle { flex: none; }
+#mz-adv-toggle:focus-visible { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; }
+
+#mz-advanced {
+  flex-basis: 100%; width: 100%; margin: 0;
+  display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s cubic-bezier(.22,.61,.36,1);
+}
+#mz-advanced.open { grid-template-rows: 1fr; }
+#mz-adv-inner { overflow: hidden; min-height: 0; }
+#mz-advanced #mz-adv-body { display: block; padding-top: 12px; }
+
+/* Interruptor de los ajustes avanzados del meta («solo desde la última expansión»).
+   Reutiliza el switch neutro de Ajustes (.pb-switch); aquí solo va la fila. */
+.mz-adv-switch { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.mz-adv-switch-lbl { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.3; }
+.mz-adv-switch:hover .mz-adv-switch-lbl { color: rgba(255,255,255,0.95); }
+
+/* ══ REORDENAR MAZOS ARRASTRANDO — al FINAL a propósito ══
+   El bloque «AESTHETIC UPDATE» redefine `.mz-deck-card` y su `:hover` con !important, así
+   que todo estado visual del arrastre tiene que declararse aquí abajo (mismo motivo que el
+   anillo verde del mazo activo). */
+
+/* En modo edición el dedo puede desplazar la página en vertical (el listado scrollea) pero
+   el gesto horizontal y el «mantener» los toma el JS. Fuera de modo edición no se toca nada:
+   `touch-action:none` fijo mataría el scroll normal sobre una tarjeta, que ocupa casi toda
+   la rejilla. */
+.mz-deck-card.mz-selectable { touch-action: pan-y; -webkit-user-select: none; user-select: none; cursor: grab; }
+.mz-deck-card.mz-deck-armed { cursor: grabbing; }
+#mz-grid.mz-reordering, #mz-grid.mz-reordering .mz-deck-card { cursor: grabbing; }
+
+/* «Cogida» (mantener pulsado, antes de mover): realce sutil, todavía sin fantasma */
+.mz-deck-card.mz-deck-armed,
+.mz-deck-card.mz-deck-armed:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.55) !important;
+  border-color: rgba(255,255,255,0.3) !important;
+  z-index: 6;
+}
+
+/* Mientras se reordena: las tarjetas se apartan con una curva ágil y sin el «pop» del hover
+   (lo que se mueve es el hueco, no la tarjeta que hay debajo del cursor). */
+#mz-grid.mz-reordering > * { transition: transform 0.22s cubic-bezier(0.22,1,0.36,1); }
+#mz-grid.mz-reordering .mz-deck-card:hover { transform: none !important; }
+#mz-grid.mz-reordering .mz-deck-card:hover .mz-stack-back-1,
+#mz-grid.mz-reordering .mz-deck-card:hover .mz-stack-back-2,
+#mz-grid.mz-reordering .mz-deck-card:hover .mz-stack-back-3 { transform: translateY(0) !important; }
+#mz-grid.mz-reordering .mz-deck-card:hover .mz-stack-front { transform: none !important; }
+
+/* Hueco de destino: ocupa la celda para que el sitio se ABRA de verdad (en una cuadrícula un
+   caret entre tarjetas no vale: ocuparía una columna). */
+.mz-deck-ph {
+  border-radius: 10px;
+  border: 1.5px dashed rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.03);
+  pointer-events: none;
+}
+
+/* Fantasma que sigue al cursor (la portada del mazo, fuera del flujo) */
+.mz-drag-ghost {
+  position: fixed; z-index: 99999;
+  width: 132px; pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-3deg);
+  filter: drop-shadow(0 16px 26px rgba(0,0,0,0.6));
+  will-change: left, top;
+}
+.mz-drag-ghost .mz-stack { margin-bottom: 0; }
+html.pb-reduce-motion #mz-grid.mz-reordering > * { transition: none; }
+/* Al arrastrar varios marcados a la vez, el fantasma dice cuántos van */
+.mz-drag-count {
+  position: absolute; top: -8px; right: -8px;
+  min-width: 22px; height: 22px; padding: 0 5px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 11px; background: #4dabff; color: #fff;
+  font: 700 12px system-ui, sans-serif;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+}
+.mz-drag-ghost { position: fixed; }
+
+/* ══ CONTROLES DE LA CABECERA DE «BARAJAS» — al FINAL a propósito ══
+   Un solo skin para TODO lo que vive en #mz-header: el desplegable de orden, «Editar» y los
+   botones de la barra de edición. Antes había tres alturas distintas (25 / 31 / 33 px): el
+   disparador heredaba el chip pequeño de la pestaña Cartas —con !important, por eso hace
+   falta aquí— y el resto no cuadraba entre sí. */
+:root { --mz-hb-h: 34px; }
+
+#mz-header .mz-hbtn,
+#mz-select-bar button {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: var(--mz-hb-h); padding: 0 13px !important;
+  border-radius: 9px !important;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.045);
+  color: rgba(255,255,255,0.6);
+  font: 700 12.5px system-ui, -apple-system, sans-serif !important;
+  letter-spacing: 0.03em; white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.16s, color 0.16s, border-color 0.16s, transform 0.1s;
+}
+#mz-header .mz-hbtn:hover,
+#mz-select-bar button:hover:not(:disabled) {
+  background: rgba(255,255,255,0.09);
+  color: rgba(255,255,255,0.92);
+  border-color: rgba(255,255,255,0.24);
+}
+/* Micro-feedback de pulsación (convención de la web) */
+#mz-header .mz-hbtn:active,
+#mz-select-bar button:active:not(:disabled) { transform: scale(0.97); }
+#mz-header .mz-hbtn:focus-visible,
+#mz-select-bar button:focus-visible { outline: 2px solid rgba(255,255,255,0.45); outline-offset: 2px; }
+.mz-hbtn-ico { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.9; }
+.mz-hbtn-ico-lg { width: 17px; height: 17px; }   /* «Editar»: icono más grande (lo pidió Daniel) */
+#mz-select-bar button svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* Disparador del orden: ancho FIJO (enseña solo la opción activa; sin esto, cambiar de orden
+   movía de sitio al botón de al lado) y la flecha de sentido pegada al borde derecho. */
+/* El disparador dice «Ordenar por» + la opción activa, y mide LO MISMO que su menú (antes era
+   más estrecho y el texto quedaba descolgado a la izquierda con un hueco muerto a la derecha). */
+#mz-sort-trigger { width: 214px; gap: 6px; }
+.mz-sort-cap { color: rgba(255,255,255,0.42); font-weight: 600; }
+#mz-sort-label { color: rgba(255,255,255,0.95); font-weight: 700; margin-left: auto; }
+#mz-sort-trigger:hover .mz-sort-cap { color: rgba(255,255,255,0.6); }
+#mz-sort-trigger.open { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.26); color: rgba(255,255,255,0.95); }
+.mz-sort-dir {
+  width: 13px; height: 13px; flex-shrink: 0;
+  opacity: 0.75; transition: transform 0.18s cubic-bezier(0.22,1,0.36,1);
+}
+.mz-sort-dir.desc { transform: rotate(180deg); }
+.mz-sort-dir.hide { display: none; }              /* «Mi orden» no tiene sentido asc/desc */
+
+/* Menú del orden. Cristal de la web (bloque LIQUID GLASS de styles.css) pero con la
+   respiración de esta pantalla: filas altas, no el chip minúsculo de Cartas. */
+.mz-menu {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  min-width: 214px; padding: 6px;
+  border-radius: 14px;
+  z-index: 9200;
+}
+.mz-menu > * { position: relative; z-index: 1; }
+.mz-menu-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; height: 36px; padding: 0 12px;
+  border: none; background: transparent; border-radius: 9px;
+  color: rgba(255,255,255,0.62);
+  font: 600 13px system-ui, -apple-system, sans-serif; letter-spacing: 0.015em;
+  text-align: left; cursor: pointer;
+  transition: background 0.13s, color 0.13s;
+}
+.mz-menu-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); }
+.mz-menu-item.active { color: #fff; font-weight: 700; background: rgba(255,255,255,0.07); }
+.mz-menu-dir { width: 13px; height: 13px; opacity: 0; flex-shrink: 0; transition: transform 0.18s cubic-bezier(0.22,1,0.36,1); }
+.mz-menu-item.active .mz-menu-dir { opacity: 0.85; }
+.mz-menu-item.active .mz-menu-dir.desc { transform: rotate(180deg); }
+.mz-menu-item.active .mz-menu-dir.hide { display: none; }

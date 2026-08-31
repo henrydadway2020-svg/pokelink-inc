@@ -1,0 +1,429 @@
+/* ═══════════════════════════════════════════════════════════════
+   PVP ONLINE — lobby (Tanda 1). Estética Cartas: system-ui, superficies
+   oscuras neutras, chips blancos translúcidos. El shell reutiliza
+   .pb-modal-overlay/.pb-modal (liquid glass + allowlist del tablero).
+   ═══════════════════════════════════════════════════════════════ */
+
+.pvp-modal {
+  width: 460px;
+  max-width: 94vw;
+  max-height: calc(100vh - 48px - 40px);
+  overflow-y: auto;
+  gap: 10px;
+}
+#pvp-close {
+  position: absolute; top: 10px; right: 12px; z-index: 2;
+  width: 30px; height: 30px; border-radius: 9px;
+  border: none; cursor: pointer;
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.75);
+  font: 18px/1 system-ui, sans-serif;
+  transition: background 0.15s, transform 0.12s;
+}
+#pvp-close:hover { background: rgba(255,255,255,0.13); }
+#pvp-close:active { transform: scale(0.94); }
+
+#pvp-content { display: flex; flex-direction: column; gap: 10px; }
+
+.pvp-h {
+  font: 600 17px/1.3 system-ui, sans-serif;
+  color: rgba(255,255,255,0.94);
+  padding-right: 30px;
+}
+.pvp-sub {
+  margin: 0;
+  font: 400 12.5px/1.5 system-ui, sans-serif;
+  color: rgba(255,255,255,0.62);
+}
+.pvp-note {
+  margin: 0;
+  font: 400 12.5px/1.5 system-ui, sans-serif;
+  color: rgba(255,255,255,0.78);
+}
+.pvp-note.dim { color: rgba(255,255,255,0.5); }
+.pvp-label {
+  font: 500 12px/1.3 system-ui, sans-serif;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Botones-opción (chips grandes, look Cartas) */
+.pvp-opt {
+  position: relative;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.88);
+  font: 500 13.5px/1.2 system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s, border-color 0.15s;
+}
+.pvp-opt:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.16); }
+.pvp-opt:active:not(:disabled) { transform: scale(0.97); }
+.pvp-opt.primary {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+  font-weight: 600;
+}
+.pvp-opt.primary:hover:not(:disabled) { background: rgba(255,255,255,0.2); }
+.pvp-opt.subtle {
+  background: transparent;
+  border-color: transparent;
+  color: rgba(255,255,255,0.55);
+}
+.pvp-opt.subtle:hover:not(:disabled) { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+.pvp-opt:disabled, .pvp-opt.disabled {
+  opacity: 0.45; cursor: default;
+}
+.pvp-soon {
+  font: 600 10px/1 system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+  padding: 4px 7px; border-radius: 999px;
+}
+
+/* Entrada de código */
+.pvp-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.25);
+  color: #fff;
+  font: 600 20px/1.2 system-ui, sans-serif;
+  letter-spacing: 0.28em;
+  text-align: center;
+  text-transform: uppercase;
+  outline: none;
+}
+.pvp-input:focus { border-color: rgba(255,255,255,0.28); }
+.pvp-err {
+  min-height: 16px;
+  font: 500 12px/1.3 system-ui, sans-serif;
+  color: #ff6b6b;
+}
+
+/* Código de la sala */
+.pvp-codebox {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.pvp-codelabel {
+  font: 500 11px/1.2 system-ui, sans-serif;
+  color: rgba(255,255,255,0.55);
+}
+.pvp-code {
+  font: 700 19px/1 system-ui, sans-serif;
+  letter-spacing: 0.18em;
+  color: #fff;
+  margin-left: auto;
+}
+.pvp-mini-btn {
+  border: none; cursor: pointer;
+  padding: 7px 11px; border-radius: 9px;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.85);
+  font: 500 11.5px/1 system-ui, sans-serif;
+  transition: background 0.15s, transform 0.12s;
+}
+.pvp-mini-btn:hover { background: rgba(255,255,255,0.16); }
+.pvp-mini-btn:active { transform: scale(0.95); }
+
+/* Filas de jugador */
+.pvp-player {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.pvp-player.me { border-color: rgba(77,171,255,0.35); }
+.pvp-player.empty { opacity: 0.75; }
+.pvp-ava {
+  width: 34px; height: 34px; border-radius: 50%;
+  object-fit: cover; flex: 0 0 auto;
+}
+.pvp-ava-ini {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+  font: 600 15px/1 system-ui, sans-serif;
+}
+.pvp-pcol { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pvp-pname {
+  font: 600 13px/1.2 system-ui, sans-serif;
+  color: rgba(255,255,255,0.92);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pvp-pname.dim, .pvp-pdeck.dim { color: rgba(255,255,255,0.45); font-weight: 500; }
+.pvp-metag {
+  font: 500 10px/1 system-ui, sans-serif;
+  color: #4dabff;
+  background: rgba(77,171,255,0.12);
+  padding: 2px 6px; border-radius: 999px;
+  vertical-align: 1px;
+}
+.pvp-pdeck {
+  display: flex; align-items: center; gap: 6px;
+  font: 400 12px/1.3 system-ui, sans-serif;
+  color: rgba(255,255,255,0.72);
+  min-width: 0;
+}
+.pvp-pdeck span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pvp-cover {
+  width: 26px; height: 36px;
+  border-radius: 3px;
+  object-fit: cover; flex: 0 0 auto;
+  background: rgba(255,255,255,0.06);
+}
+.pvp-cover.ph { display: inline-block; }
+.pvp-check { color: #7CFC98; font-weight: 700; flex: 0 0 auto; }
+
+/* Selector de mazo */
+.pvp-decklist {
+  display: flex; flex-direction: column; gap: 7px;
+  max-height: 320px; overflow-y: auto;
+  padding-right: 2px;
+}
+.pvp-deckrow {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 11px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.88);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, transform 0.12s, border-color 0.15s;
+}
+.pvp-deckrow:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.16); }
+.pvp-deckrow:active:not(:disabled) { transform: scale(0.98); }
+.pvp-deckrow.invalid { opacity: 0.5; cursor: default; }
+.pvp-deckrow .pvp-cover { width: 32px; height: 44px; border-radius: 4px; }
+.pvp-drcol { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.pvp-drname {
+  font: 600 13px/1.2 system-ui, sans-serif;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pvp-drsub {
+  font: 400 11px/1.35 system-ui, sans-serif;
+  color: rgba(255,255,255,0.55);
+}
+.pvp-deckrow.invalid .pvp-drsub { color: #ff8a8a; }
+
+/* Pantalla «¡Conectados!» (placeholder VS de la Tanda 1) */
+.pvp-vs {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  padding: 10px 0 4px;
+}
+.pvp-vs-side {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  min-width: 0; flex: 1 1 0;
+}
+.pvp-vs-cover {
+  width: 84px; height: 117px;
+  border-radius: 8px; object-fit: cover;
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+.pvp-vs-side.me .pvp-vs-cover { outline: 2px solid rgba(77,171,255,0.55); }
+.pvp-vs-side.opp .pvp-vs-cover { outline: 2px solid rgba(255,107,107,0.55); }
+.pvp-vs-name {
+  font: 600 12.5px/1.2 system-ui, sans-serif;
+  color: rgba(255,255,255,0.9);
+  max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pvp-vs-deck {
+  font: 400 11px/1.2 system-ui, sans-serif;
+  color: rgba(255,255,255,0.55);
+  max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pvp-vs-badge {
+  flex: 0 0 auto;
+  font: 800 16px/1 system-ui, sans-serif;
+  color: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 9px 11px; border-radius: 999px;
+}
+
+/* ── En partida: rendirse + rival reconectando ── */
+/* Opciones de partida (⋯) y emotes: usan los BOTONES DE ESQUINA compartidos
+   (.pb-corner-btn / .pb-corner-menu / .pb-corner-item, en css/styles.css) —
+   el mismo componente que el ⋯ del tablero local. Aquí solo lo específico. */
+#pvp-emote-btn.muted  { color: rgba(255,255,255,0.38); }
+#pvp-emote-menu {
+  position: fixed; z-index: 661;   /* left/bottom los fija el JS (abre hacia arriba-derecha) */
+  display: none; flex-direction: column; min-width: 168px;
+  padding: 6px; gap: 2px;
+  background: rgba(17,17,24,0.95); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+}
+#pvp-emote-menu.open { display: flex; animation: pvp-emote-menu-in 0.16s ease-out; }
+@keyframes pvp-emote-menu-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.pvp-emote-item {
+  text-align: left; padding: 8px 12px; border-radius: 8px;
+  border: 0; background: transparent; color: rgba(255,255,255,0.88);
+  font: 500 13px/1.2 system-ui, sans-serif; cursor: pointer;
+  transition: background 0.12s;
+}
+.pvp-emote-item:hover   { background: rgba(255,255,255,0.08); }
+.pvp-emote-item:active  { transform: scale(0.97); }
+.pvp-emote-item.cooling { opacity: 0.4; cursor: default; }
+.pvp-emote-sep { height: 1px; margin: 4px 6px; background: rgba(255,255,255,0.1); }
+.pvp-emote-mute {
+  text-align: left; padding: 8px 12px; border-radius: 8px;
+  border: 0; background: transparent; color: rgba(255,255,255,0.5);
+  font: 500 12px/1.2 system-ui, sans-serif; cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.pvp-emote-mute:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
+/* Bocadillo (aparece a la altura de la banca de cada lado; el color identifica al jugador) */
+.pvp-emote-bubble {
+  position: fixed; z-index: 9200;
+  transform: translateY(-50%);
+  max-width: 230px;
+  padding: 9px 14px; border-radius: 14px;
+  background: rgba(17,17,24,0.94);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #fff;
+  font: 600 13.5px/1.25 system-ui, sans-serif;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.45);
+  pointer-events: none;
+  animation: pvp-emote-pop 0.28s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+.pvp-emote-bubble.mine { border-color: rgba(77,171,255,0.55);  box-shadow: 0 8px 26px rgba(0,0,0,0.45), 0 0 14px rgba(77,171,255,0.18); border-bottom-left-radius: 4px; }
+.pvp-emote-bubble.opp  { border-color: rgba(255,107,107,0.55); box-shadow: 0 8px 26px rgba(0,0,0,0.45), 0 0 14px rgba(255,107,107,0.18); border-top-right-radius: 4px; }   /* espejo completo del mío: la punta a la derecha */
+.pvp-emote-bubble.leaving { animation: pvp-emote-out 0.3s ease-in forwards; }
+@keyframes pvp-emote-pop {
+  0%   { opacity: 0; transform: translateY(-50%) scale(0.6); }
+  70%  { opacity: 1; transform: translateY(-50%) scale(1.05); }
+  100% { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+@keyframes pvp-emote-out {
+  from { opacity: 1; transform: translateY(-50%) scale(1); }
+  to   { opacity: 0; transform: translateY(-56%) scale(0.92); }
+}
+html.pb-reduce-motion .pvp-emote-bubble,
+html.pb-reduce-motion #pvp-emote-menu.open { animation: none; }
+#pvp-reconnecting {
+  position: fixed; top: 58px; left: 50%; transform: translateX(-50%);
+  z-index: 9400;
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(17,17,24,0.88);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.85);
+  font: 500 12.5px/1.2 system-ui, sans-serif;
+  animation: pvp-recon-pulse 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes pvp-recon-pulse {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+/* Timer por turno: 1 chip boxy (esquinas duras), colocado por JS bajo el marcador de J2.
+   Muestra el reloj del jugador EN TURNO; tenue en el turno del rival. */
+#pvp-turn-timer {
+  position: fixed; z-index: 655;   /* top/left los fija el JS (bajo J2, a su X) */
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 11px; border-radius: 4px;   /* esquinas duras */
+  background: rgba(18,18,26,0.9);
+  border: 1px solid rgba(255,255,255,0.13);
+  color: rgba(255,255,255,0.82);
+  font: 600 12.5px/1 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.4;                    /* turno del rival: tenue/disimulado */
+  transform: translateX(-50%);     /* centrado en la X que fija el JS */
+  pointer-events: none;
+}
+#pvp-turn-timer.mine { opacity: 1; }                     /* tu turno: normal */
+#pvp-turn-timer .pt-ico { font-size: 11px; opacity: 0.6; }
+#pvp-turn-timer.mine.low .pt-num { color: #e0857f; }     /* tu turno ≤10s: solo el número, rojo tenue (no chillón) */
+/* Tope global del jugador en turno: solo aparece cuando quedan menos de 5 min (si no, ruido) */
+#pvp-turn-timer .pt-total { display: none; }
+#pvp-turn-timer.has-total .pt-total {
+  display: inline; margin-left: 4px; padding-left: 6px;
+  border-left: 1px solid rgba(255,255,255,0.16);
+  font-size: 11px; opacity: 0.62;
+}
+/* Fase de colocación: mismo chip, siempre a plena opacidad (el tiempo corre para los dos) */
+#pvp-turn-timer.setup { opacity: 1; }
+
+/* Móvil */
+@media (max-width: 720px) {
+  .pvp-modal { width: 100%; max-width: calc(100vw - 20px); }
+  .pvp-decklist { max-height: 46vh; }
+  .pvp-mini-vs { height: 100%; }
+  .pvp-mini-card { width: 52px; height: 72px; }
+}
+
+/* Carta jugada por el rival (Entrenador): se enseña en grande y vuela a su descarte */
+.pvp-reveal-card {
+  position: fixed; left: 50%; top: 42%;
+  transform: translate(-50%, -50%);
+  width: 148px; height: 206px;
+  border-radius: 10px;
+  background-size: cover; background-position: center;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.55);
+  z-index: 9450;
+  pointer-events: none;
+}
+/* Botón de turno cuando NO es tu turno (PvP): atenuado; el clic avisa, no hace nada */
+#btn-end-turn.pvp-wait { opacity: 0.45; filter: saturate(0.6); }
+
+
+/* ── BLINDAJE del tablero en PARTIDA ONLINE (html.pb-pvp-match) ──
+   Fuera todos los controles de sandbox. SOLO en online; el tablero local conserva TODO.
+   Refuerzo por JS (defensa en profundidad) en pbSetRulesMode / openDeckOverlay /
+   shortcutDraw / shortcutDiscard / openSidebar. El registro de acciones se mantiene (read-only). */
+html.pb-pvp-match .deck-hover-menu,        /* menú del mazo: Robo / Barajar / Ver mazo / Probabilidades */
+html.pb-pvp-match #sidebar-toggle,          /* solapa para abrir la sidebar (buscador + deck-builder) */
+html.pb-pvp-match #board-ctrl,
+html.pb-pvp-match #board-ctrl-btn,          /* menú de controles (⋯): Nueva partida, Escenarios, switch de reglas… */
+html.pb-pvp-match #board-ctrl-menu,
+html.pb-pvp-match #board-fab,               /* FAB móvil (☰) — espejo del menú de controles */
+html.pb-pvp-match #board-fab-menu,
+html.pb-pvp-match #bar-log-btn,             /* registro: ahora vive en el menú de opciones (⋯) */
+html.pb-pvp-match #sidebar,                 /* buscador + deck-builder: NO existe en online (aunque algo la abriera, invisible) */
+html.pb-pvp-match #bar-undo-btn {           /* deshacer: sin sentido en online (ya está bloqueado) */
+  display: none !important;
+}
+/* La tira de daño manual es de SANDBOX → oculta en TODO modo Normal (online o local). */
+html.pb-mode-normal #dmg-strip { display: none !important; }
+/* La pila de descartes SIEMPRE por encima de la UI de partida online (timer/⋯/carta revelada
+   del rival…): su z base (2500) es del tablero local y en online podía quedar debajo. */
+html.pb-pvp-match #discard-overlay { z-index: 8990; }
+
+/* ── Menú de emotes v2: MAZO de hasta 10 (Perfil) + un emote BLOQUEADO como teaser ──
+   Con más de 6 filas el menú pasa a 2 columnas para no crecer a lo alto. */
+#pvp-emote-menu.open.wide { display: grid; grid-template-columns: 1fr 1fr; min-width: 300px; column-gap: 2px; }
+#pvp-emote-menu.wide .pvp-emote-sep, #pvp-emote-menu.wide .pvp-emote-mute, #pvp-emote-menu.wide .pvp-emote-hint, #pvp-emote-menu.wide .pvp-emote-item.locked { grid-column: 1 / -1; }
+.pvp-emote-item.locked { color: rgba(255,255,255,0.38); cursor: help; display: flex; align-items: center; gap: 7px; }
+.pvp-emote-item.locked:hover { background: rgba(255,255,255,0.05); }
+.pvp-emote-item.locked:active { transform: none; }
+.pvp-emote-lock { display: inline-flex; width: 14px; height: 14px; flex-shrink: 0; color: rgba(255,255,255,0.45); }
+.pvp-emote-lock svg { width: 14px; height: 14px; }
+.pvp-emote-lktext { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* pista local al tocar el bloqueado: dónde se consigue */
+.pvp-emote-hint {
+  margin: 4px 6px 2px; padding: 7px 10px; border-radius: 8px;
+  background: rgba(255,209,102,0.10); border: 1px solid rgba(255,209,102,0.30);
+  color: #ffe08a; font: 600 11.5px/1.3 system-ui, sans-serif;
+  animation: pvp-emote-menu-in 0.16s ease-out;
+}
+html.pb-reduce-motion .pvp-emote-hint { animation: none; }
