@@ -1,198 +1,277 @@
 /* ══════════════════════════════════════════════════════════
-   POKELINK · TEMA "GRIMORIO" (FANTASÍA MEDIEVAL / RPG)
+   POKELINK · TEMA "GAMER PRO" (HUD DE ESPORTS)
    Cárgalo DESPUÉS de todos los demás <link rel="stylesheet">
    en el <head> de index.html (y de es/index.html si existe),
-   justo antes de cerrar </head>.
+   justo antes de cerrar </head>. Solo carga UNO de los temas
+   pokelink-theme-*.css a la vez.
 
-   Concepto: sala de un gremio de aventureros. Un pilar lateral
-   de madera y hierro reemplaza la barra superior; el contenido
-   vive sobre pergamino oscuro con paneles tipo pergamino/losa
-   de piedra grabada. El dorado es la única "luz" del set — se
-   usa con cuidado, no en todo. Estructura totalmente distinta
-   a las versiones anteriores (Pokémon y cyberpunk): menú lateral
-   en vez de superior, y el hub de Jugar apilado en vez de en
-   columnas lado a lado.
+   Concepto: panel de control de un jugador competitivo. Se
+   mantiene la barra superior original (no se convierte en
+   pilar lateral, para máxima compatibilidad con el layout
+   responsive existente), pero se re-viste por completo con
+   estética HUD: esquinas cortadas (clip-path), acento neón
+   cian como color primario de interacción y magenta como
+   color secundario/soporte, tipografía técnica (Orbitron para
+   títulos y marca, Rajdhani para el resto).
+
+   A diferencia del tema "Grimorio", este SÍ cubre explícitamente
+   el drawer móvil (#app-drawer) y el popup de ajustes
+   (#sb-settings-popup), para que escritorio y móvil luzcan
+   coherentes. También añade un pequeño orden visual al menú:
+   la pestaña de Perfil se separa a la derecha como grupo de
+   cuenta, distinto del grupo de juego.
    ══════════════════════════════════════════════════════════ */
 
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@500;600;700&display=swap");
 
 :root {
-  --gr-bg:        #150f0a;   /* madera quemada, casi negro */
-  --gr-bg-panel:  #241a10;   /* madera de roble oscura */
-  --gr-bg-raised: #2f2213;
-  --gr-parchment: #e8d9b5;   /* pergamino claro, solo para superficies puntuales */
-  --gr-gold:      #c9a227;   /* hoja de oro, acento único de "luz" */
-  --gr-gold-dim:  #7a621c;
-  --gr-ember:     #a8431b;   /* brasa/antorcha */
-  --gr-forest:    #3f5d3a;   /* verde bosque, soporte frío */
-  --gr-text:      #ece0c4;
-  --gr-text-dim:  #a89a76;
-  --gr-font-head: "Cinzel", "Times New Roman", serif;
+  --gp-bg:          #05070b;   /* casi negro, base HUD */
+  --gp-bg-panel:    #0d141f;   /* panel oscuro azulado */
+  --gp-bg-raised:   #131d2c;
+  --gp-line:        rgba(0, 234, 255, 0.14);
+  --gp-neon:        #00eaff;   /* cian, acento primario */
+  --gp-neon-dim:    #0a5c66;
+  --gp-magenta:     #ff2ec4;   /* magenta, acento secundario / soporte */
+  --gp-magenta-dim: #7a1663;
+  --gp-danger:      #ff4d5e;
+  --gp-text:        #eaf6ff;
+  --gp-text-dim:    #7e93a8;
+  --gp-font-head:   "Orbitron", "Segoe UI", sans-serif;
+  --gp-font-body:   "Rajdhani", "Segoe UI", sans-serif;
+  --gp-cut: 10px;   /* radio del corte de esquina HUD */
 }
 
-/* ── Fondo general: madera veteada + viñeta de antorchas ── */
+/* ── Fondo general: cuadrícula técnica + resplandores de esquina ── */
 html, body {
   background:
-    radial-gradient(circle at 10% 15%, rgba(168,67,27,0.16) 0%, transparent 40%),
-    radial-gradient(circle at 90% 85%, rgba(63,93,58,0.14) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%),
-    repeating-linear-gradient(115deg, rgba(0,0,0,0.10) 0 2px, transparent 2px 5px),
-    var(--gr-bg) !important;
+    radial-gradient(circle at 8% 10%,  rgba(0,234,255,0.10) 0%, transparent 38%),
+    radial-gradient(circle at 92% 88%, rgba(255,46,196,0.08) 0%, transparent 42%),
+    repeating-linear-gradient(0deg,   rgba(255,255,255,0.025) 0 1px, transparent 1px 42px),
+    repeating-linear-gradient(90deg,  rgba(255,255,255,0.025) 0 1px, transparent 1px 42px),
+    var(--gp-bg) !important;
+  color: var(--gp-text) !important;
+  font-family: var(--gp-font-body) !important;
 }
 
-/* ── Menú: pilar lateral fijo (reemplaza la barra superior) ── */
-body { padding-top: 0 !important; padding-left: 232px !important; }
-
+/* ── Barra superior: mismo layout original, re-vestida como HUD ── */
 header, nav, [class*="nav" i], [class*="header" i], [class*="topbar" i], [class*="toolbar" i] {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  bottom: 0 !important;
-  right: auto !important;
-  width: 232px !important;
-  height: 100vh !important;
-  z-index: 999 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 4px !important;
-  padding: 28px 0 20px !important;
-  background: linear-gradient(180deg, var(--gr-bg-panel) 0%, #180f08 100%) !important;
+  background: linear-gradient(180deg, var(--gp-bg-panel) 0%, #070b11 100%) !important;
   border: none !important;
-  border-right: 3px solid var(--gr-gold-dim) !important;
-  box-shadow: 6px 0 24px rgba(0,0,0,0.55) !important;
-}
-/* Los contenedores internos (listas/menús) también en columna */
-header > *, nav > *, [class*="nav" i] > *, [class*="header" i] > * {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 2px !important;
-}
-header a, nav a, [class*="nav" i] a, [class*="header" i] a {
-  color: var(--gr-text-dim) !important;
-  font-family: var(--gr-font-head) !important;
-  font-weight: 600 !important;
-  padding: 12px 24px !important;
-  border-left: 3px solid transparent !important;
-  letter-spacing: 0.02em;
-}
-header a:hover, nav a:hover, [class*="nav" i] a:hover {
-  color: var(--gr-text) !important;
-  background: rgba(201,162,39,0.08) !important;
-  border-left-color: var(--gr-ember) !important;
-}
-[class*="active" i]:is(nav a, header a, [class*="nav" i] a) {
-  color: var(--gr-gold) !important;
-  border-left-color: var(--gr-gold) !important;
-  background: rgba(201,162,39,0.12) !important;
+  border-bottom: 1px solid var(--gp-neon-dim) !important;
+  box-shadow: 0 1px 0 rgba(0,234,255,0.35), 0 10px 22px rgba(0,0,0,0.5) !important;
 }
 
-/* ── Títulos: grabado sobre losa, sin resplandor ── */
+#app-nav-brand, .drawer-brand span {
+  font-family: var(--gp-font-head) !important;
+  letter-spacing: 0.06em !important;
+  color: var(--gp-text) !important;
+  text-shadow: 0 0 10px rgba(0,234,255,0.45);
+}
+
+/* ── Pestañas de navegación: esquinas cortadas + acento inferior neón ── */
+.app-tab, header a, nav a, [class*="nav" i] a, [class*="header" i] a {
+  color: var(--gp-text-dim) !important;
+  font-family: var(--gp-font-head) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em;
+  clip-path: polygon(var(--gp-cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--gp-cut)) !important;
+  border-bottom: 2px solid transparent !important;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+}
+.app-tab:hover, header a:hover, nav a:hover, [class*="nav" i] a:hover {
+  color: var(--gp-text) !important;
+  background: rgba(0,234,255,0.06) !important;
+  border-bottom-color: var(--gp-neon-dim) !important;
+}
+.app-tab.active, [class*="active" i]:is(nav a, header a, [class*="nav" i] a) {
+  color: var(--gp-neon) !important;
+  border-bottom-color: var(--gp-neon) !important;
+  background: rgba(0,234,255,0.10) !important;
+  text-shadow: 0 0 8px rgba(0,234,255,0.55);
+}
+
+/* Orden visual: Perfil se separa como grupo de "cuenta", a la derecha */
+#app-tab-perfil {
+  margin-left: auto !important;
+  padding-left: 20px !important;
+  border-left: 1px solid var(--gp-neon-dim) !important;
+}
+
+/* ── Selector de idioma ── */
+#lang-current {
+  font-family: var(--gp-font-head) !important;
+  color: var(--gp-neon) !important;
+  border: 1px solid var(--gp-neon-dim) !important;
+  clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px) !important;
+}
+#lang-menu {
+  background: var(--gp-bg-panel) !important;
+  border: 1px solid var(--gp-neon-dim) !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 14px 30px rgba(0,0,0,0.55) !important;
+}
+#lang-menu button:hover, .drawer-lang:hover {
+  background: rgba(0,234,255,0.08) !important;
+  color: var(--gp-neon) !important;
+}
+
+/* ── Títulos ── */
 h1, h2, h3 {
-  color: var(--gr-text) !important;
-  font-family: var(--gr-font-head) !important;
+  color: var(--gp-text) !important;
+  font-family: var(--gp-font-head) !important;
   font-weight: 700 !important;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.6);
-  border-bottom: 1px solid var(--gr-gold-dim);
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--gp-neon-dim);
   padding-bottom: 0.3em;
 }
 
-/* ── Botones: placa de madera con remaches, sin bordes redondeados ── */
+/* ── Botones: placa HUD con esquinas cortadas y glow ── */
 button, [class*="btn" i], [class*="button" i], [class*="cta" i] {
-  background: linear-gradient(180deg, var(--gr-bg-raised) 0%, var(--gr-bg-panel) 100%) !important;
-  color: var(--gr-gold) !important;
-  border: 1px solid var(--gr-gold-dim) !important;
-  border-radius: 3px !important;
-  font-family: var(--gr-font-head) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 6px rgba(0,0,0,0.4) !important;
-  transition: border-color 0.15s ease, color 0.15s ease !important;
+  background: linear-gradient(180deg, var(--gp-bg-raised) 0%, var(--gp-bg-panel) 100%) !important;
+  color: var(--gp-neon) !important;
+  border: 1px solid var(--gp-neon-dim) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(var(--gp-cut) 0, 100% 0, 100% calc(100% - var(--gp-cut)), calc(100% - var(--gp-cut)) 100%, 0 100%, 0 var(--gp-cut)) !important;
+  font-family: var(--gp-font-head) !important;
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 6px rgba(0,0,0,0.45) !important;
+  transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease !important;
 }
 button:hover, [class*="btn" i]:hover, [class*="button" i]:hover {
-  border-color: var(--gr-gold) !important;
-  color: var(--gr-parchment) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 10px rgba(201,162,39,0.35) !important;
+  border-color: var(--gp-neon) !important;
+  color: var(--gp-text) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 14px rgba(0,234,255,0.45) !important;
 }
 [class*="icon-btn" i], [class*="ghost" i], [class*="secondary" i] {
   background: transparent !important;
-  border-color: var(--gr-forest) !important;
-  color: var(--gr-forest) !important;
+  border-color: var(--gp-magenta-dim) !important;
+  color: var(--gp-magenta) !important;
   box-shadow: none !important;
 }
 [class*="icon-btn" i]:hover, [class*="ghost" i]:hover, [class*="secondary" i]:hover {
-  border-color: #5c8a54 !important;
-  color: #9fd493 !important;
+  border-color: var(--gp-magenta) !important;
+  color: #ffb3ec !important;
+  box-shadow: 0 0 10px rgba(255,46,196,0.35) !important;
 }
 
-/* ── Paneles / tarjetas de interfaz: losa de piedra con marco dorado ── */
+/* ── Paneles / tarjetas / modales: marco HUD ── */
 [class*="overlay" i] > [class*="card" i],
 [class*="modal" i],
 [class*="panel" i],
 [class*="dialog" i] {
-  background: var(--gr-bg-panel) !important;
-  border: 1px solid var(--gr-gold-dim) !important;
-  border-radius: 2px !important;
-  box-shadow: 0 0 0 4px rgba(0,0,0,0.35), 0 12px 28px rgba(0,0,0,0.55) !important;
+  background: var(--gp-bg-panel) !important;
+  border: 1px solid var(--gp-neon-dim) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px) !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 16px 34px rgba(0,0,0,0.6) !important;
 }
 
-/* ── Inputs / selects: tinta sobre pergamino oscuro ── */
+/* ── Inputs / selects ── */
 input, select, textarea {
-  background: #1c140c !important;
-  color: var(--gr-text) !important;
-  border: 1px solid var(--gr-gold-dim) !important;
-  border-radius: 2px !important;
+  background: #0a1119 !important;
+  color: var(--gp-text) !important;
+  border: 1px solid var(--gp-neon-dim) !important;
+  border-radius: 0 !important;
+  font-family: var(--gp-font-body) !important;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: var(--gr-gold) !important;
-  box-shadow: 0 0 6px rgba(201,162,39,0.4) !important;
+  border-color: var(--gp-neon) !important;
+  box-shadow: 0 0 8px rgba(0,234,255,0.45) !important;
   outline: none !important;
 }
 
+/* ── Interruptores (ajustes) ── */
+.pb-switch { background: #0a1119 !important; border: 1px solid var(--gp-neon-dim) !important; border-radius: 999px !important; }
+.pb-switch.on { background: var(--gp-neon-dim) !important; box-shadow: 0 0 8px rgba(0,234,255,0.4) !important; }
+.pb-switch .pb-switch-knob { background: var(--gp-text) !important; }
+.pb-switch.on .pb-switch-knob { background: var(--gp-neon) !important; box-shadow: 0 0 6px rgba(0,234,255,0.6) !important; }
+
 /* ── Enlaces de texto genéricos ── */
-a { color: var(--gr-gold); }
-a:hover { color: var(--gr-ember); }
+a { color: var(--gp-neon); }
+a:hover { color: var(--gp-magenta); }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--gr-bg); }
+::-webkit-scrollbar-track { background: var(--gp-bg); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--gr-gold-dim), var(--gr-ember));
+  background: linear-gradient(var(--gp-neon-dim), var(--gp-magenta-dim));
   border-radius: 0;
 }
 
-/* ── HUB «JUGAR» (inicio): apilado vertical, orden invertido ──
-   Antes: Jugar y Barajas lado a lado en 2 columnas.
-   Ahora: una sola columna, Barajas arriba y Jugar online abajo —
-   estructura y orden distintos a las versiones anteriores.
-   Última expansión sigue oculta (no se borra del HTML/JS). */
-#view-jugar .jv2-colexp { display: none !important; }
-
-#view-jugar :has(> .jv2-colmeta) {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 20px !important;
-}
-#view-jugar .jv2-colmeta { order: 1 !important; }  /* Barajas: arriba */
-#view-jugar .jv2-center  { order: 2 !important; }  /* Jugar online: abajo */
-
-/* ── Fondo de textura: pokébolas → escudos heráldicos ──
-   Mismo tamaño de mosaico, posición y animación de deriva que el
-   original; solo cambia el dibujo (data URI SVG). Cubre las 3
-   pantallas donde aparecía el patrón. */
-#view-jugar .jv-pokeballs::before,
-#dr-online-search .pvp-pokeballs::before,
-#pvp-content .pvp-pokeballs::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg stroke='white' stroke-width='2' fill='none' opacity='0.85'%3E%3Cpath d='M50,30 L70,40 V60 Q70,80 50,90 Q30,80 30,60 V40 Z'/%3E%3Cpath d='M150,110 L170,120 V140 Q170,160 150,170 Q130,160 130,140 V120 Z'/%3E%3C/g%3E%3C/svg%3E") !important;
-}
-
-/* ── Chips / badges de rareza, tipo, filtros activos: sello de cera ── */
+/* ── Chips / badges / etiquetas de filtro ── */
 [class*="chip" i], [class*="badge" i], [class*="tag" i][class*="filter" i] {
-  background: var(--gr-forest) !important;
-  color: var(--gr-parchment) !important;
-  border-radius: 2px !important;
-  font-family: var(--gr-font-head) !important;
+  background: rgba(0,234,255,0.08) !important;
+  color: var(--gp-neon) !important;
+  border: 1px solid var(--gp-neon-dim) !important;
+  border-radius: 0 !important;
+  font-family: var(--gp-font-head) !important;
+  letter-spacing: 0.02em;
 }
 [class*="chip" i][class*="active" i], [class*="badge" i][class*="active" i] {
-  background: var(--gr-gold) !important;
-  color: #241a10 !important;
+  background: var(--gp-neon) !important;
+  color: #05070b !important;
+  border-color: var(--gp-neon) !important;
 }
+
+/* ── Ko-fi / soporte: se distingue con el acento magenta ── */
+.kofi-btn, .drawer-support {
+  border-color: var(--gp-magenta-dim) !important;
+  color: var(--gp-magenta) !important;
+}
+.kofi-btn:hover, .drawer-support:hover {
+  border-color: var(--gp-magenta) !important;
+  box-shadow: 0 0 12px rgba(255,46,196,0.4) !important;
+}
+#kofi-support {
+  background: var(--gp-bg-panel) !important;
+  border: 1px solid var(--gp-magenta-dim) !important;
+}
+
+/* ══ DRAWER MÓVIL: mismo lenguaje visual que la barra de escritorio ══ */
+#app-drawer-panel {
+  background: linear-gradient(180deg, var(--gp-bg-panel) 0%, #070b11 100%) !important;
+  border-right: 1px solid var(--gp-neon-dim) !important;
+  box-shadow: 6px 0 24px rgba(0,0,0,0.6) !important;
+}
+#app-drawer-backdrop { background: rgba(0,0,0,0.6) !important; }
+
+.drawer-tab {
+  color: var(--gp-text-dim) !important;
+  font-family: var(--gp-font-head) !important;
+  border-left: 2px solid transparent !important;
+  border-radius: 0 !important;
+}
+.drawer-tab:hover {
+  color: var(--gp-text) !important;
+  background: rgba(0,234,255,0.06) !important;
+}
+.drawer-tab.active {
+  color: var(--gp-neon) !important;
+  border-left-color: var(--gp-neon) !important;
+  background: rgba(0,234,255,0.10) !important;
+}
+
+.drawer-sep { background: var(--gp-neon-dim) !important; opacity: 0.5; }
+.drawer-section-label { color: var(--gp-text-dim) !important; font-family: var(--gp-font-head) !important; }
+
+.drawer-action {
+  color: var(--gp-text) !important;
+  border-top: 1px solid var(--gp-neon-dim) !important;
+  border-radius: 0 !important;
+}
+.drawer-action:hover { background: rgba(0,234,255,0.06) !important; }
+
+/* ══ POPUP DE AJUSTES: mismo marco HUD que el resto de paneles ══ */
+#sb-settings-popup {
+  background: var(--gp-bg-panel) !important;
+  border: 1px solid var(--gp-neon-dim) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 16px 34px rgba(0,0,0,0.6) !important;
+}
+.sbs-group-title {
+  color: var(--gp-neon) !important;
+  font-family: var(--gp-font-head) !important;
+  letter-spacing: 0.03em;
+}
+.sbs-row { border-bottom: 1px solid rgba(0,234,255,0.08) !important; }
+#app-gear-btn { color: var(--gp-neon-dim) !important; }
+#app-gear-btn:hover { color: var(--gp-neon) !important; }
