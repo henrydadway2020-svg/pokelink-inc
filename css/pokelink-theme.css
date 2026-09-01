@@ -36,11 +36,23 @@ html, body {
     var(--nx-bg) !important;
 }
 
-/* ── Encabezados y navegación ── */
+/* ── Encabezados y navegación: barra flotante separada del borde ── */
+body { padding-top: 76px !important; } /* deja hueco para que la barra flotante no tape contenido */
+
 header, nav, [class*="nav" i], [class*="header" i], [class*="topbar" i], [class*="toolbar" i] {
-  background: linear-gradient(90deg, var(--nx-bg-panel) 0%, #150a1c 100%) !important;
+  position: fixed !important;
+  top: 14px !important;
+  left: 14px !important;
+  right: 14px !important;
+  width: auto !important;
+  z-index: 999 !important;
+  background: rgba(13,15,24,0.72) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  border: 1px solid var(--nx-violet) !important;
   border-bottom: 1px solid var(--nx-magenta) !important;
-  box-shadow: 0 1px 0 rgba(0,229,255,0.25) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 20px rgba(111,91,255,0.25) !important;
 }
 header a, nav a, [class*="nav" i] a, [class*="header" i] a {
   color: var(--nx-text-dim) !important;
@@ -130,13 +142,20 @@ a:hover { color: var(--nx-magenta); }
   border-radius: 0;
 }
 
-/* ── HUB «JUGAR» (inicio): reordenar columnas → Mazos · Expansión · Jugar ──
-   Solo cambia la posición visual (grid-column); el HTML y el JS quedan
-   intactos, así que no afecta a ninguna funcionalidad. Se aplica solo
-   en escritorio: en móvil el hub ya es un carrusel de una columna. */
-#view-jugar .jv2-colmeta { grid-column: 1 !important; }  /* Mejores mazos: se queda a la izquierda */
-#view-jugar .jv2-colexp  { grid-column: 2 !important; }  /* Última expansión: pasa al centro */
-#view-jugar .jv2-center  { grid-column: 3 !important; }  /* Mazo + botón Jugar: pasa a la derecha */
+/* ── HUB «JUGAR» (inicio): solo Barajas + Jugar online, lado a lado ──
+   Se oculta la columna de Última expansión (el HTML y el JS quedan
+   intactos: solo se oculta visualmente, no se borra nada) y las dos
+   columnas restantes se reparten el ancho en 2, en vez de 3. El :has()
+   localiza automáticamente al contenedor grid sin depender de su clase
+   exacta. Se aplica solo en escritorio: en móvil el hub ya es un
+   carrusel de una columna. */
+#view-jugar .jv2-colexp { display: none !important; }
+
+#view-jugar :has(> .jv2-colmeta) {
+  grid-template-columns: 1fr 1fr !important;
+}
+#view-jugar .jv2-colmeta { grid-column: 2 !important; }  /* Barajas: a la derecha */
+#view-jugar .jv2-center  { grid-column: 1 !important; }  /* Jugar online: a la izquierda */
 
 /* ── Fondo de textura: pokébolas → placa de circuito ──
    Mismo tamaño de mosaico, posición y animación de deriva que el original;
