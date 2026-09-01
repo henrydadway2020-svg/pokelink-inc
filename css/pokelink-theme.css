@@ -102,6 +102,14 @@ a:hover { color: var(--pk-red); }
   border-radius: 10px;
 }
 
+/* ── HUB «JUGAR» (inicio): reordenar columnas → Mazos · Expansión · Jugar ──
+   Solo cambia la posición visual (grid-column); el HTML y el JS quedan
+   intactos, así que no afecta a ninguna funcionalidad. Se aplica solo
+   en escritorio: en móvil el hub ya es un carrusel de una columna. */
+#view-jugar .jv2-colmeta { grid-column: 1 !important; }  /* Mejores mazos: se queda a la izquierda */
+#view-jugar .jv2-colexp  { grid-column: 2 !important; }  /* Última expansión: pasa al centro */
+#view-jugar .jv2-center  { grid-column: 3 !important; }  /* Mazo + botón Jugar: pasa a la derecha */
+
 /* ── Chips / badges de rareza, tipo, filtros activos ── */
 [class*="chip" i], [class*="badge" i], [class*="tag" i][class*="filter" i] {
   background: var(--pk-blue) !important;
