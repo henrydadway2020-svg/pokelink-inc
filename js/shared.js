@@ -652,9 +652,9 @@ if (typeof firebase !== 'undefined') {
   window._SETN_MAP = { es: 'SET_NAMES_ES', ja: 'SET_NAMES_JA', it: 'SET_NAMES_IT', fr: 'SET_NAMES_FR', pt: 'SET_NAMES_PT', ko: 'SET_NAMES_KO' };
   window.setName = function (code) {
     var c = (code || '').toUpperCase();
-    // «CU» no es una expansión del juego: es la marca de las cartas custom de pokelink.
+    // «CU» no es una expansión del juego: es la marca de las cartas custom de tcgmini.
     // Enseñar el código pelado las haría pasar por un set real numerado.
-    if (c === 'CU') return 'PokeLink';
+    if (c === 'CU') return 'TCGmini';
     var lang = window.i18n ? window.i18n.getLang() : 'es';
     var m = window[window._SETN_MAP[lang]];
     return (m && m[c]) || (window.SET_NAMES && window.SET_NAMES[c]) || code;
@@ -742,10 +742,10 @@ if (typeof firebase !== 'undefined') {
   // En LOCAL (dev) las features SIN TERMINAR y los diagnósticos están ON (para probar);
   // en producción (dominio real) OFF → no salen al público. Forzar a mano si hace falta.
   // PREVIEW = despliegue de prueba de Cloudflare Pages en una rama que NO es main
-  // (p.ej. beta.pokelink.pages.dev). URL no listada que se comparte a mano para probar
-  // lo que aún no es público. `pokelink.pages.dev` a secas ES producción → NO cuenta.
+  // (p.ej. beta.tcgmini.pages.dev). URL no listada que se comparte a mano para probar
+  // lo que aún no es público. `tcgmini.pages.dev` a secas ES producción → NO cuenta.
   var _preview = /\.pages\.dev$/i.test(location.hostname) &&
-    location.hostname.toLowerCase() !== 'pokelink.pages.dev';
+    location.hostname.toLowerCase() !== 'tcgmini.pages.dev';
   window.PB_PREVIEW = _preview;
   // ENTORNO de esta carga, para las ESTADÍSTICAS de partida: 'dev' (tu máquina/LAN),
   // 'preview' (despliegue de prueba) o 'prod'. Sin esto, las partidas que juegas contra
@@ -775,18 +775,18 @@ if (typeof firebase !== 'undefined') {
     pvp: true,
     // Login con Discord: PÚBLICO desde 2026-08-27 (decisión de Daniel). El servidor tiene su
     // propio interruptor (`publicRelease` en el secreto DISCORD_OAUTH_CONFIG): los DOS tienen
-    // que estar abiertos para que alguien pueda darse de alta con Discord en pokelink.com.
+    // que estar abiertos para que alguien pueda darse de alta con Discord en tcgmini.com.
     // Salida rápida: `false` + deploy esconde el acceso sin tocar las cuentas ya vinculadas.
     discordAuth: true
   };
   window.pbFlag = function (k) { return !!(window.PB_FLAGS && window.PB_FLAGS[k]); };
   window.IMG_LANGS = {
-    es: { map: function () { return window.ES_IMAGE_MAP; }, base: _imgLocal ? 'images/es/' : '/assets/img/es/' },
-    ja: { map: function () { return window.JA_IMAGE_MAP; }, base: _imgLocal ? 'images/ja/' : 'https://img.pokelink.com/ja/' },
-    it: { map: function () { return window.IT_IMAGE_MAP; }, base: _imgLocal ? 'images/it/' : 'https://img.pokelink.com/it/' },
-    fr: { map: function () { return window.FR_IMAGE_MAP; }, base: _imgLocal ? 'images/fr/' : 'https://img.pokelink.com/fr/' },
-    pt: { map: function () { return window.PT_IMAGE_MAP; }, base: _imgLocal ? 'images/pt/' : 'https://img.pokelink.com/pt/' },
-    ko: { map: function () { return window.KO_IMAGE_MAP; }, base: _imgLocal ? 'images/ko/' : 'https://img.pokelink.com/ko/' },
+    es: { map: function () { return window.ES_IMAGE_MAP; }, base: _imgLocal ? 'images/es/' : 'https://img.tcgmini.com/es/' },
+    ja: { map: function () { return window.JA_IMAGE_MAP; }, base: _imgLocal ? 'images/ja/' : 'https://img.tcgmini.com/ja/' },
+    it: { map: function () { return window.IT_IMAGE_MAP; }, base: _imgLocal ? 'images/it/' : 'https://img.tcgmini.com/it/' },
+    fr: { map: function () { return window.FR_IMAGE_MAP; }, base: _imgLocal ? 'images/fr/' : 'https://img.tcgmini.com/fr/' },
+    pt: { map: function () { return window.PT_IMAGE_MAP; }, base: _imgLocal ? 'images/pt/' : 'https://img.tcgmini.com/pt/' },
+    ko: { map: function () { return window.KO_IMAGE_MAP; }, base: _imgLocal ? 'images/ko/' : 'https://img.tcgmini.com/ko/' },
   };
   window._langImg = function (id, lang) {
     var L = window.IMG_LANGS[lang]; if (!L || !id) return null;
@@ -995,7 +995,7 @@ if (typeof firebase !== 'undefined') {
       if (langs.indexOf(cur) >= 0) langs = [cur].concat(langs.filter(function (l) { return l !== cur; }));
       langs.forEach(function (lang) {
         var m = window.IMG_LANGS[lang].map && window.IMG_LANGS[lang].map();
-        if (m && m[id]) add('https://img.pokelink.com/' + lang + '/' + id + '.webp');
+        if (m && m[id]) add('https://img.tcgmini.com/' + lang + '/' + id + '.webp');
       });
     }
     return out;
@@ -1015,7 +1015,7 @@ if (typeof firebase !== 'undefined') {
   // la .png equivalente. Solo aplica a las URLs de R2 es/ja; el resto se asigna directo.
   window.setCardBg = function (el, url) {
     if (!el || !url) return;
-    var fb = url.replace(/^(https:\/\/img\.pokelink\.com\/(?:es|ja)\/.+)\.webp$/, '$1.png');
+    var fb = url.replace(/^(https:\/\/img\.tcgmini\.com\/(?:es|ja)\/.+)\.webp$/, '$1.png');
     if (fb === url) { el.style.backgroundImage = 'url("' + url + '")'; return; }
     var im = new Image();
     im.onload  = function () { el.style.backgroundImage = 'url("' + url + '")'; };
@@ -1040,7 +1040,7 @@ if (typeof firebase !== 'undefined') {
   };
   // Re-localiza TODAS las imágenes de carta visibles (al cambiar idioma o al cargar).
   window.reskinCards = function (root) {
-    (root || document).querySelectorAll('[style*="cards/"],[style*="img.pokelink.com"],[style*="images/es/"],[style*="images/ja/"]').forEach(function (el) {
+    (root || document).querySelectorAll('[style*="cards/"],[style*="img.tcgmini.com"],[style*="images/es/"],[style*="images/ja/"]').forEach(function (el) {
       var bg = el.style.backgroundImage; if (!bg || bg === 'none') return;
       var mm = bg.match(/url\(["']?(.*?)["']?\)/); if (!mm) return;
       var loc = window.localizeImg(mm[1]);
@@ -1109,7 +1109,7 @@ if (typeof firebase !== 'undefined') {
     if (cardLike.id && _dbById.has(cardLike.id)) return _dbById.get(cardLike.id);
     if (cardLike.image) {
       if (_dbByImage.has(cardLike.image)) return _dbByImage.get(cardLike.image);
-      // Imagen LOCALIZADA (es/ja: img.pokelink.com/es/<ID>.png o images/es/<id>.png): no está en
+      // Imagen LOCALIZADA (es/ja: img.tcgmini.com/es/<ID>.png o images/es/<id>.png): no está en
       // _dbByImage (que solo tiene la canónica) → saca el id de la URL y busca por id.
       if (window.cardIdFromImage) { var _idfi = window.cardIdFromImage(cardLike.image); if (_idfi && _dbById.has(_idfi)) return _dbById.get(_idfi); }
     }
@@ -1632,68 +1632,4 @@ if (typeof firebase !== 'undefined') {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
-// INTERCEPTOR GLOBAL DE IMÁGENES HÍBRIDO (Internet + Photoshop)
-(function() {
-  'use strict';
-  
-  // Guardamos la función original con la que el navegador crea elementos
-  const originalCreateElement = document.createElement;
-  document.createElement = function(tagName) {
-    const el = originalCreateElement.call(document, tagName);
-    const tag = tagName.toLowerCase();
-    
-    if (tag === 'img' || tag === 'div') {
-      // Interceptamos cuando el juego intente inyectar una imagen de carta
-      Object.defineProperty(el, 'src', {
-        set: function(val) {
-          if (val && !val.startsWith('http') && !val.startsWith('data:') && !val.includes('CU-')) {
-            const filename = val.split('/').pop().replace('.descarga', '.png');
-            val = 'https://pokelink.com' + filename;
-          }
-          this.setAttribute('src', val);
-        },
-        get: function() { return this.getAttribute('src'); }
-      });
-    }
-    return el;
-  };
 
-  // Escuchador dinámico: corrige las cartas que ya se pintaron en el tapete
-  setInterval(function() {
-    document.querySelectorAll('.mz-stack-front, .card, .board-card, .mz-stack-back').forEach(function(el) {
-      let bg = el.style.backgroundImage;
-      if (bg && bg.includes('url') && !bg.includes('http') && !bg.includes('CU-')) {
-        let filename = bg.split('/').pop().replace(/["')]/g, '').replace('.descarga', '.png');
-        el.style.backgroundImage = 'url("https://pokelink.com' + filename + '")';
-      }
-    });
-  }, 1000); // Revisa y repara las imágenes en pantalla cada segundo automáticamente
-})();
-  // Buscador y reparador dinámico de imágenes para el Tapete y Zoom
-  setInterval(function() {
-    // Buscamos todas las cartas en pantalla, incluyendo el zoom flotante
-    document.querySelectorAll('.mz-stack-front, .card, .board-card, .mz-stack-back, [data-card-id]').forEach(function(el) {
-      let bg = el.style.backgroundImage || '';
-      
-      // Si el elemento no tiene fondo o tiene una ruta local que no sea tuya (CU-)
-      if ((!bg || bg.includes('url') && !bg.includes('http')) && !bg.includes('CU-')) {
-        // Buscamos el ID numérico de la carta (ej: extrae el 154 de Hitmonlee)
-        let id = el.dataset.cardId || (document.querySelector('.qr-deck-name') ? '154' : ''); 
-        
-        // Si no lo encuentra en el dataset, lo intenta leer del texto de la pantalla
-        if (!id) {
-          let auraText = document.body.innerHTML.match(/Genes Formidables\s*-\s*(\d+)/);
-          if (auraText) id = auraText[1];
-        }
-
-        // Si logramos aislar el número de la carta, le inyectamos la imagen real en vivo
-        if (id) {
-          // Si el ID es solo un número, le ponemos el prefijo de la expansión base (A1)
-          let fullId = id.includes('-') ? id : 'A1-' + String(id).padStart(3, '0');
-          el.style.backgroundImage = 'url("https://amazonaws.com' + id + '.png")';
-          el.style.backgroundSize = 'cover';
-          el.style.backgroundPosition = 'center';
-        }
-      }
-    });
-  }, 800); // Revisa la pantalla de forma invisible cada 800 milisegundos
