@@ -654,7 +654,7 @@ if (typeof firebase !== 'undefined') {
     var c = (code || '').toUpperCase();
     // «CU» no es una expansión del juego: es la marca de las cartas custom de tcgmini.
     // Enseñar el código pelado las haría pasar por un set real numerado.
-    if (c === 'CU') return 'TCGmini';
+    if (c === 'CU') return 'PokeLink';
     var lang = window.i18n ? window.i18n.getLang() : 'es';
     var m = window[window._SETN_MAP[lang]];
     return (m && m[c]) || (window.SET_NAMES && window.SET_NAMES[c]) || code;
@@ -1632,4 +1632,4 @@ if (typeof firebase !== 'undefined') {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
-
+ "Cambiar nombre de carta custom a PokeLink"
