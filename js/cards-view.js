@@ -3314,6 +3314,13 @@
     if (!card) return '';
     const id = String(card.id || '');
     if (id.startsWith('CU-')) return '../assets/cards/' + id + '.png';
+    // Ruta local ya espejada de la carta (assets/cards/es/webp/cards/{set}/{numero}.webp),
+    // sin depender de la URL externa que trae card.image.
+    if (card.set && card.number) {
+      const setFolder = String(card.set).toLowerCase();
+      const num = String(card.number);
+      return '../assets/cards/es/webp/cards/' + setFolder + '/' + num + '.webp';
+    }
     const local = (card.image && !/^https?:\/\//i.test(card.image)) ? card.image : '';
     return local || cvPlaceholderCard(card);
   }
