@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>TCGmini — Cards, decks and matches for Pokémon TCG Pocket</title>
+<title>PokeLink — Cards, decks and matches for Pokémon TCG Pocket</title>
 <meta name="description" content="Cards, decks and matches for Pokémon TCG Pocket in one place. Board, advanced card search, deck builder, tier list and draft.">
 <meta name="theme-color" content="#111118">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -49,7 +49,7 @@
   <button id="app-nav-burger" type="button" aria-label="Menú" aria-expanded="false" onclick="window.toggleAppDrawer&&toggleAppDrawer()">
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
   </button>
-  <div id="app-nav-logo" title="TCGmini"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="7" y="5" width="13" height="18" rx="2.5" fill="none" stroke="#4dabff" stroke-width="2"/><rect x="13" y="9" width="13" height="18" rx="2.5" fill="#111118" stroke="#ff6b6b" stroke-width="2"/></svg><span id="app-nav-brand">TCGmini</span></div>
+  <div id="app-nav-logo" title="PokeLink"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="7" y="5" width="13" height="18" rx="2.5" fill="none" stroke="#4dabff" stroke-width="2"/><rect x="13" y="9" width="13" height="18" rx="2.5" fill="#111118" stroke="#ff6b6b" stroke-width="2"/></svg><span id="app-nav-brand">PokeLink</span></div>
   <div id="app-nav-tabs">
   <a class="app-tab" id="app-tab-jugar" href="/" onclick="switchAppTab('jugar');return false;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="currentColor" stroke="none"/></svg>
@@ -154,7 +154,7 @@
       </div>
       <div class="sbs-group sbs-info">
         <button onclick="window.pbShowAbout&&pbShowAbout()" class="sbs-link-btn" type="button" data-i18n="settings.about">Acerca de</button>
-        <a href="mailto:contacto@tcgmini.com" class="sbs-link-btn" data-i18n="settings.feedback">Enviar opinión</a>
+        <a href="mailto:contacto@PokeLink.com" class="sbs-link-btn" data-i18n="settings.feedback">Enviar opinión</a>
       </div>
     </div>
   </div>
@@ -169,7 +169,7 @@
       <div class="drawer-head">
         <div class="drawer-brand">
           <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="7" y="5" width="13" height="18" rx="2.5" fill="none" stroke="#4dabff" stroke-width="2"/><rect x="13" y="9" width="13" height="18" rx="2.5" fill="#111118" stroke="#ff6b6b" stroke-width="2"/></svg>
-          <span>TCGmini</span>
+          <span>PokeLink</span>
         </div>
         <button id="app-drawer-close" type="button" aria-label="Cerrar" onclick="window.closeAppDrawer&&closeAppDrawer()">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -798,7 +798,7 @@
               </span>
             </span>
             <span class="cv-chip" data-cv-type="fossil" onclick="window._cvToggle(this,'type','fossil')">Fósil</span>
-            <span class="cv-chip cv-custom-chip" id="cv-custom-chip" onclick="window._cvToggleCustom&&_cvToggleCustom(this)" data-i18n="cards.customBadge" data-i18n-attr="title:cards.customFilter" title="Cartas custom de TCGmini para el formato Avanzado">CUSTOM</span>
+            <span class="cv-chip cv-custom-chip" id="cv-custom-chip" onclick="window._cvToggleCustom&&_cvToggleCustom(this)" data-i18n="cards.customBadge" data-i18n-attr="title:cards.customFilter" title="Cartas custom de PokeLink para el formato Avanzado">CUSTOM</span>
           </div>
         </div>
       </div>
@@ -893,8 +893,8 @@
       </div>
       <div id="mz-source-tabs" class="mz-md-tabs" style="display:none;">
         <button type="button" class="mz-md-tab active" data-src="limitless" data-i18n="mazos.srcLimitless">Limitless</button>
-        <button type="button" class="mz-md-tab" data-src="standard" data-i18n="mazos.srcStandard">TCGmini Estándar</button>
-        <button type="button" class="mz-md-tab" data-src="advanced" data-i18n="mazos.srcAdvanced">TCGmini Avanzado</button>
+        <button type="button" class="mz-md-tab" data-src="standard" data-i18n="mazos.srcStandard">PokeLink Estándar</button>
+        <button type="button" class="mz-md-tab" data-src="advanced" data-i18n="mazos.srcAdvanced">PokeLink Avanzado</button>
         <button type="button" class="mz-md-tab" data-src="draft" data-i18n="mazos.srcDraft">Draft</button>
       </div>
       <div id="mz-meta-banner" style="display:none;"></div>
@@ -1216,7 +1216,7 @@
       </button>
       <h2 id="privacy-title" data-i18n="privacy.title">Política de privacidad</h2>
       <div id="privacy-body" data-i18n-html="privacy.body">
-        <p>TCGmini guarda todo tu contenido (mazos, tierlists, escenarios y ajustes) localmente en este navegador. Esta versión no envía datos a ningún servidor: no hay inicio de sesión ni funciones multijugador online.</p>
+        <p>PokeLink guarda todo tu contenido (mazos, tierlists, escenarios y ajustes) localmente en este navegador. Esta versión no envía datos a ningún servidor: no hay inicio de sesión ni funciones multijugador online.</p>
       </div>
     </div>
   </div>
@@ -1230,10 +1230,10 @@
       </button>
       <div id="about-brand">
         <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="7" y="5" width="13" height="18" rx="2.5" fill="none" stroke="#4dabff" stroke-width="2"/><rect x="13" y="9" width="13" height="18" rx="2.5" fill="#15151c" stroke="#ff6b6b" stroke-width="2"/></svg>
-        <span>TCGmini</span>
+        <span>PokeLink</span>
       </div>
       <h2 id="about-title" data-i18n="about.title">Acerca de</h2>
-      <p id="about-disclaimer" data-i18n="about.disclaimer">TCGmini es un proyecto de fans sin ánimo de lucro y no está afiliado a Nintendo, Creatures Inc., Game Freak ni The Pokémon Company. Pokémon y los nombres de cartas y personajes son marcas de sus respectivos propietarios.</p>
+      <p id="about-disclaimer" data-i18n="about.disclaimer">PokeLink es un proyecto de fans sin ánimo de lucro y no está afiliado a Nintendo, Creatures Inc., Game Freak ni The Pokémon Company. Pokémon y los nombres de cartas y personajes son marcas de sus respectivos propietarios.</p>
       <p id="about-credits" data-i18n="about.credits">Datos de torneos y mejores mazos cortesía de LimitlessTCG.</p>
       <button id="about-privacy" type="button" onclick="window.pbShowPrivacy&&pbShowPrivacy()" data-i18n="auth.privacy">Política de privacidad</button>
     </div>
@@ -1285,7 +1285,7 @@
   <script src="../data/card_text_es.js"></script>
   <script src="../data/card_text_ja.js"></script>
   <script src="../data/meta_decks.js"></script>
-  <script src="../data/meta_tcgmini.js"></script>
+  <script src="../data/meta_PokeLink.js"></script>
   <script src="../data/card_focus.js"></script>
   <script src="../data/packs.js"></script>
   <script src="../data/rarity.icons.js"></script>
@@ -1461,7 +1461,7 @@
     <div id="auth-brand">
       <!-- Sustituye este SVG por el logo real del sitio si tienes uno -->
       <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4dabff"/></svg>
-      <span>TCGmini</span>
+      <span>PokeLink</span>
     </div>
 
     <h2 id="auth-title" data-i18n="auth.title">Inicia sesión</h2>
@@ -1501,3 +1501,4 @@
 </body>
 </html>
 "Agregar CSS de login que faltaba"
+ "Cambiar nombre a PokeLink"
