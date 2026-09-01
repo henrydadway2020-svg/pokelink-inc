@@ -1,105 +1,133 @@
 /* ══════════════════════════════════════════════════════════
-   POKELINK · TEMA VIVO ESTILO POKÉMON
+   POKELINK · TEMA NEXUS-9 (CYBERPUNK / NEÓN FUTURISTA)
    Cárgalo DESPUÉS de todos los demás <link rel="stylesheet">
    en el <head> de index.html (y de es/index.html si existe),
    justo antes de cerrar </head>. Así sus reglas ganan sobre
    las originales sin tener que tocar los archivos existentes.
+
+   Concepto: consola de control de una red clandestina de datos.
+   Paneles con esquinas cortadas tipo HUD, retícula de circuito
+   de fondo, dos acentos en tensión (cian frío / magenta caliente)
+   y un tercer acento ácido reservado solo para estados activos.
    ══════════════════════════════════════════════════════════ */
 
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap");
+
 :root {
-  --pk-red:      #e3350d;   /* rojo Poké Ball */
-  --pk-red-dark: #a3260a;
-  --pk-yellow:   #ffcb05;   /* amarillo Pikachu */
-  --pk-blue:     #3b4cca;   /* azul Pokémon */
-  --pk-blue-glow:#5a72ff;
-  --pk-bg:       #0d0a12;   /* fondo base, casi negro con toque violeta */
-  --pk-bg-panel: #17121f;
-  --pk-text:     #fdf6e3;
+  --nx-bg:        #06070c;   /* fondo base, casi negro con tinte azulado */
+  --nx-bg-panel:  #0d0f18;
+  --nx-bg-raised: #12141f;
+  --nx-cyan:      #00e5ff;   /* acento frío: datos, enlaces, foco */
+  --nx-magenta:   #ff2f92;   /* acento caliente: alertas, hover, marca */
+  --nx-violet:    #6f5bff;   /* soporte: bordes, sombras */
+  --nx-acid:      #d7ff3d;   /* reservado SOLO para estado activo/selected */
+  --nx-text:      #e7ecf5;
+  --nx-text-dim:  #8891a8;
+  --nx-font-head: "Chakra Petch", "Segoe UI", sans-serif;
 }
 
-/* ── Fondo general con resplandores de color ── */
+/* ── Fondo general: retícula de circuito + resplandores en tensión ── */
 html, body {
   background:
-    radial-gradient(circle at 15% 10%, rgba(227,53,13,0.18) 0%, transparent 40%),
-    radial-gradient(circle at 85% 15%, rgba(59,76,202,0.20) 0%, transparent 45%),
-    radial-gradient(circle at 50% 100%, rgba(255,203,5,0.10) 0%, transparent 50%),
-    var(--pk-bg) !important;
+    linear-gradient(rgba(0,229,255,0.05) 1px, transparent 1px) 0 0 / 100% 42px,
+    linear-gradient(90deg, rgba(0,229,255,0.05) 1px, transparent 1px) 0 0 / 42px 100%,
+    radial-gradient(circle at 12% 8%, rgba(255,47,146,0.16) 0%, transparent 42%),
+    radial-gradient(circle at 88% 92%, rgba(0,229,255,0.14) 0%, transparent 46%),
+    var(--nx-bg) !important;
 }
 
-/* ── Encabezados y navegación (cualquier clase que contenga nav/header/topbar) ── */
+/* ── Encabezados y navegación ── */
 header, nav, [class*="nav" i], [class*="header" i], [class*="topbar" i], [class*="toolbar" i] {
-  background: linear-gradient(90deg, var(--pk-red-dark) 0%, var(--pk-bg-panel) 65%) !important;
-  border-bottom: 2px solid var(--pk-yellow) !important;
+  background: linear-gradient(90deg, var(--nx-bg-panel) 0%, #150a1c 100%) !important;
+  border-bottom: 1px solid var(--nx-magenta) !important;
+  box-shadow: 0 1px 0 rgba(0,229,255,0.25) !important;
 }
 header a, nav a, [class*="nav" i] a, [class*="header" i] a {
-  color: var(--pk-text) !important;
+  color: var(--nx-text-dim) !important;
+  font-family: var(--nx-font-head) !important;
 }
 header a:hover, nav a:hover, [class*="nav" i] a:hover {
-  color: var(--pk-yellow) !important;
+  color: var(--nx-cyan) !important;
 }
-/* Enlace/pestaña activa */
+/* Enlace/pestaña activa: único uso permitido del acento ácido */
 [class*="active" i]:is(nav a, header a, [class*="nav" i] a) {
-  color: var(--pk-yellow) !important;
-  text-shadow: 0 0 8px rgba(255,203,5,0.6);
+  color: var(--nx-acid) !important;
+  text-shadow: 0 0 6px rgba(215,255,61,0.5);
 }
 
-/* ── Títulos ── */
+/* ── Títulos: tipografía técnica propia, sin glow genérico ── */
 h1, h2, h3 {
-  color: var(--pk-yellow) !important;
-  text-shadow: 0 0 10px rgba(227,53,13,0.35);
+  color: var(--nx-text) !important;
+  font-family: var(--nx-font-head) !important;
+  font-weight: 600 !important;
+  border-left: 3px solid var(--nx-magenta);
+  padding-left: 0.5em;
 }
 
-/* ── Botones (clases que contienen btn/button/cta) ── */
+/* ── Botones: bloque con esquinas cortadas, sin bordes redondeados ── */
 button, [class*="btn" i], [class*="button" i], [class*="cta" i] {
-  background: linear-gradient(180deg, var(--pk-red) 0%, var(--pk-red-dark) 100%) !important;
-  color: #fff !important;
-  border: 2px solid var(--pk-yellow) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 0 10px rgba(227,53,13,0.45) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  background: var(--nx-bg-raised) !important;
+  color: var(--nx-cyan) !important;
+  border: 1px solid var(--nx-cyan) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px) !important;
+  font-family: var(--nx-font-head) !important;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease !important;
 }
 button:hover, [class*="btn" i]:hover, [class*="button" i]:hover {
-  transform: translateY(-1px) scale(1.02) !important;
-  box-shadow: 0 0 16px rgba(255,203,5,0.6) !important;
+  background: var(--nx-cyan) !important;
+  color: #06070c !important;
+  box-shadow: 0 0 14px rgba(0,229,255,0.55) !important;
 }
-/* Botones "secundarios" o de icono quedan más discretos (azul) */
+/* Botones secundarios / de icono: variante magenta discreta */
 [class*="icon-btn" i], [class*="ghost" i], [class*="secondary" i] {
-  background: var(--pk-bg-panel) !important;
-  border-color: var(--pk-blue-glow) !important;
-  box-shadow: 0 0 8px rgba(90,114,255,0.35) !important;
+  background: transparent !important;
+  border-color: var(--nx-magenta) !important;
+  color: var(--nx-magenta) !important;
+  box-shadow: none !important;
+}
+[class*="icon-btn" i]:hover, [class*="ghost" i]:hover, [class*="secondary" i]:hover {
+  background: var(--nx-magenta) !important;
+  color: #06070c !important;
 }
 
-/* ── Paneles / tarjetas de interfaz (overlays, modales, cards de UI — NO las cartas del juego) ── */
+/* ── Paneles / tarjetas de interfaz (overlays, modales, cards de UI) ──
+   Marco tipo HUD: esquinas cortadas + brackets en las esquinas. */
 [class*="overlay" i] > [class*="card" i],
 [class*="modal" i],
 [class*="panel" i],
 [class*="dialog" i] {
-  background: var(--pk-bg-panel) !important;
-  border: 1px solid var(--pk-blue-glow) !important;
-  box-shadow: 0 0 24px rgba(59,76,202,0.35) !important;
+  background: var(--nx-bg-panel) !important;
+  border: 1px solid var(--nx-violet) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px) !important;
+  box-shadow: 0 0 30px rgba(111,91,255,0.25) !important;
+  position: relative;
 }
 
 /* ── Inputs / selects ── */
 input, select, textarea {
-  background: var(--pk-bg-panel) !important;
-  color: var(--pk-text) !important;
-  border: 1px solid var(--pk-blue-glow) !important;
+  background: var(--nx-bg-raised) !important;
+  color: var(--nx-text) !important;
+  border: 1px solid var(--nx-violet) !important;
+  border-radius: 0 !important;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: var(--pk-yellow) !important;
-  box-shadow: 0 0 8px rgba(255,203,5,0.5) !important;
+  border-color: var(--nx-cyan) !important;
+  box-shadow: 0 0 8px rgba(0,229,255,0.45) !important;
+  outline: none !important;
 }
 
 /* ── Enlaces de texto genéricos ── */
-a { color: var(--pk-yellow); }
-a:hover { color: var(--pk-red); }
+a { color: var(--nx-cyan); }
+a:hover { color: var(--nx-magenta); }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--pk-bg); }
+::-webkit-scrollbar-track { background: var(--nx-bg); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--pk-red), var(--pk-blue));
-  border-radius: 10px;
+  background: linear-gradient(var(--nx-cyan), var(--nx-magenta));
+  border-radius: 0;
 }
 
 /* ── HUB «JUGAR» (inicio): reordenar columnas → Mazos · Expansión · Jugar ──
@@ -110,22 +138,26 @@ a:hover { color: var(--pk-red); }
 #view-jugar .jv2-colexp  { grid-column: 2 !important; }  /* Última expansión: pasa al centro */
 #view-jugar .jv2-center  { grid-column: 3 !important; }  /* Mazo + botón Jugar: pasa a la derecha */
 
-/* ── Fondo de textura: pokébolas → rayos de energía ──
+/* ── Fondo de textura: pokébolas → placa de circuito ──
    Mismo tamaño de mosaico, posición y animación de deriva que el original;
    solo cambia el dibujo (data URI SVG). Cubre las 3 pantallas donde aparecía
    el patrón: hub de inicio, búsqueda online del draft, y online estándar. */
 #view-jugar .jv-pokeballs::before,
 #dr-online-search .pvp-pokeballs::before,
 #pvp-content .pvp-pokeballs::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='white'%3E%3Cg transform='translate(50 50) rotate(15)'%3E%3Cpath d='M6,-25 L-10,3 L-1,3 L-6,25 L10,-3 L1,-3 Z'/%3E%3C/g%3E%3Cg transform='translate(150 50) rotate(-20)'%3E%3Cpath d='M6,-25 L-10,3 L-1,3 L-6,25 L10,-3 L1,-3 Z'/%3E%3C/g%3E%3Cg transform='translate(50 150) rotate(35)'%3E%3Cpath d='M6,-25 L-10,3 L-1,3 L-6,25 L10,-3 L1,-3 Z'/%3E%3C/g%3E%3Cg transform='translate(150 150) rotate(-10)'%3E%3Cpath d='M6,-25 L-10,3 L-1,3 L-6,25 L10,-3 L1,-3 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg stroke='white' stroke-width='2' fill='none' opacity='0.9'%3E%3Cpath d='M20,50 H80 M80,50 V20 M80,50 L110,50'/%3E%3Ccircle cx='110' cy='50' r='6'/%3E%3Cpath d='M150,20 V80 M150,80 H180 M150,80 L120,110'/%3E%3Ccircle cx='120' cy='110' r='6'/%3E%3Cpath d='M40,150 H10 M40,150 V180 M40,150 L70,150'/%3E%3Ccircle cx='40' cy='150' r='6'/%3E%3Cpath d='M160,140 H190 M160,140 V170'/%3E%3Ccircle cx='160' cy='140' r='6'/%3E%3C/g%3E%3C/svg%3E") !important;
 }
 
 /* ── Chips / badges de rareza, tipo, filtros activos ── */
 [class*="chip" i], [class*="badge" i], [class*="tag" i][class*="filter" i] {
-  background: var(--pk-blue) !important;
-  color: #fff !important;
+  background: var(--nx-bg-raised) !important;
+  color: var(--nx-cyan) !important;
+  border: 1px solid var(--nx-cyan) !important;
+  border-radius: 0 !important;
+  font-family: var(--nx-font-head) !important;
 }
 [class*="chip" i][class*="active" i], [class*="badge" i][class*="active" i] {
-  background: var(--pk-yellow) !important;
-  color: #1a1200 !important;
+  background: var(--nx-acid) !important;
+  color: #101400 !important;
+  border-color: var(--nx-acid) !important;
 }
