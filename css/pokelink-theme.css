@@ -1,182 +1,198 @@
 /* ══════════════════════════════════════════════════════════
-   POKELINK · TEMA NEXUS-9 (CYBERPUNK / NEÓN FUTURISTA)
+   POKELINK · TEMA "GRIMORIO" (FANTASÍA MEDIEVAL / RPG)
    Cárgalo DESPUÉS de todos los demás <link rel="stylesheet">
    en el <head> de index.html (y de es/index.html si existe),
-   justo antes de cerrar </head>. Así sus reglas ganan sobre
-   las originales sin tener que tocar los archivos existentes.
+   justo antes de cerrar </head>.
 
-   Concepto: consola de control de una red clandestina de datos.
-   Paneles con esquinas cortadas tipo HUD, retícula de circuito
-   de fondo, dos acentos en tensión (cian frío / magenta caliente)
-   y un tercer acento ácido reservado solo para estados activos.
+   Concepto: sala de un gremio de aventureros. Un pilar lateral
+   de madera y hierro reemplaza la barra superior; el contenido
+   vive sobre pergamino oscuro con paneles tipo pergamino/losa
+   de piedra grabada. El dorado es la única "luz" del set — se
+   usa con cuidado, no en todo. Estructura totalmente distinta
+   a las versiones anteriores (Pokémon y cyberpunk): menú lateral
+   en vez de superior, y el hub de Jugar apilado en vez de en
+   columnas lado a lado.
    ══════════════════════════════════════════════════════════ */
 
-@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap");
 
 :root {
-  --nx-bg:        #06070c;   /* fondo base, casi negro con tinte azulado */
-  --nx-bg-panel:  #0d0f18;
-  --nx-bg-raised: #12141f;
-  --nx-cyan:      #00e5ff;   /* acento frío: datos, enlaces, foco */
-  --nx-magenta:   #ff2f92;   /* acento caliente: alertas, hover, marca */
-  --nx-violet:    #6f5bff;   /* soporte: bordes, sombras */
-  --nx-acid:      #d7ff3d;   /* reservado SOLO para estado activo/selected */
-  --nx-text:      #e7ecf5;
-  --nx-text-dim:  #8891a8;
-  --nx-font-head: "Chakra Petch", "Segoe UI", sans-serif;
+  --gr-bg:        #150f0a;   /* madera quemada, casi negro */
+  --gr-bg-panel:  #241a10;   /* madera de roble oscura */
+  --gr-bg-raised: #2f2213;
+  --gr-parchment: #e8d9b5;   /* pergamino claro, solo para superficies puntuales */
+  --gr-gold:      #c9a227;   /* hoja de oro, acento único de "luz" */
+  --gr-gold-dim:  #7a621c;
+  --gr-ember:     #a8431b;   /* brasa/antorcha */
+  --gr-forest:    #3f5d3a;   /* verde bosque, soporte frío */
+  --gr-text:      #ece0c4;
+  --gr-text-dim:  #a89a76;
+  --gr-font-head: "Cinzel", "Times New Roman", serif;
 }
 
-/* ── Fondo general: retícula de circuito + resplandores en tensión ── */
+/* ── Fondo general: madera veteada + viñeta de antorchas ── */
 html, body {
   background:
-    linear-gradient(rgba(0,229,255,0.05) 1px, transparent 1px) 0 0 / 100% 42px,
-    linear-gradient(90deg, rgba(0,229,255,0.05) 1px, transparent 1px) 0 0 / 42px 100%,
-    radial-gradient(circle at 12% 8%, rgba(255,47,146,0.16) 0%, transparent 42%),
-    radial-gradient(circle at 88% 92%, rgba(0,229,255,0.14) 0%, transparent 46%),
-    var(--nx-bg) !important;
+    radial-gradient(circle at 10% 15%, rgba(168,67,27,0.16) 0%, transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(63,93,58,0.14) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%),
+    repeating-linear-gradient(115deg, rgba(0,0,0,0.10) 0 2px, transparent 2px 5px),
+    var(--gr-bg) !important;
 }
 
-/* ── Encabezados y navegación: barra flotante separada del borde ── */
-body { padding-top: 76px !important; } /* deja hueco para que la barra flotante no tape contenido */
+/* ── Menú: pilar lateral fijo (reemplaza la barra superior) ── */
+body { padding-top: 0 !important; padding-left: 232px !important; }
 
 header, nav, [class*="nav" i], [class*="header" i], [class*="topbar" i], [class*="toolbar" i] {
   position: fixed !important;
-  top: 14px !important;
-  left: 14px !important;
-  right: 14px !important;
-  width: auto !important;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  right: auto !important;
+  width: 232px !important;
+  height: 100vh !important;
   z-index: 999 !important;
-  background: rgba(13,15,24,0.72) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  border: 1px solid var(--nx-violet) !important;
-  border-bottom: 1px solid var(--nx-magenta) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 20px rgba(111,91,255,0.25) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 4px !important;
+  padding: 28px 0 20px !important;
+  background: linear-gradient(180deg, var(--gr-bg-panel) 0%, #180f08 100%) !important;
+  border: none !important;
+  border-right: 3px solid var(--gr-gold-dim) !important;
+  box-shadow: 6px 0 24px rgba(0,0,0,0.55) !important;
+}
+/* Los contenedores internos (listas/menús) también en columna */
+header > *, nav > *, [class*="nav" i] > *, [class*="header" i] > * {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 2px !important;
 }
 header a, nav a, [class*="nav" i] a, [class*="header" i] a {
-  color: var(--nx-text-dim) !important;
-  font-family: var(--nx-font-head) !important;
+  color: var(--gr-text-dim) !important;
+  font-family: var(--gr-font-head) !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  border-left: 3px solid transparent !important;
+  letter-spacing: 0.02em;
 }
 header a:hover, nav a:hover, [class*="nav" i] a:hover {
-  color: var(--nx-cyan) !important;
+  color: var(--gr-text) !important;
+  background: rgba(201,162,39,0.08) !important;
+  border-left-color: var(--gr-ember) !important;
 }
-/* Enlace/pestaña activa: único uso permitido del acento ácido */
 [class*="active" i]:is(nav a, header a, [class*="nav" i] a) {
-  color: var(--nx-acid) !important;
-  text-shadow: 0 0 6px rgba(215,255,61,0.5);
+  color: var(--gr-gold) !important;
+  border-left-color: var(--gr-gold) !important;
+  background: rgba(201,162,39,0.12) !important;
 }
 
-/* ── Títulos: tipografía técnica propia, sin glow genérico ── */
+/* ── Títulos: grabado sobre losa, sin resplandor ── */
 h1, h2, h3 {
-  color: var(--nx-text) !important;
-  font-family: var(--nx-font-head) !important;
-  font-weight: 600 !important;
-  border-left: 3px solid var(--nx-magenta);
-  padding-left: 0.5em;
+  color: var(--gr-text) !important;
+  font-family: var(--gr-font-head) !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+  border-bottom: 1px solid var(--gr-gold-dim);
+  padding-bottom: 0.3em;
 }
 
-/* ── Botones: bloque con esquinas cortadas, sin bordes redondeados ── */
+/* ── Botones: placa de madera con remaches, sin bordes redondeados ── */
 button, [class*="btn" i], [class*="button" i], [class*="cta" i] {
-  background: var(--nx-bg-raised) !important;
-  color: var(--nx-cyan) !important;
-  border: 1px solid var(--nx-cyan) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px) !important;
-  font-family: var(--nx-font-head) !important;
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease !important;
+  background: linear-gradient(180deg, var(--gr-bg-raised) 0%, var(--gr-bg-panel) 100%) !important;
+  color: var(--gr-gold) !important;
+  border: 1px solid var(--gr-gold-dim) !important;
+  border-radius: 3px !important;
+  font-family: var(--gr-font-head) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 6px rgba(0,0,0,0.4) !important;
+  transition: border-color 0.15s ease, color 0.15s ease !important;
 }
 button:hover, [class*="btn" i]:hover, [class*="button" i]:hover {
-  background: var(--nx-cyan) !important;
-  color: #06070c !important;
-  box-shadow: 0 0 14px rgba(0,229,255,0.55) !important;
+  border-color: var(--gr-gold) !important;
+  color: var(--gr-parchment) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 10px rgba(201,162,39,0.35) !important;
 }
-/* Botones secundarios / de icono: variante magenta discreta */
 [class*="icon-btn" i], [class*="ghost" i], [class*="secondary" i] {
   background: transparent !important;
-  border-color: var(--nx-magenta) !important;
-  color: var(--nx-magenta) !important;
+  border-color: var(--gr-forest) !important;
+  color: var(--gr-forest) !important;
   box-shadow: none !important;
 }
 [class*="icon-btn" i]:hover, [class*="ghost" i]:hover, [class*="secondary" i]:hover {
-  background: var(--nx-magenta) !important;
-  color: #06070c !important;
+  border-color: #5c8a54 !important;
+  color: #9fd493 !important;
 }
 
-/* ── Paneles / tarjetas de interfaz (overlays, modales, cards de UI) ──
-   Marco tipo HUD: esquinas cortadas + brackets en las esquinas. */
+/* ── Paneles / tarjetas de interfaz: losa de piedra con marco dorado ── */
 [class*="overlay" i] > [class*="card" i],
 [class*="modal" i],
 [class*="panel" i],
 [class*="dialog" i] {
-  background: var(--nx-bg-panel) !important;
-  border: 1px solid var(--nx-violet) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px) !important;
-  box-shadow: 0 0 30px rgba(111,91,255,0.25) !important;
-  position: relative;
+  background: var(--gr-bg-panel) !important;
+  border: 1px solid var(--gr-gold-dim) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.35), 0 12px 28px rgba(0,0,0,0.55) !important;
 }
 
-/* ── Inputs / selects ── */
+/* ── Inputs / selects: tinta sobre pergamino oscuro ── */
 input, select, textarea {
-  background: var(--nx-bg-raised) !important;
-  color: var(--nx-text) !important;
-  border: 1px solid var(--nx-violet) !important;
-  border-radius: 0 !important;
+  background: #1c140c !important;
+  color: var(--gr-text) !important;
+  border: 1px solid var(--gr-gold-dim) !important;
+  border-radius: 2px !important;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: var(--nx-cyan) !important;
-  box-shadow: 0 0 8px rgba(0,229,255,0.45) !important;
+  border-color: var(--gr-gold) !important;
+  box-shadow: 0 0 6px rgba(201,162,39,0.4) !important;
   outline: none !important;
 }
 
 /* ── Enlaces de texto genéricos ── */
-a { color: var(--nx-cyan); }
-a:hover { color: var(--nx-magenta); }
+a { color: var(--gr-gold); }
+a:hover { color: var(--gr-ember); }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--nx-bg); }
+::-webkit-scrollbar-track { background: var(--gr-bg); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--nx-cyan), var(--nx-magenta));
+  background: linear-gradient(var(--gr-gold-dim), var(--gr-ember));
   border-radius: 0;
 }
 
-/* ── HUB «JUGAR» (inicio): solo Barajas + Jugar online, lado a lado ──
-   Se oculta la columna de Última expansión (el HTML y el JS quedan
-   intactos: solo se oculta visualmente, no se borra nada) y las dos
-   columnas restantes se reparten el ancho en 2, en vez de 3. El :has()
-   localiza automáticamente al contenedor grid sin depender de su clase
-   exacta. Se aplica solo en escritorio: en móvil el hub ya es un
-   carrusel de una columna. */
+/* ── HUB «JUGAR» (inicio): apilado vertical, orden invertido ──
+   Antes: Jugar y Barajas lado a lado en 2 columnas.
+   Ahora: una sola columna, Barajas arriba y Jugar online abajo —
+   estructura y orden distintos a las versiones anteriores.
+   Última expansión sigue oculta (no se borra del HTML/JS). */
 #view-jugar .jv2-colexp { display: none !important; }
 
 #view-jugar :has(> .jv2-colmeta) {
-  grid-template-columns: 1fr 1fr !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
 }
-#view-jugar .jv2-colmeta { grid-column: 2 !important; }  /* Barajas: a la derecha */
-#view-jugar .jv2-center  { grid-column: 1 !important; }  /* Jugar online: a la izquierda */
+#view-jugar .jv2-colmeta { order: 1 !important; }  /* Barajas: arriba */
+#view-jugar .jv2-center  { order: 2 !important; }  /* Jugar online: abajo */
 
-/* ── Fondo de textura: pokébolas → placa de circuito ──
-   Mismo tamaño de mosaico, posición y animación de deriva que el original;
-   solo cambia el dibujo (data URI SVG). Cubre las 3 pantallas donde aparecía
-   el patrón: hub de inicio, búsqueda online del draft, y online estándar. */
+/* ── Fondo de textura: pokébolas → escudos heráldicos ──
+   Mismo tamaño de mosaico, posición y animación de deriva que el
+   original; solo cambia el dibujo (data URI SVG). Cubre las 3
+   pantallas donde aparecía el patrón. */
 #view-jugar .jv-pokeballs::before,
 #dr-online-search .pvp-pokeballs::before,
 #pvp-content .pvp-pokeballs::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg stroke='white' stroke-width='2' fill='none' opacity='0.9'%3E%3Cpath d='M20,50 H80 M80,50 V20 M80,50 L110,50'/%3E%3Ccircle cx='110' cy='50' r='6'/%3E%3Cpath d='M150,20 V80 M150,80 H180 M150,80 L120,110'/%3E%3Ccircle cx='120' cy='110' r='6'/%3E%3Cpath d='M40,150 H10 M40,150 V180 M40,150 L70,150'/%3E%3Ccircle cx='40' cy='150' r='6'/%3E%3Cpath d='M160,140 H190 M160,140 V170'/%3E%3Ccircle cx='160' cy='140' r='6'/%3E%3C/g%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg stroke='white' stroke-width='2' fill='none' opacity='0.85'%3E%3Cpath d='M50,30 L70,40 V60 Q70,80 50,90 Q30,80 30,60 V40 Z'/%3E%3Cpath d='M150,110 L170,120 V140 Q170,160 150,170 Q130,160 130,140 V120 Z'/%3E%3C/g%3E%3C/svg%3E") !important;
 }
 
-/* ── Chips / badges de rareza, tipo, filtros activos ── */
+/* ── Chips / badges de rareza, tipo, filtros activos: sello de cera ── */
 [class*="chip" i], [class*="badge" i], [class*="tag" i][class*="filter" i] {
-  background: var(--nx-bg-raised) !important;
-  color: var(--nx-cyan) !important;
-  border: 1px solid var(--nx-cyan) !important;
-  border-radius: 0 !important;
-  font-family: var(--nx-font-head) !important;
+  background: var(--gr-forest) !important;
+  color: var(--gr-parchment) !important;
+  border-radius: 2px !important;
+  font-family: var(--gr-font-head) !important;
 }
 [class*="chip" i][class*="active" i], [class*="badge" i][class*="active" i] {
-  background: var(--nx-acid) !important;
-  color: #101400 !important;
-  border-color: var(--nx-acid) !important;
+  background: var(--gr-gold) !important;
+  color: #241a10 !important;
 }
